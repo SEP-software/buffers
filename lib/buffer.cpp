@@ -27,7 +27,9 @@ buffer::buffer(const std::vector<int> &n, const std::vector<int> &f,
   setBlock();
 }
 
-void buffer::readBuffer() {
+long long buffer::readBuffer() {
+  long long oldSize = _buf->getSize();
+
   /*Only need to do something if sitting on disk*/
   if (_bufferState == ON_DISK) {
     assert(_nameSet);
@@ -44,13 +46,16 @@ void buffer::readBuffer() {
     in.close();
   }
   assert(_bufferState != UNDEFINED);
+  return _buf->getSize() - oldSize;
 }
 
-void buffer::writeBuffer(bool keepState) {
+long long buffer::writeBuffer(bool keepState) {
+  long long oldSize = _buf->getSize();
+
   std::shared_ptr<storeBase> buf;
   bufferState restore;
   assert(_bufferState != UNDEFINED);
-  if (_bufferState == ON_DISK) return;
+  if (_bufferState == ON_DISK) return 0;
   if (keepState) {
     restore = _bufferState;
     buf = _buf->clone();
@@ -62,54 +67,66 @@ void buffer::writeBuffer(bool keepState) {
   out.write(_buf->getPtr(), _buf->getSize());
   assert(out.good());
   out.close();
+
   if (keepState) {
     _buf = buf;
     _bufferState = restore;
-  }
+  } else
+    _buf->zero();
+  return _buf->getSize() - oldSize;
 }
-void buffer::getBufferCPU(std::shared_ptr<storeBase> buf, bool keepState) {
+long long buffer::getBufferCPU(std::shared_ptr<storeBase> buf, bool keepState) {
   bufferState restore = _bufferState;
-  std::shared_ptr<storeBase> bufT = _buf;
+  long long oldSize = _buf->getSize();
 
+  std::shared_ptr<storeBase> bufT = _buf;
   changeState(CPU_DECOMPRESSED);
   _buf->getData(buf);
   if (keepState) {
     _buf = bufT;
     _bufferState = restore;
   }
+  return _buf->getSize() - oldSize;
 }
 
-void buffer::putBufferCPU(std::shared_ptr<storeBase> buf, bool keepState) {
+long long buffer::putBufferCPU(std::shared_ptr<storeBase> buf, bool keepState) {
   bufferState restore = _bufferState;
+  long long oldSize = _buf->getSize();
+
   _buf = _compress->getUncompressedStore(_n);
   _buf->putData(buf);
   if (keepState) changeState(restore);
+  return _buf->getSize() - oldSize;
 }
 
-void buffer::getWindowCPU(const std::vector<int> &nw,
-                          const std ::vector<int> &fw,
-                          const std::vector<int> &jw,
-                          std::shared_ptr<storeBase> buf, const size_t loc,
-                          const bool keepState) {
+long long buffer::getWindowCPU(const std::vector<int> &nw,
+                               const std ::vector<int> &fw,
+                               const std::vector<int> &jw,
+                               std::shared_ptr<storeBase> buf, const size_t loc,
+                               const bool keepState) {
   bufferState restore = _bufferState;
   std::shared_ptr<storeBase> bufT = _buf;
-
+  long long oldSize = _buf->getSize();
   changeState(CPU_DECOMPRESSED);
   std::shared_ptr<storeBase> bufIn = _buf->clone();
   _buf->getWindow(nw, fw, jw, _block, bufIn, loc);
   if (keepState) changeState(restore);
   _bufferState = restore;
   _buf = bufT;
+  return _buf->getSize() - oldSize;
 }
-void buffer::putWindowCPU(const std::vector<int> &nw,
-                          const std ::vector<int> &fw, std::vector<int> &jw,
-                          const std::shared_ptr<storeBase> buf,
-                          const size_t loc, const bool keepState) {
+long long buffer::putWindowCPU(const std::vector<int> &nw,
+                               const std ::vector<int> &fw,
+                               std::vector<int> &jw,
+                               const std::shared_ptr<storeBase> buf,
+                               const size_t loc, const bool keepState) {
   bufferState restore = _bufferState;
+  long long oldSize = _buf->getSize();
 
   changeState(CPU_DECOMPRESSED);
   _buf->putWindow(nw, fw, jw, _block, buf, loc);
   if (keepState) changeState(restore);
+  return _buf->getSize() - oldSize;
 }
 size_t buffer::localWindow(const std::vector<int> &nw,
                            const std::vector<int> &fw,
@@ -130,7 +147,9 @@ size_t buffer::localWindow(const std::vector<int> &nw,
   return nelem;
 }
 
-void buffer::changeState(const bufferState state) {
+long buffer::changeState(const bufferState state) {
+  long long oldSize = _buf->getSize();
+
   switch (state) {
     case CPU_DECOMPRESSED:
       switch (_bufferState) {
@@ -178,6 +197,8 @@ void buffer::changeState(const bufferState state) {
       std::cerr << "Can not change state" << std::endl;
       assert(1 == 2);
   }
+
   assert(state != UNDEFINED);
   _bufferState = state;
+  return _buf->getSize() - oldSize;
 }

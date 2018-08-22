@@ -1,15 +1,25 @@
 project(buffer)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.3)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 
 # configure a header file to pass some of the CMake settings
 find_package( PythonInterp 3 REQUIRED )
+FIND_PACKAGE(TBB REQUIRED)
 
 
 set(buffer_MAJOR_VERSION 0)
 set(buffer_MINOR_VERSION 2)
 set(buffer_VERSION_STRING    ${buffer_MAJOR_VERSION}.${buffer_MINOR_VERSION})
+
+
+
+ 
+# add the binary tree to the search path for include files
+# so that we will find TutorialConfig.h
+include_directories("${PROJECT_BINARY_DIR}")
+include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 
 FIND_PACKAGE(hypercube)
 if(hypercube_FOUND)
@@ -28,12 +38,41 @@ else(hypercube_FOUND)
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube/lib)
 endif(hypercube_FOUND)
 
+FIND_PACKAGE(json)
+if(json_FOUND)
+  message("Found json")
+  INCLUDE_DIRECTORIES(${json_DIRNAME_include})
+  link_directories(json_DIRNAME_lib)
+else(json_FOUND)
+   message("Unable to find json")
+
+    # we have a submodule setup for foo, assume it is under external/foo
+    # now we need to clone this submodule
+    execute_process(COMMAND git submodule update --init --recursive -- external/json
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    message("before add subdirectory")
+    add_subdirectory(external/json)
+    INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
+endif(json_FOUND)
 
 
- 
-# add the binary tree to the search path for include files
-# so that we will find TutorialConfig.h
-include_directories("${PROJECT_BINARY_DIR}")
+FIND_PACKAGE(ZFP)
+if(ZFP_FOUND)
+  message("Found ZFP")
+  INCLUDE_DIRECTORIES(${ZFP_INCLUDE_DIR})
+else(ZFP_FOUND)
+
+ExternalProject_Add (
+       ZFP_INSTALL
+       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_INSTALL_LIBDIR=lib
+      GIT_REPOSITORY "https://github.com/LLNL/zfp"
+            INSTALL_DIR  ${CMAKE_INSTALL_PREFIX})
+
+   set(ZFP_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+
+     set(ZFP_LIBRARIES ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zfp${CMAKE_SHARED_LIBRARY_SUFFIX})
+
+endif(ZFP_FOUND)
 
 
 include(CheckCXXCompilerFlag)

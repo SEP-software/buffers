@@ -1,11 +1,15 @@
 #ifndef STORE_H
 #define STORE_H 1
+#include <cassert>
 #include <complex>
+#include <cstring>
 #include <memory>
 #include <sstream>
 #include <vector>
 namespace SEP {
 namespace IO {
+enum dataType { IO_BYTE, IO_INT, IO_FLOAT, IO_COMPLEX, IO_DOUBLE, IO_UNKNOWN };
+
 class storeBase {
  public:
   virtual void getData(std::shared_ptr<storeBase> buf) const = 0;
@@ -18,6 +22,7 @@ class storeBase {
                          std::shared_ptr<storeBase> bufIn, const int ibeg);
   virtual std::shared_ptr<storeBase> clone() const = 0;
   virtual int getSize() const = 0;
+  virtual void zero();
   virtual char *getPtr();
 };
 
@@ -25,12 +30,17 @@ template <class V>
 class store : public storeBase {
  public:
   store(const int n) { _buf.resize(n); }
+  store(const int n, void *buf) {
+    _buf.resize(n);
+    memcpy(_buf.data(), buf, n * sizeof(V));
+  }
   void getData(std::shared_ptr<storeBase> buf) const {
     std::shared_ptr<store<V>> b = std::dynamic_pointer_cast<store<V>>(buf);
     assert(b);
     assert(b->_buf.size() <= _buf.size());
     memcpy(b->_buf.data(), _buf.data(), _buf.size() * sizeof(V));
   }
+
   char *getPtr() { return (char *)_buf.data(); }
   void putData(const std::shared_ptr<store> buf) {
     const std::shared_ptr<store<V>> b =
@@ -39,7 +49,7 @@ class store : public storeBase {
     assert(b->_buf.size() == _buf.size());
     memcpy(_buf.data(), b->_buf.data(), _buf.size() * sizeof(V));
   }
-
+  virtual void zero() { _buf.resize(0); }
   virtual std::shared_ptr<storeBase> clone() const {
     std::shared_ptr<store<V>> m(new store<V>((int)_buf.size()));
     memcpy(m->_buf.data(), _buf.data(), _buf.size() * sizeof(V));
@@ -109,6 +119,31 @@ class store : public storeBase {
  private:
   std::vector<V> _buf;
 };
+
+std::shared_ptr<storeBase> returnStorage(const dataType state, const size_t n) {
+  switch (state) {
+    case IO_INT: {
+      std::shared_ptr<store<int>> x(new store<int>(n));
+      return x;
+    } break;
+    case IO_FLOAT: {
+      std::shared_ptr<store<float>> y(new store<float>(n));
+      return y;
+    } break;
+    case IO_COMPLEX: {
+      std::shared_ptr<store<std::complex<float>>> z(
+          new store<std::complex<float>>(n));
+      return z;
+    } break;
+    case IO_DOUBLE: {
+      std::shared_ptr<store<double>> a(new store<double>(n));
+      return a;
+
+    } break;
+    default:
+      assert(1 == 2);
+  }
+}
 
 }  // namespace IO
 }  // namespace SEP

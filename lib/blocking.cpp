@@ -1,11 +1,12 @@
-
 #include "blocking.h"
+#include <cassert>
 #include <cmath>
+#include <iostream>
 using namespace SEP::IO;
-blockParams blocking::makeBlocks(const std::vector<int> &n) {
-  axesBlock = blockAxis(n);
+blockParams blocking::makeBlocks(const std::vector<int> &nsz) {
+  std::vector<std::vector<int>> axesBlock = blockAxis(nsz);
   blockParams x;
-  std::vector<int> n(7, 1), f(7, 0);
+  std::vector<int> n(7, 1), f(7, 0), axis(7, 0);
   for (int i6 = 0; i6 < axesBlock[6].size(); i6++) {
     axis[6] = axesBlock[6][i6];
     f[6] = 0;
@@ -27,9 +28,9 @@ blockParams blocking::makeBlocks(const std::vector<int> &n) {
               for (int i0 = 0; i0 < axesBlock[0].size(); i0++) {
                 axis[0] = axesBlock[0][i0];
                 f[0] = 0;
-                x._f.push_back(f);
+                x._fs.push_back(f);
                 ;
-                x._n.push_back(axis);
+                x._ns.push_back(axis);
                 f[0] += axis[0];
               }
               f[1] += axis[1];
@@ -40,39 +41,75 @@ blockParams blocking::makeBlocks(const std::vector<int> &n) {
         }
         f[4] += axis[4];
       }
-      f[5] = += axis[5];
+      f[5] += axis[5];
     }
     f[6] += axis[6];
   }
   x._nblocking.push_back(1);
   for (int i = 0; i < 6; i++) {
-    x._nblocking.push_back(x._nblocking[i] * x._f[i].size());
+    x._nblocking.push_back(x._nblocking[i] * x._ns[i].size());
   }
   return x;
 }
 
+blocking::blocking(const Json::Value &jsonArgs) {
+  if (jsonArgs["blocksize"].isNull()) {
+    std::cerr << std::string(
+                     "trouble grabbing parameter blocksize from parameters")
+              << std::endl;
+
+    assert(1 == 2);
+  }
+  const Json::Value vals = jsonArgs["blocksize"];
+
+  for (auto i = 0; i < _blocksize.size(); i++)
+    _blocksize.push_back(vals[i].asInt());
+
+  if (jsonArgs["nb"].isNull()) {
+    std::cerr << std::string("trouble grabbing parameter nb from parameters")
+              << std::endl;
+
+    assert(1 == 2);
+  }
+  const Json::Value val2 = jsonArgs["nb"];
+
+  for (auto i = 0; i < _nb.size(); i++) _nb.push_back(val2[i].asInt());
+  checkLogicBlocking();
+}
+
+Json::Value blocking::getJsonDescription() {
+  Json::Value v;
+  Json::Value vals;
+  for (auto i = 0; i < _blocksize.size(); i++) vals.append(_blocksize[i]);
+  v["blocksize"] = vals;
+
+  Json::Value val2;
+  for (auto i = 0; i < _nb.size(); i++) val2.append(_nb[i]);
+  v["nb"] = val2;
+
+  return v;
+}
 std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
-  std::vector<int> blocks;
+  std::vector<std::vector<int>> blocks;
   for (int i = 0; i < n.size(); i++) {
     std::vector<int> axisBlock;
     int nleft = n[i];
-    bs = 1;
-    nb = 1;
+    int bs = 1;
+    int nb = 1;
     if (_blocksize.size() > i) bs = _blocksize[i];
     if (_nb.size() > 1) nb = _nb[i];
-    int nblocks = ceilf(float(n[i]) / float(blocksize));  // 100 3 34
-    int ratio = nb / bs;                                  // 3
-    int nparts = ceilf(float(nblocks) / float(ratio));    // 34 /3 = 12
+    int nblocks = ceilf(float(n[i]) / float(_blocksize[i]));  // 100 3 34
+    int ratio = nb / bs;                                      // 3
+    int nparts = ceilf(float(nblocks) / float(ratio));        // 34 /3 = 12
     for (int ib = 0; ib < nparts - 1; ib++) {
       int nuse = ceilf(float(nblocks) / float(nparts - ib));
       nparts -= nuse;
       axisBlock.push_back(nuse * bs);
     }
-    if (nleft - nparts * bs)>0)
-       axisBlock.push_back(nleft-nparts*bs);
-    blocks.push_back(axisBlock)
+    if (nleft - nparts * bs > 0) axisBlock.push_back(nleft - nparts * bs);
+    blocks.push_back(axisBlock);
   }
-  for (i = n.size(); i < 7; i++) {
+  for (size_t i = n.size(); i < 7; i++) {
     std::vector<int> axisBlock(1, 1);
     blocks.push_back(axisBlock);
   }
@@ -81,6 +118,7 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
 void blocking::checkLogicBlocking() {
   for (int i = 0; i < _nb.size(); i++) {
     if (_blocksize.size() > i) {
-      assert(int(_nb[i] / _blocksize[i]) * blocksize[i] = _nb[i]);
+      assert(int(_nb[i] / _blocksize[i]) * _blocksize[i] == _nb[i]);
     }
   }
+}

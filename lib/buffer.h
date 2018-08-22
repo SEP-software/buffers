@@ -1,6 +1,7 @@
 #ifndef BUFFER_H
 #define BUFFER_H 1
 #include <store.h>
+#include <cassert>
 #include <cstring>
 #include <memory>
 #include <sstream>
@@ -9,6 +10,7 @@
 namespace SEP {
 namespace IO {
 enum bufferState { UNDEFINED, CPU_COMPRESSED, CPU_DECOMPRESSED, ON_DISK };
+
 class buffer {
  public:
   buffer(const std::string name, const std::vector<int> &n,
@@ -17,27 +19,34 @@ class buffer {
   buffer(const std::vector<int> &n, const std::vector<int> &f,
          std::shared_ptr<compress> comp);
   void setName(const std::string name) { _name = name; }
+  std::string getName() {
+    assert(_nameSet);
+    return _name;
+  }
   void setBlock() {
     _block.push_back(1);
     for (size_t i = 0; i < _n.size(); i++) _block.push_back(_block[i] * _n[i]);
   }
-  virtual void readBuffer();
-  virtual void writeBuffer(bool keepState = false);
-  virtual void getBufferCPU(std::shared_ptr<storeBase> buf,
-                            bool keepState = false);
-  virtual void putBufferCPU(std::shared_ptr<storeBase> buf,
-                            bool keepState = false);
-  void getWindowCPU(const std::vector<int> &nw, const std ::vector<int> &fw,
-                    const std::vector<int> &jw, std::shared_ptr<storeBase> buf,
-                    const size_t bufLoc, const bool keepState = false);
+  virtual long long readBuffer();
+  virtual long long writeBuffer(bool keepState = false);
+  virtual long long getBufferCPU(std::shared_ptr<storeBase> buf,
+                                 bool keepState = false);
+  virtual long long putBufferCPU(std::shared_ptr<storeBase> buf,
+                                 bool keepState = false);
+  long long getWindowCPU(const std::vector<int> &nw,
+                         const std ::vector<int> &fw,
+                         const std::vector<int> &jw,
+                         std::shared_ptr<storeBase> buf, const size_t bufLoc,
+                         const bool keepState = false);
 
-  void putWindowCPU(const std::vector<int> &nw, const std ::vector<int> &fw,
-                    std::vector<int> &jw, const std::shared_ptr<storeBase> buf,
-                    const size_t bufLoc, const bool keepState = false);
+  long long putWindowCPU(const std::vector<int> &nw,
+                         const std ::vector<int> &fw, std::vector<int> &jw,
+                         const std::shared_ptr<storeBase> buf,
+                         const size_t bufLoc, const bool keepState = false);
   size_t localWindow(const std::vector<int> &nw, const std::vector<int> &fw,
                      const std::vector<int> &jw, std::vector<int> &n_w,
                      std::vector<int> &f_w, std::vector<int> &j_w) const;
-  void changeState(const bufferState state);
+  long changeState(const bufferState state);
 
  private:
   std::vector<int> _f, _n, _block;

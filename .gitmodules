@@ -1,0 +1,6 @@
+[submodule "external/hypercube"]
+	path = external/hypercube
+	url = http://zapad.Stanford.EDU/bob/hypercube.git
+[submodule "external/json"]
+	path = external/json
+	url = http://zapad.Stanford.EDU/bob/json.git
