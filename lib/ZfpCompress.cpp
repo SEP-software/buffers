@@ -3,13 +3,13 @@
 #include <cassert>
 #include <iostream>
 using namespace SEP::IO;
-ZfpCompression::ZfpCompression(const dataType typ, zfpMethod meth, float rate,
-                               float tolerance, int precision) {
+ZfpCompression::ZfpCompression(const dataType typ, const ZfpParams pars) {
   setDataType(typ);
-  _rate = rate;
-  _meth = meth;
-  _tolerance = tolerance;
-  _precision = precision;
+  _rate = pars._rate;
+  _meth = pars._meth;
+  _tolerance = pars._tolerance;
+  _precision = pars._precision;
+  _typ = typ;
 
   setGlobalZfp();
 }
@@ -39,8 +39,7 @@ void ZfpCompression::setGlobalZfp() {
 }
 
 std::shared_ptr<storeBase> ZfpCompression::decompressData(
-    const dataType typ, const std::vector<int> ns,
-    const std::shared_ptr<storeBase> buf) {
+    const std::vector<int> ns, const std::shared_ptr<storeBase> buf) {
   if (_typ == IO_BYTE) return buf;
 
   int ndim = 0;
@@ -59,7 +58,7 @@ std::shared_ptr<storeBase> ZfpCompression::decompressData(
   zfp_type type = _ztype;
   size_t typesize = zfp_type_size(type);
 
-  std::shared_ptr<storeBase> storeOut = returnStorage(typ, n123);
+  std::shared_ptr<storeBase> storeOut = returnStorage(_typ, n123);
 
   zfp_field_set_pointer(field, storeOut->getPtr());
 
@@ -101,13 +100,15 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
   }
 
   switch (_meth) {
-    case ZFP_ACCURACY:
+    case ZFP_TOLERANCE:
+
       zfp_stream_set_accuracy(zfp, _tolerance);
       break;
-    case ZFP_TOLERANCE:
+    case ZFP_PRECISION:
       zfp_stream_set_precision(zfp, _precision);
       break;
-    case ZFP_PRECISION:
+    case ZFP_ACCURACY:
+
       zfp_stream_set_rate(zfp, _rate, _ztype, ndim, 0);
       break;
   }
@@ -120,12 +121,15 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
   assert(stream);
   zfp_stream_set_bit_stream(zfp, stream);
 
-  zfp_write_header(zfp, field, ZFP_HEADER_FULL);
+  assert(zfp_write_header(zfp, field, ZFP_HEADER_FULL));
+
   size_t zfpsize = zfp_compress(zfp, field);
-  std::shared_ptr<store<unsigned char>> x(
-      new store<unsigned char>(zfpsize, field));
+
+  std::shared_ptr<storeByte> x(new storeByte(zfpsize, buffer));
+
   /* free allocated storage */
   zfp_field_free(field);
+
   zfp_stream_close(zfp);
   stream_close(stream);
   free(buffer);

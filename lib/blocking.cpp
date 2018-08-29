@@ -4,32 +4,32 @@
 #include <iostream>
 using namespace SEP::IO;
 blockParams blocking::makeBlocks(const std::vector<int> &nsz) {
-  std::vector<std::vector<int>> axesBlock = blockAxis(nsz);
   blockParams x;
+  x._axesBlock = blockAxis(nsz);
+
   std::vector<int> n(7, 1), f(7, 0), axis(7, 0);
-  for (int i6 = 0; i6 < axesBlock[6].size(); i6++) {
-    axis[6] = axesBlock[6][i6];
-    f[6] = 0;
-    for (int i5 = 0; i5 < axesBlock[5].size(); i5++) {
-      axis[5] = axesBlock[5][i5];
-      f[5] = 0;
-      for (int i4 = 0; i4 < axesBlock[4].size(); i4++) {
-        axis[4] = axesBlock[4][i4];
-        f[4] = 0;
-        for (int i3 = 0; i3 < axesBlock[3].size(); i3++) {
-          axis[3] = axesBlock[3][i3];
-          f[3] = 0;
-          for (int i2 = 0; i2 < axesBlock[2].size(); i2++) {
-            axis[2] = axesBlock[2][i2];
-            f[2] = 0;
-            for (int i1 = 0; i1 < axesBlock[1].size(); i1++) {
-              axis[1] = axesBlock[1][i1];
-              f[1] = 0;
-              for (int i0 = 0; i0 < axesBlock[0].size(); i0++) {
-                axis[0] = axesBlock[0][i0];
-                f[0] = 0;
+  f[6] = 0;
+  for (int i6 = 0; i6 < x._axesBlock[6].size(); i6++) {
+    axis[6] = x._axesBlock[6][i6];
+    f[5] = 0;
+    for (int i5 = 0; i5 < x._axesBlock[5].size(); i5++) {
+      axis[5] = x._axesBlock[5][i5];
+      f[4] = 0;
+      for (int i4 = 0; i4 < x._axesBlock[4].size(); i4++) {
+        axis[4] = x._axesBlock[4][i4];
+        f[3] = 0;
+        for (int i3 = 0; i3 < x._axesBlock[3].size(); i3++) {
+          axis[3] = x._axesBlock[3][i3];
+          f[2] = 0;
+          for (int i2 = 0; i2 < x._axesBlock[2].size(); i2++) {
+            axis[2] = x._axesBlock[2][i2];
+            f[1] = 0;
+            for (int i1 = 0; i1 < x._axesBlock[1].size(); i1++) {
+              axis[1] = x._axesBlock[1][i1];
+              f[0] = 0;
+              for (int i0 = 0; i0 < x._axesBlock[0].size(); i0++) {
+                axis[0] = x._axesBlock[0][i0];
                 x._fs.push_back(f);
-                ;
                 x._ns.push_back(axis);
                 f[0] += axis[0];
               }
@@ -47,7 +47,7 @@ blockParams blocking::makeBlocks(const std::vector<int> &nsz) {
   }
   x._nblocking.push_back(1);
   for (int i = 0; i < 6; i++) {
-    x._nblocking.push_back(x._nblocking[i] * x._ns[i].size());
+    x._nblocking.push_back(x._nblocking[i] * x._axesBlock[i].size());
   }
   return x;
 }
@@ -97,16 +97,19 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     int bs = 1;
     int nb = 1;
     if (_blocksize.size() > i) bs = _blocksize[i];
-    if (_nb.size() > 1) nb = _nb[i];
+    if (_nb.size() > i) nb = _nb[i];
     int nblocks = ceilf(float(n[i]) / float(_blocksize[i]));  // 100 3 34
     int ratio = nb / bs;                                      // 3
     int nparts = ceilf(float(nblocks) / float(ratio));        // 34 /3 = 12
+
     for (int ib = 0; ib < nparts - 1; ib++) {
       int nuse = ceilf(float(nblocks) / float(nparts - ib));
-      nparts -= nuse;
+      nblocks -= nuse;
+      nleft -= nuse * bs;
+
       axisBlock.push_back(nuse * bs);
     }
-    if (nleft - nparts * bs > 0) axisBlock.push_back(nleft - nparts * bs);
+    if (nleft > 0) axisBlock.push_back(nleft);
     blocks.push_back(axisBlock);
   }
   for (size_t i = n.size(); i < 7; i++) {

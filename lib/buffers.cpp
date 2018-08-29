@@ -10,10 +10,25 @@
 using namespace SEP::IO;
 
 std::shared_ptr<blocking> buffers::createDefaultBlocking() {
-  std::vector<int> bs(3, 1);
-  bs[0] = 16;
-  std::vector<int> block(3, 32);
-  block[256];
+  std::vector<int> bs(3, 1), block(3, 1);
+  if (_hyper->getAxis(1).n > 16)
+    bs[0] = 1;
+  else
+    bs[0] = 16;
+
+  if (_hyper->getNdimG1() == 1) {
+    block[0] = 256 * 1024;
+  } else if (_hyper->getNdimG1() == 2) {
+    bs[1] = std::min(_hyper->getAxis(2).n, 4);
+    block[0] = 256;
+    block[1] = 1024;
+  } else {
+    bs[1] = std::min(_hyper->getAxis(2).n, 4);
+    bs[2] = std::min(_hyper->getAxis(3).n, 4);
+    block[0] = 256;
+    block[1] = 32;
+    block[2] = 32;
+  }
   std::shared_ptr<blocking> b(new blocking(bs, block));
   return b;
 }
@@ -67,13 +82,13 @@ buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
   _compress = comp;
   _blocking = block;
   _memory = mem;
+  _hyper = hyper;
+
   if (_compress == nullptr) _compress = createDefaultCompress();
   if (_blocking == nullptr) _blocking = createDefaultBlocking();
   if (_memory == nullptr) _memory = createDefaultMemory();
-  _hyper = hyper;
   blockParams v = _blocking->makeBlocks(_hyper->getNs());
   createBuffers();
-  // _axisBlocking = v._axisBlocking;
 }
 
 Json::Value buffers::getFiles() {
@@ -97,7 +112,7 @@ void buffers::createBuffers() {
     _buffers.push_back(buffer(b._ns[i], b._fs[i], _compress));
 
   _n123blocking = b._nblocking;
-  _nBlock = b._ns;
+  _axisBlocking = b._axesBlock;
 }
 void buffers::updateMemory(const long change2) {
   bool done = false;
@@ -160,25 +175,32 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
       fail = true;
     }
     if (fail) assert(1 == 2);
-    std::vector<bool> axisP(_nBlock[i].size(), false);
+    std::vector<bool> axisP(_axisBlocking[i].size(), false);
     size_t ip = 0;
     int ibeg = 0;
-    int iend = _nBlock[i][0];
+    int iend = _axisBlocking[i][0];
     // Loop through all of window we are reading
     for (int iax = 0, ib = fw[i]; iax < nw[i]; iax++, ib += jw[i]) {
-      // Go until we reach the patch on the axis containing the sample
-      while (ip < _nBlock[i].size() && (ib < ibeg || ib >= iend)) {
-        ibeg = ibeg + _nBlock[i][ip];
+      // Go until we reach the patch on the axis containing the
+
+      while (ip < _axisBlocking[i].size() && (ib < ibeg || ib >= iend)) {
+        ibeg = ibeg + _axisBlocking[i][ip];
         ip++;
-        if (ip < axisP.size()) iend = ibeg + _nBlock[i][ip];
+        if (ip < axisP.size()) iend = ibeg + _axisBlocking[i][ip];
       }
-      if (ip < axisP.size()) axisP[ip] = true;
+      if (ip < axisP.size()) {
+        axisP[ip] = true;
+      }
     }
     int ic = 0;
     for (size_t iax = 0; iax < axisP.size(); iax++) {
       if (axisP[iax]) ic++;
     }
     ntot *= ic;
+    patches.push_back(axisP);
+  }
+  for (int i = patches.size(); i < 7; i++) {
+    std::vector<bool> axisP(1, true);
     patches.push_back(axisP);
   }
 
@@ -219,6 +241,7 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
       }
     }
   }
+
   return bufSearch;
 }
 void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
@@ -229,15 +252,16 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
-
   long change = tbb::parallel_reduce(
       tbb::blocked_range<size_t>(0, pwind.size()), long(0),
       [&](const tbb::blocked_range<size_t> &r, long locChange) {
         for (size_t i = r.begin(); i != r.end(); ++i) {
-          std::vector<int> n_w(7), f_w(7), j_w(7);
-          size_t pos = _buffers[i].localWindow(n, f, j, n_w, f_w, j_w);
-          locChange +=
-              _buffers[i].getWindowCPU(n_w, f_w, j_w, buf, pos, keepState);
+          std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
+          size_t pos =
+              _buffers[i].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
+
+          locChange += _buffers[i].getWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
+                                                buf, keepState);
         }
         return locChange;
       },
@@ -257,11 +281,15 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
       tbb::blocked_range<size_t>(0, pwind.size()), long(0),
       [&](const tbb::blocked_range<size_t> &r, long locChange) {
         for (size_t i = r.begin(); i != r.end(); ++i) {
-          std::vector<int> n_w(7), f_w(7), j_w(7);
-          size_t pos = _buffers[i].localWindow(n, f, j, n_w, f_w, j_w);
-          locChange +=
-              _buffers[i].putWindowCPU(n_w, f_w, j_w, buf, pos, keepState);
+          std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
+
+          size_t pos =
+              _buffers[i].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
+
+          locChange += _buffers[i].putWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
+                                                buf, keepState);
         }
+
         return locChange;
       },
       [](long a, long b) { return a + b; });

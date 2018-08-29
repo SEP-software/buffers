@@ -39,6 +39,9 @@ class buffers {
   std::vector<int> parsedWindows(const std::vector<int> &nw,
                                  const std ::vector<int> &fw,
                                  const std::vector<int> &jw);
+  std::shared_ptr<storeBase> getSpecificStore(int ibuf) {
+    return _buffers[ibuf].getStorePtr();
+  }
 
  private:
   std::shared_ptr<blocking> _blocking;
@@ -50,7 +53,6 @@ class buffers {
   std::vector<int> _lastUsed;
   std::vector<std::vector<int>> _axisBlocking;
   std::vector<int> _n123blocking;
-  std::vector<std::vector<int>> _nBlock;
   std::string _directory;
 };
 }  // namespace IO

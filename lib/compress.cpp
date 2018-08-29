@@ -23,20 +23,19 @@ std::shared_ptr<storeBase> compress::getUncompressedStore(
   size_t n123 = 1;
   for (auto n : ns) n123 *= n;
   if (_typ == IO_BYTE) {
-    std::shared_ptr<store<unsigned char>> x(new store<unsigned char>(n123));
+    std::shared_ptr<storeByte> x(new storeByte(n123));
     return x;
   }
   if (_typ == IO_INT) {
-    std::shared_ptr<store<int>> x2(new store<int>(n123));
+    std::shared_ptr<storeInt> x2(new storeInt(n123));
     return x2;
   }
   if (_typ == IO_FLOAT) {
-    std::shared_ptr<store<float>> x3(new store<float>(n123));
+    std::shared_ptr<storeFloat> x3(new storeFloat(n123));
     return x3;
   }
   if (_typ == IO_COMPLEX) {
-    std::shared_ptr<store<std::complex<float>>> x4(
-        new store<std::complex<float>>(n123));
+    std::shared_ptr<storeComplex> x4(new storeComplex(n123));
     return x4;
   }
   return nullptr;

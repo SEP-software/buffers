@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.3)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
+enable_testing()
 
 # configure a header file to pass some of the CMake settings
 find_package( PythonInterp 3 REQUIRED )
@@ -37,6 +38,11 @@ else(hypercube_FOUND)
     add_subdirectory(external/hypercube)
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube/lib)
 endif(hypercube_FOUND)
+
+ execute_process(COMMAND git submodule update --init --recursive -- external/googletest
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    add_subdirectory(external/googletest)
+
 
 FIND_PACKAGE(json)
 if(json_FOUND)
@@ -119,8 +125,10 @@ INCLUDE(CMakePackageConfigHelpers)
   DESTINATION
     ${buffer_DIRNAME_cmake}
   )
-  
+
 add_subdirectory(lib)
+  add_subdirectory(unit-tests)
+
 #add_subdirectory(python)
 
 #add_subdirectory(env-modules)

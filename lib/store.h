@@ -12,138 +12,159 @@ enum dataType { IO_BYTE, IO_INT, IO_FLOAT, IO_COMPLEX, IO_DOUBLE, IO_UNKNOWN };
 
 class storeBase {
  public:
+  storeBase() { ; }
   virtual void getData(std::shared_ptr<storeBase> buf) const = 0;
-  virtual void putData(const std::shared_ptr<storeBase> buf);
-  virtual void getWindow(const std::vector<int> &nw, const std::vector<int> &fw,
-                         const std::vector<int> &jw, const std::vector<int> &nb,
-                         std::shared_ptr<storeBase> bufIn, const int ibeg);
-  virtual void putWindow(const std::vector<int> &nw, const std::vector<int> &fw,
-                         const std::vector<int> &jw, const std::vector<int> &nb,
-                         std::shared_ptr<storeBase> bufIn, const int ibeg);
+  virtual void putData(const std::shared_ptr<storeBase> buf) = 0;
+  virtual void getWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) = 0;
+  virtual void putWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) = 0;
   virtual std::shared_ptr<storeBase> clone() const = 0;
-  virtual int getSize() const = 0;
-  virtual void zero();
-  virtual char *getPtr();
+  virtual size_t getElementSize() const = 0;
+  virtual size_t getSize() const = 0;
+  virtual void zero() = 0;
+  virtual char *getPtr() = 0;
 };
 
-template <class V>
-class store : public storeBase {
+class storeInt : public storeBase {
  public:
-  store(const int n) { _buf.resize(n); }
-  store(const int n, void *buf) {
-    _buf.resize(n);
-    memcpy(_buf.data(), buf, n * sizeof(V));
-  }
-  void getData(std::shared_ptr<storeBase> buf) const {
-    std::shared_ptr<store<V>> b = std::dynamic_pointer_cast<store<V>>(buf);
-    assert(b);
-    assert(b->_buf.size() <= _buf.size());
-    memcpy(b->_buf.data(), _buf.data(), _buf.size() * sizeof(V));
-  }
-
+  storeInt(const int n) { _buf.resize(n); }
+  storeInt(const int n, void *buf);
+  virtual void getData(std::shared_ptr<storeBase> buf) const override;
   char *getPtr() { return (char *)_buf.data(); }
-  void putData(const std::shared_ptr<store> buf) {
-    const std::shared_ptr<store<V>> b =
-        std::dynamic_pointer_cast<store<V>>(buf);
-    assert(b);
-    assert(b->_buf.size() == _buf.size());
-    memcpy(_buf.data(), b->_buf.data(), _buf.size() * sizeof(V));
-  }
-  virtual void zero() { _buf.resize(0); }
-  virtual std::shared_ptr<storeBase> clone() const {
-    std::shared_ptr<store<V>> m(new store<V>((int)_buf.size()));
-    memcpy(m->_buf.data(), _buf.data(), _buf.size() * sizeof(V));
-
-    return m;
-  }
-
-  virtual void getWindow(const std::vector<int> &nw, const std::vector<int> &fw,
-                         const std::vector<int> &jw, const std::vector<int> &nb,
-                         std::shared_ptr<storeBase> bufIn, const int ibeg) {
-    std::shared_ptr<store<V>> in = std::dynamic_pointer_cast<store<V>>(bufIn);
-
-    int ipos = ibeg;
-    for (int i6 = 0; i6 < nw[6]; i6++) {
-      int f6 = nb[6] * (fw[6] + i6 * jw[6]);
-      for (int i5 = 0; i5 < nw[5]; i5++) {
-        int f5 = f6 + nb[5] * (fw[5] + i5 * jw[5]);
-        for (int i4 = 0; i4 < nw[4]; i4++) {
-          int f4 = f5 + nb[4] * (fw[4] + jw[4] * i4);
-          for (int i3 = 0; i3 < nw[3]; i3++) {
-            int f3 = f4 + nb[3] * (fw[3] + jw[3] * i3);
-            for (int i2 = 0; i2 < nw[2]; i2++) {
-              int f2 = f3 + nb[2] * (fw[2] + jw[2] * i2);
-              for (int i1 = 0; i1 < nw[1]; i1++) {
-                int f1 = f2 + nb[1] * (fw[1] + jw[1] * i1) + fw[0];
-                for (int i0 = 0; i0 < nw[0]; i0++) {
-                  _buf[ipos++] = in->_buf[f1 + i0 * jw[0]];
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  virtual void putWindow(const std::vector<int> &nw, const std::vector<int> &fw,
-                         const std::vector<int> &jw, const std::vector<int> &nb,
-                         std::shared_ptr<storeBase> bufIn, const int ibeg) {
-    const std::shared_ptr<store<V>> in =
-        std::dynamic_pointer_cast<store<V>>(bufIn);
-    int ipos = ibeg;
-    for (int i6 = 0; i6 < nw[6]; i6++) {
-      int f6 = nb[6] * (fw[6] + i6 * jw[6]);
-      for (int i5 = 0; i5 < nw[5]; i5++) {
-        int f5 = f6 + nb[5] * (fw[5] + i5 * jw[5]);
-        for (int i4 = 0; i4 < nw[4]; i4++) {
-          int f4 = f5 + nb[4] * (fw[4] + jw[4] * i4);
-          for (int i3 = 0; i3 < nw[3]; i3++) {
-            int f3 = f4 + nb[3] * (fw[3] + jw[3] * i3);
-            for (int i2 = 0; i2 < nw[2]; i2++) {
-              int f2 = f3 + nb[2] * (fw[2] + jw[2] * i2);
-              for (int i1 = 0; i1 < nw[1]; i1++) {
-                int f1 = f2 + nb[1] * (fw[1] + jw[1] * i1) + fw[0];
-                for (int i0 = 0; i0 < nw[0]; i0++) {
-                  _buf[f1 + i0 * jw[0]] = in->_buf[ipos++];
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  virtual int getSize() const { return sizeof(V); }
+  virtual void putData(const std::shared_ptr<storeBase> buf) override;
+  virtual void zero() override { _buf.resize(0); }
+  virtual std::shared_ptr<storeBase> clone() const;
+  virtual void getWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) override;
+  virtual void putWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) override;
+  virtual size_t getElementSize() const { return sizeof(int); }
+  virtual size_t getSize() const { return _buf.size(); }
 
  private:
-  std::vector<V> _buf;
+  std::vector<int> _buf;
 };
 
-std::shared_ptr<storeBase> returnStorage(const dataType state, const size_t n) {
-  switch (state) {
-    case IO_INT: {
-      std::shared_ptr<store<int>> x(new store<int>(n));
-      return x;
-    } break;
-    case IO_FLOAT: {
-      std::shared_ptr<store<float>> y(new store<float>(n));
-      return y;
-    } break;
-    case IO_COMPLEX: {
-      std::shared_ptr<store<std::complex<float>>> z(
-          new store<std::complex<float>>(n));
-      return z;
-    } break;
-    case IO_DOUBLE: {
-      std::shared_ptr<store<double>> a(new store<double>(n));
-      return a;
+class storeByte : public storeBase {
+ public:
+  storeByte(const int n) { _buf.resize(n); }
+  storeByte(const int n, void *buf);
+  virtual void getData(std::shared_ptr<storeBase> buf) const override;
+  char *getPtr() { return (char *)_buf.data(); }
+  virtual void putData(const std::shared_ptr<storeBase> buf) override;
+  virtual void zero() override { _buf.resize(0); }
+  virtual std::shared_ptr<storeBase> clone() const;
+  virtual void getWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) override;
+  virtual void putWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) override;
+  virtual size_t getElementSize() const { return sizeof(unsigned char); }
+  virtual size_t getSize() const { return _buf.size(); }
 
-    } break;
-    default:
-      assert(1 == 2);
-  }
-}
+ private:
+  std::vector<unsigned char> _buf;
+};
+
+class storeFloat : public storeBase {
+ public:
+  storeFloat(const int n) { _buf.resize(n); }
+  storeFloat(const int n, void *buf);
+  virtual void getData(std::shared_ptr<storeBase> buf) const override;
+  char *getPtr() { return (char *)_buf.data(); }
+  virtual void putData(const std::shared_ptr<storeBase> buf) override;
+  virtual void zero() override { _buf.resize(0); }
+  virtual std::shared_ptr<storeBase> clone() const;
+  virtual void getWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) override;
+  virtual void putWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) override;
+  virtual size_t getElementSize() const { return sizeof(float); }
+  virtual size_t getSize() const { return _buf.size(); }
+
+ private:
+  std::vector<float> _buf;
+};
+
+class storeDouble : public storeBase {
+ public:
+  storeDouble(const int n) { _buf.resize(n); }
+  storeDouble(const int n, void *buf);
+  virtual void getData(std::shared_ptr<storeBase> buf) const override;
+  char *getPtr() { return (char *)_buf.data(); }
+  virtual void putData(const std::shared_ptr<storeBase> buf) override;
+  virtual void zero() override { _buf.resize(0); }
+  virtual std::shared_ptr<storeBase> clone() const;
+  virtual void getWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) override;
+  virtual void putWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) override;
+  virtual size_t getElementSize() const { return sizeof(double); }
+  virtual size_t getSize() const { return _buf.size(); }
+
+ private:
+  std::vector<double> _buf;
+};
+
+class storeComplex : public storeBase {
+ public:
+  storeComplex(const int n) { _buf.resize(n); }
+  storeComplex(const int n, void *buf);
+  virtual void getData(std::shared_ptr<storeBase> buf) const override;
+  char *getPtr() { return (char *)_buf.data(); }
+  virtual void putData(const std::shared_ptr<storeBase> buf) override;
+  virtual void zero() override { _buf.resize(0); }
+  virtual std::shared_ptr<storeBase> clone() const;
+  virtual void getWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) override;
+  virtual void putWindow(
+      const std::vector<int> &nwL, const std::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nbL,
+      const std::vector<int> &nwG, const std::vector<int> &fwG,
+      const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) override;
+  virtual size_t getElementSize() const { return sizeof(std::complex<float>); }
+  virtual size_t getSize() const { return _buf.size(); }
+
+ private:
+  std::vector<std::complex<float>> _buf;
+};
+
+std::string returnStorageType(const std::shared_ptr<storeBase> bufIn);
+std::shared_ptr<storeBase> returnStorage(const dataType state, const size_t n);
+void throwError(const std::string myType, const std::string typeSent);
 
 }  // namespace IO
 }  // namespace SEP

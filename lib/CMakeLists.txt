@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
-project(hypercube)
-include_directories(${TBB_INCLUDE_DIRS})
+project(buffers-lib)
 INCLUDE_DIRECTORIES(${ZFP_INCLUDE_DIR})
-message("ZFP INCLUDE " ${ZFP_INCLUDE_DIR})
-set(SOURCES buffer.cpp compress.cpp  blocking.cpp nocompress.cpp compressTypes.cpp
+set(SOURCES store.cpp buffer.cpp compress.cpp  blocking.cpp nocompress.cpp compressTypes.cpp
  memoryAll.cpp
  zfpCompress.cpp
  buffers.cpp

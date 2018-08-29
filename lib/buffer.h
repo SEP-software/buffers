@@ -18,7 +18,10 @@ class buffer {
          std::shared_ptr<compress> comp);  // Read from file
   buffer(const std::vector<int> &n, const std::vector<int> &f,
          std::shared_ptr<compress> comp);
-  void setName(const std::string name) { _name = name; }
+  void setName(const std::string name) {
+    _name = name;
+    _nameSet = true;
+  }
   std::string getName() {
     assert(_nameSet);
     return _name;
@@ -33,20 +36,25 @@ class buffer {
                                  bool keepState = false);
   virtual long long putBufferCPU(std::shared_ptr<storeBase> buf,
                                  bool keepState = false);
-  long long getWindowCPU(const std::vector<int> &nw,
-                         const std ::vector<int> &fw,
-                         const std::vector<int> &jw,
-                         std::shared_ptr<storeBase> buf, const size_t bufLoc,
-                         const bool keepState = false);
+  long long getWindowCPU(
+      const std::vector<int> &nwL, const std ::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nwG,
+      const std ::vector<int> &fwG, const std::vector<int> &blockG,
+      std::shared_ptr<storeBase> buf, const bool keepState = false);
 
-  long long putWindowCPU(const std::vector<int> &nw,
-                         const std ::vector<int> &fw, std::vector<int> &jw,
-                         const std::shared_ptr<storeBase> buf,
-                         const size_t bufLoc, const bool keepState = false);
+  long long putWindowCPU(
+      const std::vector<int> &nwL, const std ::vector<int> &fwL,
+      const std::vector<int> &jwL, const std::vector<int> &nwG,
+      const std ::vector<int> &fwG, const std::vector<int> &blockG,
+      const std::shared_ptr<storeBase> buf, const bool keepState = false);
   size_t localWindow(const std::vector<int> &nw, const std::vector<int> &fw,
                      const std::vector<int> &jw, std::vector<int> &n_w,
-                     std::vector<int> &f_w, std::vector<int> &j_w) const;
+                     std::vector<int> &f_w, std::vector<int> &j_w,
+                     std::vector<int> &nwG, std::vector<int> &fwG,
+                     std::vector<int> &blockG) const;
   long changeState(const bufferState state);
+  std::vector<int> getBlock() { return _block; }
+  std::shared_ptr<storeBase> getStorePtr() { return _buf; }
 
  private:
   std::vector<int> _f, _n, _block;

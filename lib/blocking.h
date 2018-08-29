@@ -10,8 +10,9 @@ class blockParams {
  public:
   blockParams() { ; }
   std::vector<std::vector<int>> _fs, _ns;
-  std::vector<std::vector<int>> _blocks;
+  // std::vector<std::vector<int>> _blocks;
   std::vector<int> _nblocking;
+  std::vector<std::vector<int>> _axesBlock;
 };
 
 class blocking {
