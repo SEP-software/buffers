@@ -18,8 +18,7 @@ class compress {
   std::shared_ptr<storeBase> getUncompressedStore(const std::vector<int> n);
   void setDataType(const dataType typ) { _typ = typ; }
   dataType getDataType() { return _typ; }
-  int getElementSize();
-  std::string elementString();
+  std::string elementString(){ return getTypeString(_typ); }
   virtual Json::Value getJsonDescription() = 0;
 
   dataType _typ;

@@ -27,10 +27,3 @@ compressTypes::compressTypes(const Json::Value &des) {
   }
 }
 
-dataType compressTypes::toElementType(const std::string &name) {
-  if (name == "BYTE") return IO_BYTE;
-  if (name == "INT") return IO_INT;
-  if (name == "FLOAT") return IO_FLOAT;
-  if (name == "COMPLEX") return IO_COMPLEX;
-  return IO_UNKNOWN;
-}

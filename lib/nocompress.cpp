@@ -5,7 +5,7 @@ using namespace SEP::IO;
 
 std::shared_ptr<storeBase> noCompression::decompressData(
     const std::vector<int> ns, const std::shared_ptr<storeBase> buf) {
-  if (_typ == IO_BYTE) return buf;
+  if (_typ == DATA_BYTE) return buf;
   size_t n123 = 1;
   for (auto n : ns) n123 *= n;
   std::shared_ptr<storeBase> x = returnStorage(_typ, n123);
@@ -15,7 +15,7 @@ std::shared_ptr<storeBase> noCompression::decompressData(
 
 std::shared_ptr<storeBase> noCompression::compressData(
     const std::vector<int> ns, const std::shared_ptr<storeBase> buf) {
-  if (_typ == IO_BYTE) return buf;
+  if (_typ == DATA_BYTE) return buf;
 
   size_t n123 = getElementSize();
   for (auto n : ns) n123 *= n;

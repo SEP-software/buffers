@@ -517,23 +517,23 @@ void storeComplex::putWindow(
 std::shared_ptr<storeBase> SEP::IO::returnStorage(const dataType state,
                                                   const size_t n) {
   switch (state) {
-    case IO_INT: {
+    case DATA_INT: {
       std::shared_ptr<storeInt> x(new storeInt(n));
       return x;
     } break;
-    case IO_FLOAT: {
+    case DATA_FLOAT: {
       std::shared_ptr<storeFloat> y(new storeFloat(n));
       return y;
     } break;
-    case IO_COMPLEX: {
+    case DATA_COMPLEX: {
       std::shared_ptr<storeComplex> z(new storeComplex(n));
       return z;
     } break;
-    case IO_DOUBLE: {
+    case DATA_DOUBLE: {
       std::shared_ptr<storeDouble> a(new storeDouble(n));
       return a;
     } break;
-    case IO_BYTE: {
+    case DATABYTE: {
       std::shared_ptr<storeByte> b(new storeByte(n));
       return b;
     } break;
@@ -553,6 +553,12 @@ std::string SEP::IO::returnStorageType(
     const std::shared_ptr<storeInt> by =
         std::dynamic_pointer_cast<storeInt>(bufIn);
     if (by) return "storeInt";
+  }
+  {
+    const std::shared_ptr<storeDouble> by =
+        std::dynamic_pointer_cast<storeDouble>(bufIn);
+
+    if (by) return "storeDouble";
   }
   {
     const std::shared_ptr<storeFloat> by =

@@ -6,9 +6,9 @@
 #include <memory>
 #include <sstream>
 #include <vector>
+#include "ioTypes.h"
 namespace SEP {
 namespace IO {
-enum dataType { IO_BYTE, IO_INT, IO_FLOAT, IO_COMPLEX, IO_DOUBLE, IO_UNKNOWN };
 
 class storeBase {
  public:

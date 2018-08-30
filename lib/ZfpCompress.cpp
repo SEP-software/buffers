@@ -15,19 +15,19 @@ ZfpCompression::ZfpCompression(const dataType typ, const ZfpParams pars) {
 }
 void ZfpCompression::setGlobalZfp() {
   switch (_typ) {
-    case IO_FLOAT:
+    case DATA_FLOAT:
       _ztype = zfp_type_float;
       break;
-    case IO_INT:
+    case DATA_INT:
       _ztype = zfp_type_int32;
       break;
-    case IO_DOUBLE:
+    case DATA_DOUBLE:
       _ztype = zfp_type_double;
       break;
-    case IO_BYTE:
+    case DATA_BYTE:
       _ztype = zfp_type_none;
       break;
-    case IO_COMPLEX:
+    case DATA_COMPLEX:
       std::cerr << "Not supporting complex yet" << std::endl;
       assert(1 == 2);
       _ztype = zfp_type_float;
@@ -40,7 +40,7 @@ void ZfpCompression::setGlobalZfp() {
 
 std::shared_ptr<storeBase> ZfpCompression::decompressData(
     const std::vector<int> ns, const std::shared_ptr<storeBase> buf) {
-  if (_typ == IO_BYTE) return buf;
+  if (_typ == DATA_BYTE) return buf;
 
   int ndim = 0;
   long long n123 = 1;
@@ -72,7 +72,7 @@ std::shared_ptr<storeBase> ZfpCompression::decompressData(
 
 std::shared_ptr<storeBase> ZfpCompression::compressData(
     const std::vector<int> ns, const std::shared_ptr<storeBase> buf) {
-  if (_typ == IO_BYTE) return buf;
+  if (_typ == DATA_BYTE) return buf;
 
   int ndim = 0;
   for (int i = 0; i < ns.size(); i++) {
