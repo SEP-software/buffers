@@ -45,6 +45,12 @@ endif(hypercube_FOUND)
 
 
 FIND_PACKAGE(json)
+
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
 if(json_FOUND)
   message("Found json")
   INCLUDE_DIRECTORIES(${json_DIRNAME_include})

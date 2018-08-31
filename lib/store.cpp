@@ -533,7 +533,7 @@ std::shared_ptr<storeBase> SEP::IO::returnStorage(const dataType state,
       std::shared_ptr<storeDouble> a(new storeDouble(n));
       return a;
     } break;
-    case DATABYTE: {
+    case DATA_BYTE: {
       std::shared_ptr<storeByte> b(new storeByte(n));
       return b;
     } break;
