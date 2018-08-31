@@ -22,7 +22,7 @@ target_link_libraries(blockTest    buffers gtest gtest_main gtest jsonCpp)
 add_test(AllStoreTests blockTest)
 
 add_executable( bufferTest bufferTest.cc)
-target_link_libraries(bufferTest    buffers gtest gtest_main gtest jsonCpp)
+target_link_libraries(bufferTest    buffers gtest gtest_main gtest jsonCpp hypercube)
 add_test(AllStoreTests bufferTest)
 
 
@@ -34,6 +34,6 @@ add_test(AllStoreTests ZfpCompressTest)
 
 
 add_executable(buffersTest buffersTest.cc)
-target_link_libraries(buffersTest    buffers gtest gtest_main gtest hypercube tbb jsonCpp)
+target_link_libraries(buffersTest    buffers gtest gtest_main gtest  tbb jsonCpp hypercube)
 add_test(AllStoreTests buffersTest)
 

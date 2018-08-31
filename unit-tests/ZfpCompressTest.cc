@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include "ZfpCompress.h"
+#include "ioTypes.h"
 using std::string;
 using namespace SEP::IO;
 
@@ -23,7 +24,7 @@ std::shared_ptr<storeFloat> array() {
 
 void compare(const ZfpParams zpars, const float maxE, const float minCompress,
              const float maxCompress) {
-  ZfpCompression z = ZfpCompression(IO_FLOAT, zpars);
+  ZfpCompression z = ZfpCompression(SEP::DATA_FLOAT, zpars);
   std::vector<int> n(3, 20);
   std::shared_ptr<storeFloat> st = array();
 

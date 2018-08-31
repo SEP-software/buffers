@@ -8,9 +8,10 @@
 #include "nocompress.h"
 using std::string;
 using namespace SEP::IO;
+using namespace SEP;
 
 TEST(writeBuffer, buffer) {
-  std::shared_ptr<noCompression> comp(new noCompression(IO_INT));
+  std::shared_ptr<noCompression> comp(new noCompression(DATA_INT));
 
   std::vector<int> n(3, 20), f(3, 0);
 
@@ -64,7 +65,7 @@ std::shared_ptr<storeFloat> array() {
 TEST(readWindowNoCompress, buffer) {
   ZfpParams zpars = ZfpParams();
   zpars._meth = ZFP_TOLERANCE;
-  std::shared_ptr<noCompression> comp(new noCompression(IO_FLOAT));
+  std::shared_ptr<noCompression> comp(new noCompression(DATA_FLOAT));
 
   std::shared_ptr<storeFloat> store = array();
   std::vector<int> n(3, 20), f(3, 0);
@@ -90,7 +91,7 @@ TEST(readWindowNoCompress, buffer) {
 TEST(readWindowCompress, buffer) {
   ZfpParams zpars = ZfpParams();
   zpars._meth = ZFP_TOLERANCE;
-  std::shared_ptr<ZfpCompression> z(new ZfpCompression(IO_FLOAT, zpars));
+  std::shared_ptr<ZfpCompression> z(new ZfpCompression(DATA_FLOAT, zpars));
 
   std::shared_ptr<storeFloat> store = array();
   std::vector<int> n(3, 20), f(3, 0);
@@ -122,7 +123,7 @@ TEST(readWindowCompress, buffer) {
   */
 
 TEST(localWindow, buffer) {
-  std::shared_ptr<noCompression> comp(new noCompression(IO_INT));
+  std::shared_ptr<noCompression> comp(new noCompression(DATA_INT));
 
   std::vector<int> nbuf(7, 20), fbuf(7, 11);
 

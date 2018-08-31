@@ -2,8 +2,9 @@
 #include "Zfpcompress.h"
 #include <cassert>
 #include <iostream>
+#include "ioTypes.h"
 using namespace SEP::IO;
-ZfpCompression::ZfpCompression(const dataType typ, const ZfpParams pars) {
+ZfpCompression::ZfpCompression(const SEP::dataType typ, const ZfpParams pars) {
   setDataType(typ);
   _rate = pars._rate;
   _meth = pars._meth;

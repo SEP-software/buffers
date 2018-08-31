@@ -6,11 +6,11 @@ using std::string;
 using namespace SEP::IO;
 
 TEST(createObjects, storage) {
-  ASSERT_NO_THROW(returnStorage(IO_BYTE, 4));
-  ASSERT_NO_THROW(returnStorage(IO_INT, 4));
-  ASSERT_NO_THROW(returnStorage(IO_FLOAT, 4));
-  ASSERT_NO_THROW(returnStorage(IO_DOUBLE, 4));
-  ASSERT_NO_THROW(returnStorage(IO_COMPLEX, 4));
+  ASSERT_NO_THROW(returnStorage(SEP::DATA_BYTE, 4));
+  ASSERT_NO_THROW(returnStorage(SEP::DATA_INT, 4));
+  ASSERT_NO_THROW(returnStorage(SEP::DATA_FLOAT, 4));
+  ASSERT_NO_THROW(returnStorage(SEP::DATA_DOUBLE, 4));
+  ASSERT_NO_THROW(returnStorage(SEP::DATA_COMPLEX, 4));
 }
 class data4D {
  public:

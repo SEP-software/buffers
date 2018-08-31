@@ -5,6 +5,7 @@
 #include <memory>
 #include <sstream>
 #include <vector>
+#include "ioTypes.h"
 #include "store.h"
 namespace SEP {
 namespace IO {
@@ -18,7 +19,7 @@ class compress {
   std::shared_ptr<storeBase> getUncompressedStore(const std::vector<int> n);
   void setDataType(const dataType typ) { _typ = typ; }
   dataType getDataType() { return _typ; }
-  std::string elementString(){ return getTypeString(_typ); }
+  std::string elementString() { return SEP::getTypeString(_typ); }
   virtual Json::Value getJsonDescription() = 0;
 
   dataType _typ;

@@ -1,4 +1,5 @@
 #include "buffers.h"
+#include <sys/stat.h>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 #include <tbb/parallel_reduce.h>
@@ -100,6 +101,12 @@ Json::Value buffers::getFiles() {
 }
 void buffers::setDirectory(std::string &dir) {
   _directory = dir;
+  const int dir_err =
+      mkdir(_directory.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  if (-1 == dir_err) {
+    printf("Error creating directory!n");
+    exit(1);
+  }
   for (auto i = 0; i < _buffers.size(); i++) {
     _buffers[i].setName(_directory + std::string("/buf") + std::to_string(i));
   }

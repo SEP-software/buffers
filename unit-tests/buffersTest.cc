@@ -9,6 +9,7 @@
 #include "nocompress.h"
 using std::string;
 using namespace SEP::IO;
+using namespace SEP;
 
 TEST(parsedWindows, buffers) {
   std::vector<SEP::axis> axes;
@@ -19,11 +20,11 @@ TEST(parsedWindows, buffers) {
 
   std::vector<int> blocksize(3, 5), nb(3, 10);
   std::shared_ptr<blocking> block(new blocking(blocksize, nb));
-  std::shared_ptr<noCompression> comp(new noCompression(IO_INT));
+  std::shared_ptr<noCompression> comp(new noCompression(SEP::DATA_INT));
 
-  ASSERT_NO_THROW(buffers myb(hyper, IO_INT, comp, block));
+  ASSERT_NO_THROW(buffers myb(hyper, SEP::DATA_INT, comp, block));
 
-  buffers myb(hyper, IO_INT, comp, block);
+  buffers myb(hyper, SEP::DATA_INT, comp, block);
   std::vector<int> nw(3, 1), fw(3, 0), jw(3, 1);
 
   ASSERT_NO_THROW(std::vector<int> windows = myb.parsedWindows(nw, fw, jw));
@@ -60,8 +61,8 @@ TEST(bigTest, buffers) {
 
   std::vector<int> blocksize(3, 5), nb(3, 10);
   std::shared_ptr<blocking> block(new blocking(blocksize, nb));
-  std::shared_ptr<noCompression> comp(new noCompression(IO_FLOAT));
-  buffers myb(hyper, IO_FLOAT, comp, block);
+  std::shared_ptr<noCompression> comp(new noCompression(SEP::DATA_FLOAT));
+  buffers myb(hyper, SEP::DATA_FLOAT, comp, block);
 
   std::shared_ptr<storeFloat> whole(new storeFloat(100 * 100 * 100)),
       result(new storeFloat(100 * 100 * 100));
@@ -79,7 +80,7 @@ TEST(bigTest, buffers) {
 
   std::vector<int> ns(3, 100), fs(3, 0), js(3, 1);
   myb.putWindow(ns, fs, js, whole);
-  std::cerr << "done with put window " << std::endl;
+  std::cerr << "do ne with put window " << std::endl;
 
   /*std::shared_ptr<storeBase> bs = myb.getSpecificStore(1);
   std::shared_ptr<storeFloat> in = std::dynamic_pointer_cast<storeFloat>(bs);
