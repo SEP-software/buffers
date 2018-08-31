@@ -31,42 +31,29 @@ include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 
     # we have a submodule setup for foo, assume it is under external/foo
     # now we need to clone this submodule
+  if(NOT TARGET hypercube)
     execute_process(COMMAND git submodule update --init --recursive -- external/hypercube
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     message("before add subdirectory")
     add_subdirectory(external/hypercube)
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube/lib)
-#endif(hypercube_FOUND)
+  endif(NOT TARGET hypercube)
 
- execute_process(COMMAND git submodule update --init --recursive -- external/googletest
+
+execute_process(COMMAND git submodule update --init --recursive -- external/googletest
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-    add_subdirectory(external/googletest)
+add_subdirectory(external/googletest)
 
 
-FIND_PACKAGE(json)
-
-if(json_FOUND)
-  message("Found json")
-  INCLUDE_DIRECTORIES(${json_DIRNAME_include})
-  link_directories(json_DIRNAME_lib)
-else(json_FOUND)
-   message("Unable to find json")
-
-    # we have a submodule setup for foo, assume it is under external/foo
-    # now we need to clone this submodule
+if(NOT TARGET jsonCpp)
     execute_process(COMMAND git submodule update --init --recursive -- external/json
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     message("before add subdirectory")
     add_subdirectory(external/json)
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
-endif(json_FOUND)
+endif(NOT TARGET jsonCpp)
 
 
-FIND_PACKAGE(ZFP)
-if(ZFP_FOUND)
-  message("Found ZFP")
-  INCLUDE_DIRECTORIES(${ZFP_INCLUDE_DIR})
-else(ZFP_FOUND)
 
 ExternalProject_Add (
        ZFP_INSTALL
@@ -78,7 +65,6 @@ ExternalProject_Add (
 
      set(ZFP_LIBRARIES ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zfp${CMAKE_SHARED_LIBRARY_SUFFIX})
 
-endif(ZFP_FOUND)
 
 
 include(CheckCXXCompilerFlag)
