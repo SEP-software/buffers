@@ -35,7 +35,7 @@ include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
     execute_process(COMMAND git submodule update --init --recursive -- external/hypercube
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     message("before add subdirectory")
-    add_subdirectory(external/hypercube)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube)
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube/lib)
   endif(NOT TARGET hypercube)
 
@@ -49,7 +49,7 @@ if(NOT TARGET jsonCpp)
     execute_process(COMMAND git submodule update --init --recursive -- external/json
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     message("before add subdirectory")
-    add_subdirectory(external/json)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 endif(NOT TARGET jsonCpp)
 
