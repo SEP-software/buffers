@@ -22,11 +22,9 @@ class buffers {
           std::shared_ptr<memoryUsage> mem = nullptr);
 
   void getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
-                 const std::vector<int> &jw, void *buf,
-                 const bool keepState = false);
+                 const std::vector<int> &jw, void *buf);
   void putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
-                 const std::vector<int> &jw, const void *buf,
-                 const bool keepState = false);
+                 const std::vector<int> &jw, const void *buf);
   void createBuffers();
   void changeState(const bufferState state);
   Json::Value getDescription();
@@ -36,6 +34,10 @@ class buffers {
   std::shared_ptr<blocking> createDefaultBlocking();
   std::shared_ptr<memoryUsage> createDefaultMemory();
   Json::Value getFiles();
+  void setDefaultState(const bufferState stat) {
+    _defState = stat;
+    _defaultStateSet = true;
+  }
   void setDirectory(std::string &dir);
   std::vector<int> parsedWindows(const std::vector<int> &nw,
                                  const std ::vector<int> &fw,
@@ -45,6 +47,8 @@ class buffers {
   }
 
  private:
+  bool _defaultStateSet;
+  bufferState _defState;
   std::shared_ptr<blocking> _blocking;
   std::shared_ptr<memoryUsage> _memory;
   std::shared_ptr<compress> _compress;

@@ -66,6 +66,7 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const Json::Value &des,
   }
   SEP::IO::compressTypes ct = compressTypes(des["compression"]);
   _compress = ct.getCompressionObj();
+  _defaultStateSet = false;
 }
 Json::Value buffers::getDescription() {
   Json::Value des;
@@ -90,6 +91,7 @@ buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
   if (_memory == nullptr) _memory = createDefaultMemory();
   blockParams v = _blocking->makeBlocks(_hyper->getNs());
   createBuffers();
+  _defaultStateSet = false;
 }
 
 Json::Value buffers::getFiles() {
@@ -252,8 +254,9 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
   return bufSearch;
 }
 void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
-                        const std::vector<int> &jw, void *buf,
-                        const bool keepState) {
+                        const std::vector<int> &jw, void *buf) {
+  bufferState state = CPU_DECOMPRESSED;
+  if (_defaultStateSet) state = _defState;
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
@@ -268,7 +271,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                                                       nG, fG, blockG);
 
           locChange += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG,
-                                                       blockG, buf, keepState);
+                                                       blockG, buf, state);
         }
         return locChange;
       },
@@ -286,8 +289,9 @@ void buffers::changeState(const bufferState state) {
       [](long a, long b) { return a + b; });
 }
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
-                        const std::vector<int> &jw, const void *buf,
-                        const bool keepState) {
+                        const std::vector<int> &jw, const void *buf) {
+  bufferState state = CPU_DECOMPRESSED;
+  if (_defaultStateSet) state = _defState;
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
@@ -304,7 +308,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                                                       nG, fG, blockG);
 
           locChange += _buffers[pwind[i]].putWindowCPU(n_w, f_w, j_w, nG, fG,
-                                                       blockG, buf, keepState);
+                                                       blockG, buf, state);
         }
 
         return locChange;

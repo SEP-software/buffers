@@ -33,16 +33,16 @@ class buffer {
   virtual long long readBuffer();
   virtual long long writeBuffer(bool keepState = false);
   virtual long long getBufferCPU(std::shared_ptr<storeBase> buf,
-                                 bool keepState = false);
+                                 const bufferState finalState);
   virtual long long putBufferCPU(std::shared_ptr<storeBase> buf,
-                                 bool keepState = false);
+                                 const bufferState finalState);
   long long getWindowCPU(const std::vector<int> &nwL,
                          const std ::vector<int> &fwL,
                          const std::vector<int> &jwL,
                          const std::vector<int> &nwG,
                          const std ::vector<int> &fwG,
                          const std::vector<int> &blockG, void *buf,
-                         const bool keepState = false);
+                         const bufferState finalState);
 
   long long putWindowCPU(const std::vector<int> &nwL,
                          const std ::vector<int> &fwL,
@@ -50,7 +50,7 @@ class buffer {
                          const std::vector<int> &nwG,
                          const std ::vector<int> &fwG,
                          const std::vector<int> &blockG, const void *buf,
-                         const bool keepState = false);
+                         const bufferState finalState);
   size_t localWindow(const std::vector<int> &nw, const std::vector<int> &fw,
                      const std::vector<int> &jw, std::vector<int> &n_w,
                      std::vector<int> &f_w, std::vector<int> &j_w,

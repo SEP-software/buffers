@@ -29,7 +29,7 @@ TEST(writeBuffer, buffer) {
 
   buf.setName("/tmp/junk1");
 
-  buf.putBufferCPU(store);
+  buf.putBufferCPU(store, CPU_DECOMPRESSED);
 
   ASSERT_NO_THROW(buf.writeBuffer());
   std::ifstream in("/tmp/junk1", std::ifstream::ate | std::ifstream::binary);
@@ -70,7 +70,7 @@ TEST(readWindowNoCompress, buffer) {
   std::shared_ptr<storeFloat> store = array();
   std::vector<int> n(3, 20), f(3, 0);
   buffer buf(n, f, comp);
-  buf.putBufferCPU(store);
+  buf.putBufferCPU(store, CPU_DECOMPRESSED);
   buf.setName("/tmp/junk2");
   std::shared_ptr<storeBase> storeCompare = store->clone();
 
@@ -80,7 +80,7 @@ TEST(readWindowNoCompress, buffer) {
   std::shared_ptr<storeFloat> x(new storeFloat(20 * 20 * 20));
 
   float *b1 = (float *)storeCompare->getPtr();
-  buf.getBufferCPU(x);
+  buf.getBufferCPU(x, CPU_DECOMPRESSED);
   float *b2 = (float *)x->getPtr();
 
   for (int ii = 0; ii < 20 * 20 * 20; ii++) {
@@ -96,7 +96,7 @@ TEST(readWindowCompress, buffer) {
   std::shared_ptr<storeFloat> store = array();
   std::vector<int> n(3, 20), f(3, 0);
   buffer buf(n, f, z);
-  buf.putBufferCPU(store);
+  buf.putBufferCPU(store, CPU_DECOMPRESSED);
   buf.setName("/tmp/junk2");
   std::shared_ptr<storeBase> storeCompare = store->clone();
 
@@ -106,7 +106,7 @@ TEST(readWindowCompress, buffer) {
   std::shared_ptr<storeFloat> x(new storeFloat(20 * 20 * 20));
 
   float *b1 = (float *)storeCompare->getPtr();
-  buf.getBufferCPU(x);
+  buf.getBufferCPU(x, CPU_DECOMPRESSED);
   float *b2 = (float *)x->getPtr();
 
   for (int ii = 0; ii < 20 * 20 * 20; ii++) {
