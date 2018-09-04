@@ -264,17 +264,27 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
       [&](const tbb::blocked_range<size_t> &r, long locChange) {
         for (size_t i = r.begin(); i != r.end(); ++i) {
           std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
-          size_t pos =
-              _buffers[i].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
+          size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
+                                                      nG, fG, blockG);
 
-          locChange += _buffers[i].getWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
-                                                buf, keepState);
+          locChange += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG,
+                                                       blockG, buf, keepState);
         }
         return locChange;
       },
       [](long a, long b) { return a + b; });
 }
-
+void buffers::changeState(const bufferState state) {
+  long change = tbb::parallel_reduce(
+      tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
+      [&](const tbb::blocked_range<size_t> &r, long locChange) {
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          locChange += _buffers[i].changeState(state);
+        }
+        return locChange;
+      },
+      [](long a, long b) { return a + b; });
+}
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, const void *buf,
                         const bool keepState) {
@@ -290,11 +300,11 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         for (size_t i = r.begin(); i != r.end(); ++i) {
           std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
 
-          size_t pos =
-              _buffers[i].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
+          size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
+                                                      nG, fG, blockG);
 
-          locChange += _buffers[i].putWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
-                                                buf, keepState);
+          locChange += _buffers[pwind[i]].putWindowCPU(n_w, f_w, j_w, nG, fG,
+                                                       blockG, buf, keepState);
         }
 
         return locChange;

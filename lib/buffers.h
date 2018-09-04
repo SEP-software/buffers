@@ -28,6 +28,7 @@ class buffers {
                  const std::vector<int> &jw, const void *buf,
                  const bool keepState = false);
   void createBuffers();
+  void changeState(const bufferState state);
   Json::Value getDescription();
   void updateMemory(const long change);
   void setMemoryUsage(std::shared_ptr<memoryUsage> mem) { _memory = mem; }
