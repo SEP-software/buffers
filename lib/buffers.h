@@ -22,15 +22,15 @@ class buffers {
           std::shared_ptr<memoryUsage> mem = nullptr);
 
   void getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
-                 const std::vector<int> &jw, std::shared_ptr<storeBase> buf,
+                 const std::vector<int> &jw, void *buf,
                  const bool keepState = false);
   void putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
-                 const std::vector<int> &jw,
-                 const std::shared_ptr<storeBase> buf,
+                 const std::vector<int> &jw, const void *buf,
                  const bool keepState = false);
   void createBuffers();
   Json::Value getDescription();
   void updateMemory(const long change);
+  void setMemoryUsage(std::shared_ptr<memoryUsage> mem) { _memory = mem; }
   std::shared_ptr<compress> createDefaultCompress();
   std::shared_ptr<blocking> createDefaultBlocking();
   std::shared_ptr<memoryUsage> createDefaultMemory();

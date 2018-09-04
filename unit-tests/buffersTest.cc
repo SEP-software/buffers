@@ -79,7 +79,7 @@ TEST(bigTest, buffers) {
   }
 
   std::vector<int> ns(3, 100), fs(3, 0), js(3, 1);
-  myb.putWindow(ns, fs, js, whole);
+  myb.putWindow(ns, fs, js, whole->getPtr());
   std::cerr << "do ne with put window " << std::endl;
 
   /*std::shared_ptr<storeBase> bs = myb.getSpecificStore(1);
@@ -94,7 +94,7 @@ TEST(bigTest, buffers) {
     std::cerr << ii << " " << rawP[ii] << "=in out=" << rawC[ii] << std::endl;
   }
   */
-  myb.getWindow(ns, fs, js, result);
+  myb.getWindow(ns, fs, js, result->getPtr());
   std::cerr << "done with get window" << std::endl;
   for (size_t ii = 0; ii < 100 * 100 * 100; ii += 23) {
     EXPECT_EQ(rawP[ii], rawC[ii]);

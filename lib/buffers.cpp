@@ -252,8 +252,8 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
   return bufSearch;
 }
 void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
-                        const std::vector<int> &jw,
-                        std::shared_ptr<storeBase> buf, const bool keepState) {
+                        const std::vector<int> &jw, void *buf,
+                        const bool keepState) {
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
@@ -276,8 +276,8 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
 }
 
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
-                        const std::vector<int> &jw,
-                        std::shared_ptr<storeBase> buf, const bool keepState) {
+                        const std::vector<int> &jw, const void *buf,
+                        const bool keepState) {
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];

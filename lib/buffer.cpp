@@ -173,11 +173,13 @@ long long buffer::putBufferCPU(std::shared_ptr<storeBase> buf, bool keepState) {
   return _buf->getSize() - oldSize;
 }
 
-long long buffer::getWindowCPU(
-    const std::vector<int> &nwL, const std ::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nwG,
-    const std ::vector<int> &fwG, const std::vector<int> &blockG,
-    std::shared_ptr<storeBase> buf, const bool keepState) {
+long long buffer::getWindowCPU(const std::vector<int> &nwL,
+                               const std ::vector<int> &fwL,
+                               const std::vector<int> &jwL,
+                               const std::vector<int> &nwG,
+                               const std ::vector<int> &fwG,
+                               const std::vector<int> &blockG, void *buf,
+                               const bool keepState) {
   bufferState restore = _bufferState;
   std::shared_ptr<storeBase> bufT = _buf;
   long long oldSize = _buf->getSize();
@@ -188,11 +190,13 @@ long long buffer::getWindowCPU(
   _buf = bufT;
   return _buf->getSize() - oldSize;
 }
-long long buffer::putWindowCPU(
-    const std::vector<int> &nwL, const std ::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nwG,
-    const std ::vector<int> &fwG, const std::vector<int> &blockG,
-    const std::shared_ptr<storeBase> buf, const bool keepState) {
+long long buffer::putWindowCPU(const std::vector<int> &nwL,
+                               const std ::vector<int> &fwL,
+                               const std::vector<int> &jwL,
+                               const std::vector<int> &nwG,
+                               const std ::vector<int> &fwG,
+                               const std::vector<int> &blockG, const void *buf,
+                               const bool keepState) {
   bufferState restore = _bufferState;
   long long oldSize = _buf->getSize();
 

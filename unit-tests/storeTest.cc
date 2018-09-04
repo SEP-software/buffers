@@ -110,7 +110,7 @@ TEST(getWindowBasic, storage) {
   ng[0] = 13;
   fg[0] = 0;
   blockG[1] = 13;
-  x.store->getWindow(nw, fw, jw, x.nb, ng, fg, blockG, z);
+  x.store->getWindow(nw, fw, jw, x.nb, ng, fg, blockG, z->getPtr());
   int *y = (int *)z->getPtr();
 
   for (int i = 0; i < 3; i++) {
@@ -121,7 +121,7 @@ TEST(getWindowBasic, storage) {
   fw[2] = 1;
   fw[3] = 1;
   fg[0] = 10;
-  x.store->getWindow(nw, fw, jw, x.nb, ng, fg, blockG, z);
+  x.store->getWindow(nw, fw, jw, x.nb, ng, fg, blockG, z->getPtr());
 
   for (int i = 0; i < 3; i++) {
     EXPECT_EQ(y[i + 10], 1 + 2 * i + 100 + 10000 + 1000000);
@@ -140,7 +140,7 @@ TEST(putWindowBasic, storage) {
   nw[0] = 3;
   ng[0] = 10;
   fg[0] = 3;
-  x.store->putWindow(nw, fw, jw, x.nb, ng, fg, blockG, z);
+  x.store->putWindow(nw, fw, jw, x.nb, ng, fg, blockG, z->getPtr());
   int *y = (int *)x.store->getPtr();
 
   for (int i = 0; i < 3; i++) {

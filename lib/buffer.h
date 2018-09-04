@@ -36,17 +36,21 @@ class buffer {
                                  bool keepState = false);
   virtual long long putBufferCPU(std::shared_ptr<storeBase> buf,
                                  bool keepState = false);
-  long long getWindowCPU(
-      const std::vector<int> &nwL, const std ::vector<int> &fwL,
-      const std::vector<int> &jwL, const std::vector<int> &nwG,
-      const std ::vector<int> &fwG, const std::vector<int> &blockG,
-      std::shared_ptr<storeBase> buf, const bool keepState = false);
+  long long getWindowCPU(const std::vector<int> &nwL,
+                         const std ::vector<int> &fwL,
+                         const std::vector<int> &jwL,
+                         const std::vector<int> &nwG,
+                         const std ::vector<int> &fwG,
+                         const std::vector<int> &blockG, void *buf,
+                         const bool keepState = false);
 
-  long long putWindowCPU(
-      const std::vector<int> &nwL, const std ::vector<int> &fwL,
-      const std::vector<int> &jwL, const std::vector<int> &nwG,
-      const std ::vector<int> &fwG, const std::vector<int> &blockG,
-      const std::shared_ptr<storeBase> buf, const bool keepState = false);
+  long long putWindowCPU(const std::vector<int> &nwL,
+                         const std ::vector<int> &fwL,
+                         const std::vector<int> &jwL,
+                         const std::vector<int> &nwG,
+                         const std ::vector<int> &fwG,
+                         const std::vector<int> &blockG, const void *buf,
+                         const bool keepState = false);
   size_t localWindow(const std::vector<int> &nw, const std::vector<int> &fw,
                      const std::vector<int> &jw, std::vector<int> &n_w,
                      std::vector<int> &f_w, std::vector<int> &j_w,

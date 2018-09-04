@@ -26,16 +26,14 @@ std::shared_ptr<storeBase> storeInt::clone() const {
 
   return m;
 }
-void storeInt::getWindow(
-    const std::vector<int> &nwL, const std::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nbL,
-    const std::vector<int> &nwG, const std::vector<int> &fwG,
-    const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) {
-  const std::shared_ptr<storeInt> in =
-      std::dynamic_pointer_cast<storeInt>(bufIn);
-  if (!in) throwError("storeInt", returnStorageType(bufIn));
-
-  int *buf = (int *)bufIn->getPtr();
+void storeInt::getWindow(const std::vector<int> &nwL,
+                         const std::vector<int> &fwL,
+                         const std::vector<int> &jwL,
+                         const std::vector<int> &nbL,
+                         const std::vector<int> &nwG,
+                         const std::vector<int> &fwG,
+                         const std::vector<int> &nbG, void *bufIn) {
+  int *buf = (int *)bufIn;
 
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
@@ -65,16 +63,14 @@ void storeInt::getWindow(
     }
   }
 }
-void storeInt::putWindow(
-    const std::vector<int> &nwL, const std::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nbL,
-    const std::vector<int> &nwG, const std::vector<int> &fwG,
-    const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) {
-  const std::shared_ptr<storeInt> in =
-      std::dynamic_pointer_cast<storeInt>(bufIn);
-  if (!in) throwError("storeInt", returnStorageType(bufIn));
-
-  int *buf = (int *)bufIn->getPtr();
+void storeInt::putWindow(const std::vector<int> &nwL,
+                         const std::vector<int> &fwL,
+                         const std::vector<int> &jwL,
+                         const std::vector<int> &nbL,
+                         const std::vector<int> &nwG,
+                         const std::vector<int> &fwG,
+                         const std::vector<int> &nbG, const void *bufIn) {
+  const int *buf = (int *)bufIn;
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
     size_t f6G = nbG[6] * (fwG[6] + i6L);
@@ -128,15 +124,14 @@ std::shared_ptr<storeBase> storeByte::clone() const {
 
   return m;
 }
-void storeByte::getWindow(
-    const std::vector<int> &nwL, const std::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nbL,
-    const std::vector<int> &nwG, const std::vector<int> &fwG,
-    const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) {
-  std::shared_ptr<storeByte> in = std::dynamic_pointer_cast<storeByte>(bufIn);
-  if (!in) throwError("storeByte", returnStorageType(bufIn));
-
-  unsigned char *buf = (unsigned char *)bufIn->getPtr();
+void storeByte::getWindow(const std::vector<int> &nwL,
+                          const std::vector<int> &fwL,
+                          const std::vector<int> &jwL,
+                          const std::vector<int> &nbL,
+                          const std::vector<int> &nwG,
+                          const std::vector<int> &fwG,
+                          const std::vector<int> &nbG, void *bufIn) {
+  unsigned char *buf = (unsigned char *)bufIn;
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
     size_t f6G = nbG[6] * (fwG[6] + i6L);
@@ -165,16 +160,14 @@ void storeByte::getWindow(
     }
   }
 }
-void storeByte::putWindow(
-    const std::vector<int> &nwL, const std::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nbL,
-    const std::vector<int> &nwG, const std::vector<int> &fwG,
-    const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) {
-  const std::shared_ptr<storeByte> in =
-      std::dynamic_pointer_cast<storeByte>(bufIn);
-  if (!in) throwError("storeByte", returnStorageType(bufIn));
-
-  unsigned char *buf = (unsigned char *)bufIn->getPtr();
+void storeByte::putWindow(const std::vector<int> &nwL,
+                          const std::vector<int> &fwL,
+                          const std::vector<int> &jwL,
+                          const std::vector<int> &nbL,
+                          const std::vector<int> &nwG,
+                          const std::vector<int> &fwG,
+                          const std::vector<int> &nbG, const void *bufIn) {
+  const unsigned char *buf = (unsigned char *)bufIn;
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
     size_t f6G = nbG[6] * (fwG[6] + i6L);
@@ -228,15 +221,15 @@ std::shared_ptr<storeBase> storeFloat::clone() const {
 
   return m;
 }
-void storeFloat::getWindow(
-    const std::vector<int> &nwL, const std::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nbL,
-    const std::vector<int> &nwG, const std::vector<int> &fwG,
-    const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) {
-  std::shared_ptr<storeFloat> in = std::dynamic_pointer_cast<storeFloat>(bufIn);
-  if (!in) throwError("storeFloat", returnStorageType(bufIn));
+void storeFloat::getWindow(const std::vector<int> &nwL,
+                           const std::vector<int> &fwL,
+                           const std::vector<int> &jwL,
+                           const std::vector<int> &nbL,
+                           const std::vector<int> &nwG,
+                           const std::vector<int> &fwG,
 
-  float *buf = (float *)bufIn->getPtr();
+                           const std::vector<int> &nbG, void *bufIn) {
+  float *buf = (float *)bufIn;
 
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
@@ -268,16 +261,14 @@ void storeFloat::getWindow(
     }
   }
 }
-void storeFloat::putWindow(
-    const std::vector<int> &nwL, const std::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nbL,
-    const std::vector<int> &nwG, const std::vector<int> &fwG,
-    const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) {
-  const std::shared_ptr<storeFloat> in =
-      std::dynamic_pointer_cast<storeFloat>(bufIn);
-  if (!in) throwError("storeFloat", returnStorageType(bufIn));
-
-  float *buf = (float *)bufIn->getPtr();
+void storeFloat::putWindow(const std::vector<int> &nwL,
+                           const std::vector<int> &fwL,
+                           const std::vector<int> &jwL,
+                           const std::vector<int> &nbL,
+                           const std::vector<int> &nwG,
+                           const std::vector<int> &fwG,
+                           const std::vector<int> &nbG, const void *bufIn) {
+  const float *buf = (float *)bufIn;
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
     size_t f6G = nbG[6] * (fwG[6] + i6L);
@@ -331,16 +322,14 @@ std::shared_ptr<storeBase> storeDouble::clone() const {
 
   return m;
 }
-void storeDouble::getWindow(
-    const std::vector<int> &nwL, const std::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nbL,
-    const std::vector<int> &nwG, const std::vector<int> &fwG,
-    const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) {
-  std::shared_ptr<storeDouble> in =
-      std::dynamic_pointer_cast<storeDouble>(bufIn);
-  if (!in) throwError("storeDouble", returnStorageType(bufIn));
-
-  double *buf = (double *)bufIn->getPtr();
+void storeDouble::getWindow(const std::vector<int> &nwL,
+                            const std::vector<int> &fwL,
+                            const std::vector<int> &jwL,
+                            const std::vector<int> &nbL,
+                            const std::vector<int> &nwG,
+                            const std::vector<int> &fwG,
+                            const std::vector<int> &nbG, void *bufIn) {
+  double *buf = (double *)bufIn;
 
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
@@ -370,16 +359,14 @@ void storeDouble::getWindow(
     }
   }
 }
-void storeDouble::putWindow(
-    const std::vector<int> &nwL, const std::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nbL,
-    const std::vector<int> &nwG, const std::vector<int> &fwG,
-    const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) {
-  const std::shared_ptr<storeDouble> in =
-      std::dynamic_pointer_cast<storeDouble>(bufIn);
-  if (!in) throwError("storeDouble", returnStorageType(bufIn));
-
-  double *buf = (double *)bufIn->getPtr();
+void storeDouble::putWindow(const std::vector<int> &nwL,
+                            const std::vector<int> &fwL,
+                            const std::vector<int> &jwL,
+                            const std::vector<int> &nbL,
+                            const std::vector<int> &nwG,
+                            const std::vector<int> &fwG,
+                            const std::vector<int> &nbG, const void *bufIn) {
+  const double *buf = (double *)bufIn;
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
     size_t f6G = nbG[6] * (fwG[6] + i6L);
@@ -439,13 +426,14 @@ std::shared_ptr<storeBase> storeComplex::clone() const {
 
   return m;
 }
-void storeComplex::getWindow(
-    const std::vector<int> &nwL, const std::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nbL,
-    const std::vector<int> &nwG, const std::vector<int> &fwG,
-    const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) {
-  std::complex<float> *buf = (std::complex<float> *)bufIn->getPtr();
-  if (!buf) throwError("storeComplex", returnStorageType(bufIn));
+void storeComplex::getWindow(const std::vector<int> &nwL,
+                             const std::vector<int> &fwL,
+                             const std::vector<int> &jwL,
+                             const std::vector<int> &nbL,
+                             const std::vector<int> &nwG,
+                             const std::vector<int> &fwG,
+                             const std::vector<int> &nbG, void *bufIn) {
+  std::complex<float> *buf = (std::complex<float> *)bufIn;
 
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
@@ -475,16 +463,14 @@ void storeComplex::getWindow(
     }
   }
 }
-void storeComplex::putWindow(
-    const std::vector<int> &nwL, const std::vector<int> &fwL,
-    const std::vector<int> &jwL, const std::vector<int> &nbL,
-    const std::vector<int> &nwG, const std::vector<int> &fwG,
-    const std::vector<int> &nbG, std::shared_ptr<storeBase> bufIn) {
-  const std::shared_ptr<storeComplex> in =
-      std::dynamic_pointer_cast<storeComplex>(bufIn);
-  if (!in) throwError("storeComplex", returnStorageType(bufIn));
-
-  std::complex<float> *buf = (std::complex<float> *)bufIn->getPtr();
+void storeComplex::putWindow(const std::vector<int> &nwL,
+                             const std::vector<int> &fwL,
+                             const std::vector<int> &jwL,
+                             const std::vector<int> &nbL,
+                             const std::vector<int> &nwG,
+                             const std::vector<int> &fwG,
+                             const std::vector<int> &nbG, const void *bufIn) {
+  const std::complex<float> *buf = (std::complex<float> *)bufIn;
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
     size_t f6G = nbG[6] * (fwG[6] + i6L);
