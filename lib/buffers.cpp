@@ -52,10 +52,8 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
 
     assert(1 == 2);
   }
-  std::cerr << "wjere 1 " << std::endl;
 
   _blocking.reset(new blocking(des["blocking"]));
-  std::cerr << "wjere 1 " << std::endl;
 
   if (des["compression"].isNull()) {
     std::cerr << std::string(
@@ -69,19 +67,14 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
       _memory = createDefaultMemory();
     }
   }
-  std::cerr << "before compressType 1 " << std::endl;
 
   SEP::IO::compressTypes ct = compressTypes(des["compression"]);
-  std::cerr << "return compression obj 1 " << std::endl;
 
   _compress = ct.getCompressionObj();
-  std::cerr << "wjere 1 " << std::endl;
 
   _defaultStateSet = false;
   createBuffers();
-  std::cerr << "after create buffers" << std::endl;
-  setDirectory(dir);
-  std::cerr << "after set directory" << std::endl;
+  setDirectory(dir, false);
 }
 Json::Value buffers::getDescription() {
   Json::Value des;
@@ -108,13 +101,15 @@ buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
   _defaultStateSet = false;
 }
 
-void buffers::setDirectory(const std::string &dir) {
+void buffers::setDirectory(const std::string &dir, const bool createDirectory) {
   _directory = dir;
-  const int dir_err =
-      mkdir(_directory.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-  if (-1 == dir_err) {
-    std::cerr << "Error creating directory, exists? DIR=" << dir << std::endl;
-    exit(1);
+  if (createDrirectory) {
+    const int dir_err =
+        mkdir(_directory.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (-1 == dir_err) {
+      std::cerr << "Error creating directory, exists? DIR=" << dir << std::endl;
+      exit(1);
+    }
   }
   for (auto i = 0; i < _buffers.size(); i++) {
     _buffers[i].setName(_directory + std::string("/buf") + std::to_string(i));
