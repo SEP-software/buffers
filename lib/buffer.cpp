@@ -175,7 +175,7 @@ long long buffer::putBufferCPU(std::shared_ptr<storeBase> buf,
 
   _bufferState = CPU_DECOMPRESSED;
   _buf->putData(buf);
-  _buf->info("after read");
+  _buf->info("AFTER ");
 
   changeState(state);
 
