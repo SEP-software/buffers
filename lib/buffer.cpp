@@ -125,9 +125,9 @@ long long buffer::writeBuffer(bool keepState) {
     restore = _bufferState;
     buf = _buf->clone();
   }
-
   changeState(CPU_COMPRESSED);
-
+  std::cerr << "COMPRESSS WRITE " << oldSize << "=old new=" << _buf->getSize()
+            << std::endl;
   assert(_nameSet);
   std::ofstream out(_name, std::ofstream::binary);
   assert(!checkErrorBitsOut(&out));
@@ -143,7 +143,7 @@ long long buffer::writeBuffer(bool keepState) {
     _buf->zero();
     _bufferState = ON_DISK;
   }
-
+  std::cerr << "closed file" << std::endl;
   return _buf->getSize() - oldSize;
 }
 long long buffer::getBufferCPU(std::shared_ptr<storeBase> buf,
@@ -301,8 +301,11 @@ long buffer::changeState(const bufferState state) {
         case ON_DISK:
           break;
         case CPU_DECOMPRESSED:
+          std::cerr << "before compres" << std::endl;
           _buf = _compress->compressData(_n, _buf);
+          std::cerr << "before write" << std::endl;
           writeBuffer();
+          std::cerr << "after write" << std::endl;
           break;
         case CPU_COMPRESSED:
           writeBuffer();
