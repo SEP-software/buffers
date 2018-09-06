@@ -115,10 +115,8 @@ long long buffer::readBuffer() {
 }
 
 long long buffer::writeBuffer(bool keepState) {
-  std::cerr << "before getSize" << std::endl;
   long long oldSize = _buf->getSize();
 
-  std::cerr << "after getSize-" << oldSize << std::endl;
   std::shared_ptr<storeBase> buf;
   bufferState restore;
   assert(_bufferState != UNDEFINED);
@@ -127,10 +125,9 @@ long long buffer::writeBuffer(bool keepState) {
     restore = _bufferState;
     buf = _buf->clone();
   }
-  std::cerr << "before compressed" << std::endl;
   changeState(CPU_COMPRESSED);
-  std::cerr << "COMPRESSS WRITE " << oldSize << "=old new=" << _buf->getSize()
-            << std::endl;
+  std::cerr << "COMPRESSS WRITE " << _n123 << "=old new=" << _buf->getSize()
+            << " file=" << _name << std::endl;
   assert(_nameSet);
   std::ofstream out(_name, std::ofstream::binary);
   assert(!checkErrorBitsOut(&out));
@@ -259,7 +256,6 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 
 long buffer::changeState(const bufferState state) {
   long long oldSize = _buf->getSize();
-  std::cerr << "size=" << oldSize << std::endl;
   switch (state) {
     case CPU_DECOMPRESSED:
       switch (_bufferState) {
@@ -306,11 +302,8 @@ long buffer::changeState(const bufferState state) {
         case ON_DISK:
           break;
         case CPU_DECOMPRESSED:
-          std::cerr << "before compres" << std::endl;
           _buf = _compress->compressData(_n, _buf);
           _bufferState = CPU_COMPRESSED;
-          std::cerr << "before write" << std::endl;
-          std::cerr << "after write" << std::endl;
         case CPU_COMPRESSED:
           writeBuffer();
           break;
