@@ -110,6 +110,7 @@ long long buffer::readBuffer() {
     _bufferState = CPU_COMPRESSED;
     in.close();
   }
+  _buf->info("after read");
   assert(_bufferState != UNDEFINED);
   return _buf->getSize() - oldSize;
 }
