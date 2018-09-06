@@ -211,7 +211,11 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
   _buf->info("put2");
 
   _buf->putWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
+  _buf->info("put3");
+
   changeState(state);
+  _buf->info("put4");
+
   std::cerr << "check " << oldSize << "=old new=" << _buf->getSize()
             << std::endl;
   return _buf->getSize() - oldSize;
