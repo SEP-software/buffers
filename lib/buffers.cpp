@@ -95,13 +95,6 @@ buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
   _defaultStateSet = false;
 }
 
-Json::Value buffers::getFiles() {
-  Json::Value des;
-  for (auto i = 0; i < _buffers.size(); i++) {
-    des[std::string("buffer") + std::to_string(i)] = _buffers[i].getName();
-  }
-  return des;
-}
 void buffers::setDirectory(const std::string &dir) {
   _directory = dir;
   const int dir_err =

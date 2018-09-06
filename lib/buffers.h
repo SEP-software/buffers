@@ -34,7 +34,6 @@ class buffers {
   std::shared_ptr<compress> createDefaultCompress();
   std::shared_ptr<blocking> createDefaultBlocking();
   std::shared_ptr<memoryUsage> createDefaultMemory();
-  Json::Value getFiles();
   void setDefaultState(const bufferState stat) {
     _defState = stat;
     _defaultStateSet = true;
