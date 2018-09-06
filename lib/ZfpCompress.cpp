@@ -73,6 +73,8 @@ std::shared_ptr<storeBase> ZfpCompression::decompressData(
 
 std::shared_ptr<storeBase> ZfpCompression::compressData(
     const std::vector<int> ns, const std::shared_ptr<storeBase> buf) {
+  std::cerr << "IN 1" << std::endl;
+
   if (_typ == DATA_BYTE) return buf;
 
   int ndim = 0;
@@ -85,6 +87,7 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
   zfp_stream* zfp = zfp_stream_open(NULL);
 
   size_t rawsize = 0;
+  std::cerr << "IN 2" << std::endl;
 
   zfp_field_set_type(field, _ztype);
   zfp_field_set_pointer(field, buf->getPtr());
@@ -113,26 +116,39 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
       zfp_stream_set_rate(zfp, _rate, _ztype, ndim, 0);
       break;
   }
+
+  std::cerr << "IN 3" << std::endl;
+
   size_t bufsize = zfp_stream_maximum_size(zfp, field);
   assert(bufsize);
   void* buffer = malloc(bufsize);
   assert(buffer);
+  std::cerr << "IN 4" << std::endl;
 
   bitstream* stream = stream_open(buffer, bufsize);
   assert(stream);
   zfp_stream_set_bit_stream(zfp, stream);
+  std::cerr << "IN 5" << std::endl;
 
   assert(zfp_write_header(zfp, field, ZFP_HEADER_FULL));
+  std::cerr << "IN 6" << std::endl;
 
   size_t zfpsize = zfp_compress(zfp, field);
+  std::cerr << "IN 7" << std::endl;
 
   std::shared_ptr<storeByte> x(new storeByte(zfpsize, buffer));
+  std::cerr << "IN 8" << std::endl;
 
   /* free allocated storage */
   zfp_field_free(field);
+  std::cerr << "IN 9" << std::endl;
 
   zfp_stream_close(zfp);
+  std::cerr << "INa" << std::endl;
+
   stream_close(stream);
+  std::cerr << "IN b" << std::endl;
+
   free(buffer);
   return x;
 }
