@@ -83,7 +83,7 @@ Json::Value buffers::getDescription() {
   Json::Value des;
 
   des["blocking"] = _blocking->getJsonDescription();
-  des["compression"] = _blocking->getJsonDescription();
+  des["compression"] = _compress->getJsonDescription();
   return des;
 }
 buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
