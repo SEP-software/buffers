@@ -304,22 +304,24 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
 
-  long change = tbb::parallel_reduce(
-      tbb::blocked_range<size_t>(0, pwind.size()), long(0),
-      [&](const tbb::blocked_range<size_t> &r, long locChange) {
-        for (size_t i = r.begin(); i != r.end(); ++i) {
-          std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
+  //  long change = tbb::parallel_reduce(
+  //    tbb::blocked_range<size_t>(0, pwind.size()), long(0),
+  //  [&](const tbb::blocked_range<size_t> &r, long locChange) {
+  //  for (size_t i = r.begin(); i != r.end(); ++i) {
+  for (auto i = 0; i < pwind.size(); i++) {
+    std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
 
-          size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
-                                                      nG, fG, blockG);
+    size_t pos =
+        _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
 
-          locChange += _buffers[pwind[i]].putWindowCPU(n_w, f_w, j_w, nG, fG,
-                                                       blockG, buf, state);
-        }
+    std::cerr << i << " put window " << pwind[i] << std::endl;
+    locChange += _buffers[pwind[i]].putWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
+                                                 buf, state);
+  }
 
-        return locChange;
-      },
-      [](long a, long b) { return a + b; });
+  //  return locChange;
+  // },
+  // [](long a, long b) { return a + b; });
 }
 // buffers(std::string diretory, std::shared_ptr<compress> comp = nullptr,
 //      std::shared_ptr<blocking> block = nullptr);
