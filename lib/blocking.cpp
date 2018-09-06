@@ -121,7 +121,11 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
 void blocking::checkLogicBlocking() {
   for (int i = 0; i < _nb.size(); i++) {
     if (_blocksize.size() > i) {
-      assert(int(_nb[i] / _blocksize[i]) * _blocksize[i] == _nb[i]);
+      if (int(_nb[i] / _blocksize[i]) * _blocksize[i] != _nb[i]) {
+        std::cerr << "axis " << i << " mb=" << _nb[i] << " bs=" << _blocksize[i]
+                  << std::endl;
+        assert(1 == 2);
+      }
     }
   }
 }
