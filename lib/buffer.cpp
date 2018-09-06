@@ -115,8 +115,10 @@ long long buffer::readBuffer() {
 }
 
 long long buffer::writeBuffer(bool keepState) {
+  std::cerr << "before getSize" << std::endl;
   long long oldSize = _buf->getSize();
 
+  std::ccerr << "after getSize-" << oldSize << std::endl;
   std::shared_ptr<storeBase> buf;
   bufferState restore;
   assert(_bufferState != UNDEFINED);
@@ -125,6 +127,7 @@ long long buffer::writeBuffer(bool keepState) {
     restore = _bufferState;
     buf = _buf->clone();
   }
+  std::cerr << "before compressed" << std::endl;
   changeState(CPU_COMPRESSED);
   std::cerr << "COMPRESSS WRITE " << oldSize << "=old new=" << _buf->getSize()
             << std::endl;
