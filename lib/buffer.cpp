@@ -210,7 +210,8 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
   long long oldSize = _buf->getSize();
 
   changeState(CPU_DECOMPRESSED);
-
+  std::cerr << "AXIS 3 " << nwL[2] << "=nw2 fw2=" << fwL[2] << " " << nwG[2]
+            << "=ng fg=" << fwG[2] << " blockG" << blockG[2] << std::endl;
   _buf->putWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
   _buf->info("put window");
   changeState(state);
