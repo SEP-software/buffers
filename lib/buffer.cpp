@@ -309,9 +309,7 @@ long buffer::changeState(const bufferState state) {
           std::cerr << "before compres" << std::endl;
           _buf = _compress->compressData(_n, _buf);
           std::cerr << "before write" << std::endl;
-          writeBuffer();
           std::cerr << "after write" << std::endl;
-          break;
         case CPU_COMPRESSED:
           writeBuffer();
           break;
