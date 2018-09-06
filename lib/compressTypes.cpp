@@ -7,6 +7,7 @@
 using namespace SEP::IO;
 
 compressTypes::compressTypes(const Json::Value &des) {
+  std::cerr << "in create compressTypes" << std::endl;
   if (des["dataType"].isNull()) {
     std::cerr << std::string(
                      "trouble grabbing parameter compressType from parameters")

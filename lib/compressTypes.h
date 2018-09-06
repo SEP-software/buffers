@@ -13,10 +13,13 @@ class compressTypes {
  public:
   compressTypes(const Json::Value &val);
   std::shared_ptr<compress> getCompressionObj() { return _compress; }
-  dataType getDataType() { return _compress->_typ; }
+  dataType getDataType() {
+    assert(_compress->_typ);
+    return _compress->_typ;
+  }
 
  private:
-  std::shared_ptr<compress> _compress;
+  std::shared_ptr<compress> _compress = nullptr;
 };
 
 }  // namespace IO
