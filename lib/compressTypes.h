@@ -16,7 +16,6 @@ class compressTypes {
   std::shared_ptr<compress> getCompressionObj() { return _compress; }
   dataType getDataType() {
     assert(_compress->_typ);
-    std::cerr << "before gedatatype" << std::endl;
     return _compress->_typ;
   }
 
