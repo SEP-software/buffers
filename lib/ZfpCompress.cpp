@@ -1,4 +1,3 @@
-
 #include "Zfpcompress.h"
 #include <cassert>
 #include <iostream>
@@ -15,12 +14,11 @@ ZfpCompression::ZfpCompression(const SEP::dataType typ, const ZfpParams pars) {
   setGlobalZfp();
 }
 ZfpCompression::ZfpCompression(const Json::Value& des) {
-  setDataType(typ);
   _rate = des["rate"].asFloat();
   _tolerance = des["tolerance"].asFloat();
   _precision = des["precision"].asInt();
-  _typ = toElementType(des["dataType"].asString());
-  stringtoMethod()
+  setDataType(toElementType(des["dataType"].asString()));
+  stringToMethod(des["method"].asString());
 }
 
 void ZfpCompression::setGlobalZfp() {
@@ -166,8 +164,8 @@ std::string ZfpCompression::methodToString() {
   if (_meth == ZFP_PRECISION) return "PRECISION";
   return "Unknown";
 }
-std::string ZfpCompression::stringToMethod(const std::string meth) {
-  if (meth == "ACCURACY") == ZFP_ACCURACY;
- if(meth== "TOLERANCE"==ZFP_TOLERANCE;
-if(meth== "PRECISION"==ZFP_PRECISION;
+void ZfpCompression::stringToMethod(const std::string& meth) {
+  if (meth == "ACCURACY") ZFP_ACCURACY;
+  if (meth == "TOLERANCE") ZFP_TOLERANCE;
+  if (meth == "PRECISION") ZFP_PRECISION;
 }
