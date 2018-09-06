@@ -44,6 +44,7 @@ std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
 buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
                  const Json::Value &des, std::shared_ptr<memoryUsage> mem) {
   _hyper = hyper->clone();
+  std::cerr << "wjere 1 " << std::endl;
   if (des["blocking"].isNull()) {
     std::cerr << std::string(
                      "trouble grabbing parameter blocking from parameters")
@@ -51,7 +52,11 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
 
     assert(1 == 2);
   }
-  _blocking.reset(new blocking(des["blocking"].asString()));
+  std::cerr << "wjere 1 " << std::endl;
+
+  _blocking.reset(new blocking(des["blocking"]));
+  std::cerr << "wjere 1 " << std::endl;
+
   if (des["compression"].isNull()) {
     std::cerr << std::string(
                      "trouble grabbing parameter blocking from parameters")
@@ -64,7 +69,11 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
       _memory = createDefaultMemory();
     }
   }
+  std::cerr << "wjere 1 " << std::endl;
+
   SEP::IO::compressTypes ct = compressTypes(des["compression"]);
+  std::cerr << "wjere 1 " << std::endl;
+
   _compress = ct.getCompressionObj();
   _defaultStateSet = false;
   createBuffers();
