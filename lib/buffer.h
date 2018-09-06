@@ -22,9 +22,11 @@ class buffer {
     _name = name;
     _nameSet = true;
   }
-  std::string getName() {
+  std::string getFileName() {
     assert(_nameSet);
-    return _name;
+    size_t found = _name.find_last_of("/\\");
+
+    return _name.substr(found + 1);
   }
   void setBlock() {
     _block.push_back(1);

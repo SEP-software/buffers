@@ -18,7 +18,8 @@ class buffers {
           std::shared_ptr<compress> comp = nullptr,
           std::shared_ptr<blocking> block = nullptr,
           std::shared_ptr<memoryUsage> mem = nullptr);
-  buffers(const std::shared_ptr<hypercube> hyper, const Json::Value &jsonArgs,
+  buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
+          const Json::Value &jsonArgs,
           std::shared_ptr<memoryUsage> mem = nullptr);
 
   void getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,

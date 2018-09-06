@@ -41,8 +41,8 @@ std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
   std::shared_ptr<memoryUsage> c(new memoryAll());
   return c;
 }
-buffers::buffers(const std::shared_ptr<hypercube> hyper, const Json::Value &des,
-                 std::shared_ptr<memoryUsage> mem) {
+buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
+                 const Json::Value &des, std::shared_ptr<memoryUsage> mem) {
   _hyper = hyper->clone();
   if (des["blocking"].isNull()) {
     std::cerr << std::string(
@@ -67,13 +67,14 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const Json::Value &des,
   SEP::IO::compressTypes ct = compressTypes(des["compression"]);
   _compress = ct.getCompressionObj();
   _defaultStateSet = false;
+  createBuffers();
+  setDirectory();
 }
 Json::Value buffers::getDescription() {
   Json::Value des;
 
   des["blocking"] = _blocking->getJsonDescription();
   des["compression"] = _blocking->getJsonDescription();
-  des["files"] = getFiles();
   return des;
 }
 buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
