@@ -5,7 +5,9 @@
 using namespace SEP::IO;
 blockParams blocking::makeBlocks(const std::vector<int> &nsz) {
   blockParams x;
+  std::cerr << "before block axis" << std::endl;
   x._axesBlock = blockAxis(nsz);
+  std::cerr << "after block axis" << std::endl;
 
   std::vector<int> n(7, 1), f(7, 0), axis(7, 0);
   f[6] = 0;
@@ -92,6 +94,7 @@ Json::Value blocking::getJsonDescription() {
 std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
   std::vector<std::vector<int>> blocks;
   for (int i = 0; i < n.size(); i++) {
+    std::cerr << "in block axis " << i << std::endl;
     std::vector<int> axisBlock;
     int nleft = n[i];
     int bs = 1;
