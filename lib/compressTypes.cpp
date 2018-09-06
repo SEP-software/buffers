@@ -27,5 +27,8 @@ compressTypes::compressTypes(const Json::Value &des) {
     _compress.reset(new noCompression(ele));
   } else if (typ == std::string("ZfpCompression")) {
     _compress.reset(new ZfpCompression(des));
+  } else {
+    std::cerr << "Unknown compression type " << typ << std::endl;
+    assert(1 == 2);
   }
 }
