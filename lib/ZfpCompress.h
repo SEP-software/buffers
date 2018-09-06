@@ -34,7 +34,8 @@ class ZfpCompression : public compress {
   virtual std::shared_ptr<storeBase> decompressData(
       const std::vector<int> n, const std::shared_ptr<storeBase> buf);
   virtual Json::Value getJsonDescription();
-  std::string methodString();
+  std::string methodToString();
+  void stringToMethod(const std::string meth);
 
  private:
   zfpMethod _meth;

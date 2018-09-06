@@ -2,6 +2,7 @@
 #include "compressTypes.h"
 #include <cassert>
 #include <iostream>
+#include "ZfpCompress.h"
 #include "nocompress.h"
 using namespace SEP::IO;
 
@@ -24,6 +25,7 @@ compressTypes::compressTypes(const Json::Value &des) {
   dataType ele = toElementType(des["dataType"].asString());
   if (typ == std::string("noCompression")) {
     _compress.reset(new noCompression(ele));
+  } else if (type == std::string("ZfpCompression")) {
+    _compress.reset(new ZfpCompression(des));
   }
 }
-

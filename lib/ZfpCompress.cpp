@@ -14,6 +14,15 @@ ZfpCompression::ZfpCompression(const SEP::dataType typ, const ZfpParams pars) {
 
   setGlobalZfp();
 }
+ZfpCompression::ZfpCompression(const Json::Value& des) {
+  setDataType(typ);
+  _rate = des["rate"].asFloat();
+  _tolerance = des["tolerance"].asFloat();
+  _precision = des["precision"].asInt();
+  _typ = toElementType(des["dataType"].asString());
+  stringtoMethod()
+}
+
 void ZfpCompression::setGlobalZfp() {
   switch (_typ) {
     case DATA_FLOAT:
@@ -142,14 +151,23 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
 
 Json::Value ZfpCompression::getJsonDescription() {
   Json::Value v;
-  v["compressType"] = "noCompression";
+  v["compressType"] = "zfpCompression";
   v["dataType"] = elementString();
-  v["method"] = methodString();
+  v["method"] = methodToString();
+  v["tolerance"] = _tolerance;
+  v["rate"] = _rate;
+  v["precision"] = _precision;
+
   return v;
 }
-std::string ZfpCompression::methodString() {
+std::string ZfpCompression::methodToString() {
   if (_meth == ZFP_ACCURACY) return "ACCURACY";
   if (_meth == ZFP_TOLERANCE) return "TOLERANCE";
   if (_meth == ZFP_PRECISION) return "PRECISION";
   return "Unknown";
+}
+std::string ZfpCompression::stringToMethod(const std::string meth) {
+  if (meth == "ACCURACY") == ZFP_ACCURACY;
+ if(meth== "TOLERANCE"==ZFP_TOLERANCE;
+if(meth== "PRECISION"==ZFP_PRECISION;
 }
