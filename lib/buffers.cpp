@@ -181,7 +181,8 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
     }
     if (fw[i] + jw[i] * (nw[i] - 1) > ns[i] - 1) {
       std::cerr << "axis[" << i << "] window out of range f=" << fw[i]
-                << " j=" << jw[i] << " n=" << nw[i] << std::endl;
+                << " j=" << jw[i] << " n=" << nw[i] << " ns=" << ns[i]
+                << std::endl;
       fail = true;
     }
     if (fail) assert(1 == 2);
