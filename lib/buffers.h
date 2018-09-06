@@ -38,7 +38,7 @@ class buffers {
     _defState = stat;
     _defaultStateSet = true;
   }
-  void setDirectory(std::string &dir);
+  void setDirectory(const std::string &dir);
   std::vector<int> parsedWindows(const std::vector<int> &nw,
                                  const std ::vector<int> &fw,
                                  const std::vector<int> &jw);

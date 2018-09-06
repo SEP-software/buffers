@@ -101,7 +101,7 @@ Json::Value buffers::getFiles() {
   }
   return des;
 }
-void buffers::setDirectory(std::string &dir) {
+void buffers::setDirectory(const std::string &dir) {
   _directory = dir;
   const int dir_err =
       mkdir(_directory.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
