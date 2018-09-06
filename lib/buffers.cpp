@@ -103,7 +103,7 @@ buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
 
 void buffers::setDirectory(const std::string &dir, const bool createDirectory) {
   _directory = dir;
-  if (createDrirectory) {
+  if (createDirectory) {
     const int dir_err =
         mkdir(_directory.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     if (-1 == dir_err) {
