@@ -68,7 +68,7 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
   _compress = ct.getCompressionObj();
   _defaultStateSet = false;
   createBuffers();
-  setDirectory();
+  setDirectory(dir);
 }
 Json::Value buffers::getDescription() {
   Json::Value des;
