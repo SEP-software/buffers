@@ -189,6 +189,7 @@ long long buffer::getWindowCPU(const std::vector<int> &nwL,
   long long oldSize = _buf->getSize();
   changeState(CPU_DECOMPRESSED);
   _buf->getWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
+  _buf->info("after get");
   if (restore == state) {
     _bufferState = restore;
     _buf = bufT;

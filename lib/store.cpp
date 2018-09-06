@@ -261,14 +261,14 @@ void storeFloat::getWindow(const std::vector<int> &nwL,
     }
   }
 }
-void storeFloat::info() const {
+void storeFloat::info(const std::string &v) const {
   double mn = 1e31, mx = -1e31, sm = 0;
   for (auto i = 0; i < _buf.size(); i++) {
     mn = std::min(mn, _buf[i]);
     mx = std::max(mx, _buf[i]);
     sm += fabs(_buf[i]);
   }
-  std::cerr << " size=" << _buf.size() << " min=" << mn << " max=" << mx
+  std::cerr << v << " size=" << _buf.size() << " min=" << mn << " max=" << mx
             << " sm=" << sm << endl;
 }
 void storeFloat::putWindow(const std::vector<int> &nwL,
