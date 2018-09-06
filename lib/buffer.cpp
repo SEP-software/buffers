@@ -162,7 +162,6 @@ long long buffer::getBufferCPU(std::shared_ptr<storeBase> buf,
   } else if (state != CPU_DECOMPRESSED) {
     changeState(state);
   }
-  _buf->info("after read");
 
   return _buf->getSize() - oldSize;
 }
@@ -173,8 +172,10 @@ long long buffer::putBufferCPU(std::shared_ptr<storeBase> buf,
   long long oldSize = _buf->getSize();
 
   _buf = _compress->getUncompressedStore(_n);
+
   _bufferState = CPU_DECOMPRESSED;
   _buf->putData(buf);
+  _buf->info("after read");
 
   changeState(state);
 
