@@ -290,7 +290,7 @@ void buffers::changeState(const bufferState state) {
     std::cerr << "where am i failing " << i << std::endl;
     locChange += _buffers[i].changeState(state);
   }
-  return locChange;
+  // return locChange;
   // },
   // [](long a, long b) { return a + b; });
 }
