@@ -125,6 +125,8 @@ long long buffer::writeBuffer(bool keepState) {
     restore = _bufferState;
     buf = _buf->clone();
   }
+  _buf->info("before write");
+
   changeState(CPU_COMPRESSED);
   std::cerr << "COMPRESSS WRITE " << _n123 << "=old new=" << _buf->getSize()
             << " file=" << _name << std::endl;
@@ -205,19 +207,13 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
                                const bufferState state) {
   bufferState restore = _bufferState;
   long long oldSize = _buf->getSize();
-  _buf->info("put");
 
   changeState(CPU_DECOMPRESSED);
-  _buf->info("put2");
 
   _buf->putWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
-  _buf->info("put3");
 
   changeState(state);
-  _buf->info("put4");
 
-  std::cerr << "check " << oldSize << "=old new=" << _buf->getSize()
-            << std::endl;
   return _buf->getSize() - oldSize;
 }
 size_t buffer::localWindow(const std::vector<int> &nw,
