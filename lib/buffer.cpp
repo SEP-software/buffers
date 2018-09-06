@@ -170,12 +170,13 @@ long long buffer::putBufferCPU(std::shared_ptr<storeBase> buf,
                                const bufferState state) {
   bufferState restore = _bufferState;
   long long oldSize = _buf->getSize();
-
+  std::cerr << "in put b" << std::endl;
   _buf = _compress->getUncompressedStore(_n);
+  _buf->info("should be 0");
 
   _bufferState = CPU_DECOMPRESSED;
   _buf->putData(buf);
-  _buf->info("AFTER ");
+  _buf->info("should not be 0");
 
   changeState(state);
 
