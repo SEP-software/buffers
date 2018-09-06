@@ -123,9 +123,9 @@ void buffers::setDirectory(const std::string &dir) {
 
 void buffers::createBuffers() {
   std::vector<int> ns = _hyper->getNs();
-  std::cerr << "in create 1" << std:: : endl;
+  std::cerr << "in create 1" << std::endl;
   blockParams b = _blocking->makeBlocks(ns);
-  std::cerr << "in 2create 1" << std:: : endl;
+  std::cerr << "in 2create 1" << std::endl;
 
   for (int i = 0; i < b._ns.size(); i++)
     _buffers.push_back(buffer(b._ns[i], b._fs[i], _compress));
