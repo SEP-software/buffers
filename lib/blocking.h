@@ -17,7 +17,7 @@ class blockParams {
 
 class blocking {
  public:
-  blocking(const std::vector<int> &blocksize, std::vector<int> nb) {
+  blocking(const std::vector<int> &blocksize, std::vector<int> &nb) {
     _blocksize = blocksize;
     _nb = nb;
     checkLogicBlocking();

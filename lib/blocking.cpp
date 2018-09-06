@@ -62,10 +62,7 @@ blocking::blocking(const Json::Value &jsonArgs) {
 
     assert(1 == 2);
   }
-  const Json::Value vals = jsonArgs["blocksize"];
-
-  for (auto i = 0; i < _blocksize.size(); i++)
-    _blocksize.push_back(vals[i].asInt());
+  for (auto itr : jsonArgs["blocksize"]) _blocksize.push_back(itr.asInt());
 
   if (jsonArgs["nb"].isNull()) {
     std::cerr << std::string("trouble grabbing parameter nb from parameters")
@@ -73,9 +70,8 @@ blocking::blocking(const Json::Value &jsonArgs) {
 
     assert(1 == 2);
   }
-  const Json::Value val2 = jsonArgs["nb"];
+  for (auto itr : jsonArgs["nb"]) _nb.push_back(itr.asInt());
 
-  for (auto i = 0; i < _nb.size(); i++) _nb.push_back(val2[i].asInt());
   checkLogicBlocking();
 }
 
