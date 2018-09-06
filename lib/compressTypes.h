@@ -2,6 +2,7 @@
 #define COMPRESS_TYPES_H 1
 #include <json.h>
 #include <complex>
+#include <iostream>
 #include <memory>
 #include <sstream>
 #include <vector>
