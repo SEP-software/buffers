@@ -99,11 +99,17 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     int nleft = n[i];
     int bs = 1;
     int nb = 1;
+    std::cerr << "fail 1" << std::endl;
     if (_blocksize.size() > i) bs = _blocksize[i];
+    std::cerr << "fail 1" << std::endl;
+
     if (_nb.size() > i) nb = _nb[i];
+    std::cerr << "fail 1" << std::endl;
+
     int nblocks = ceilf(float(n[i]) / float(_blocksize[i]));  // 100 3 34
     int ratio = nb / bs;                                      // 3
     int nparts = ceilf(float(nblocks) / float(ratio));        // 34 /3 = 12
+    std::cerr << "fail 1" << std::endl;
 
     for (int ib = 0; ib < nparts - 1; ib++) {
       int nuse = ceilf(float(nblocks) / float(nparts - ib));
@@ -112,7 +118,11 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
 
       axisBlock.push_back(nuse * bs);
     }
+    std::cerr << "fail 1" << std::endl;
+
     if (nleft > 0) axisBlock.push_back(nleft);
+    std::cerr << "fail 1" << std::endl;
+
     blocks.push_back(axisBlock);
   }
   for (size_t i = n.size(); i < 7; i++) {
