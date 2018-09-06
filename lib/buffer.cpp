@@ -189,7 +189,6 @@ long long buffer::getWindowCPU(const std::vector<int> &nwL,
   long long oldSize = _buf->getSize();
   changeState(CPU_DECOMPRESSED);
   _buf->getWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
-  _buf->info("after get");
   if (restore == state) {
     _bufferState = restore;
     _buf = bufT;
@@ -206,8 +205,10 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
                                const bufferState state) {
   bufferState restore = _bufferState;
   long long oldSize = _buf->getSize();
+  _buf->info("put");
 
   changeState(CPU_DECOMPRESSED);
+  _buf->info("put2");
 
   _buf->putWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
   changeState(state);
