@@ -106,7 +106,7 @@ void buffers::setDirectory(const std::string &dir) {
   const int dir_err =
       mkdir(_directory.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
   if (-1 == dir_err) {
-    printf("Error creating directory!n");
+    std::cerr << "Error creating directory, exists? DIR=" << dir << std::endl;
     exit(1);
   }
   for (auto i = 0; i < _buffers.size(); i++) {
@@ -165,6 +165,7 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
   std::vector<std::vector<bool>> patches;
   std::vector<int> first(1, 0);
   size_t ntot = 1;
+  for (int i = ns.size(); i < nw.size(); i++) ns.push_back(1);
   for (int i = 0; i < nw.size(); i++) {
     bool fail = false;
     if (nw[i] < 1) {
