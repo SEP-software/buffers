@@ -149,7 +149,7 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
 
 Json::Value ZfpCompression::getJsonDescription() {
   Json::Value v;
-  v["compressType"] = "zfpCompression";
+  v["compressType"] = "ZfpCompression";
   v["dataType"] = elementString();
   v["method"] = methodToString();
   v["tolerance"] = _tolerance;
