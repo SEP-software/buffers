@@ -118,7 +118,7 @@ long long buffer::writeBuffer(bool keepState) {
   std::cerr << "before getSize" << std::endl;
   long long oldSize = _buf->getSize();
 
-  std::ccerr << "after getSize-" << oldSize << std::endl;
+  std::cerr << "after getSize-" << oldSize << std::endl;
   std::shared_ptr<storeBase> buf;
   bufferState restore;
   assert(_bufferState != UNDEFINED);
