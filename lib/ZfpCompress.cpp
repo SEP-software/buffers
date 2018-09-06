@@ -14,11 +14,17 @@ ZfpCompression::ZfpCompression(const SEP::dataType typ, const ZfpParams pars) {
   setGlobalZfp();
 }
 ZfpCompression::ZfpCompression(const Json::Value& des) {
+  std::cerr << "WWR 1" << std::endl;
   _rate = des["rate"].asFloat();
   _tolerance = des["tolerance"].asFloat();
   _precision = des["precision"].asInt();
+  std::cerr << "WWR 1" << std::endl;
+
   setDataType(toElementType(des["dataType"].asString()));
+  std::cerr << "WWR 1" << std::endl;
+
   stringToMethod(des["method"].asString());
+  std::cerr << "WWR 1" << std::endl;
 }
 
 void ZfpCompression::setGlobalZfp() {
