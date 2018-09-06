@@ -296,7 +296,6 @@ void buffers::changeState(const bufferState state) {
   // for (size_t i = r.begin(); i != r.end(); ++i) {
   long locChange = 0;
   for (int i = 0; i < _buffers.size(); i++) {
-    std::cerr << "where am i failing " << i << std::endl;
     locChange += _buffers[i].changeState(state);
   }
   // return locChange;
