@@ -30,6 +30,7 @@ class storeBase {
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, const void *bufIn) = 0;
   virtual std::shared_ptr<storeBase> clone() const = 0;
+  virtual void info() const { ; }
   virtual size_t getElementSize() const = 0;
   virtual size_t getSize() const = 0;
   virtual void zero() = 0;
@@ -101,6 +102,7 @@ class storeFloat : public storeBase {
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   virtual void zero() override { _buf.resize(0); }
   virtual std::shared_ptr<storeBase> clone() const;
+  virtual void info() const override;
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
