@@ -269,7 +269,7 @@ void storeFloat::info(const std::string &v) const {
     sm += fabs(_buf[i]);
   }
   std::cerr << v << " size=" << _buf.size() << " min=" << mn << " max=" << mx
-            << " sm=" << sm << endl;
+            << " sm=" << sm << std::endl;
 }
 void storeFloat::putWindow(const std::vector<int> &nwL,
                            const std::vector<int> &fwL,
