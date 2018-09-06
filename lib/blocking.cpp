@@ -106,6 +106,7 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     if (_nb.size() > i) nb = _nb[i];
     std::cerr << "fail 1" << std::endl;
 
+    std::cerr << "CHECK" << n.size() << " " << _blocksize.size() << std::endl;
     int nblocks = ceilf(float(n[i]) / float(_blocksize[i]));  // 100 3 34
     int ratio = nb / bs;                                      // 3
     int nparts = ceilf(float(nblocks) / float(ratio));        // 34 /3 = 12
