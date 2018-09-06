@@ -122,8 +122,8 @@ void blocking::checkLogicBlocking() {
   for (int i = 0; i < _nb.size(); i++) {
     if (_blocksize.size() > i) {
       if (int(_nb[i] / _blocksize[i]) * _blocksize[i] != _nb[i]) {
-        std::cerr << "axis " << i << " mb=" << _nb[i] << " bs=" << _blocksize[i]
-                  << std::endl;
+        std::cerr << "axis " << i << " blockElement=" << _nb[i]
+                  << " blockSize=" << _blocksize[i] << std::endl;
         assert(1 == 2);
       }
     }
