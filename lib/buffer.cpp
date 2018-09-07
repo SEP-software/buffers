@@ -262,6 +262,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     std::cerr << i << " =axis nw=" << nw[i] << " fw=" << fw[i]
               << " n_w=" << n_w[i] << " f_w=" << f_w[i] << " ng=" << nwG[i]
               << " fg=" << fwG[i] << std::endl;
+    std::cerr << i << " compare " << n_w.size() << std::endl;
   }
   return nelem;
 }
