@@ -322,7 +322,8 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
     size_t pos =
         _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
 
-    std::cerr << i << " put2 window " << pwind[i] << std::endl;
+    std::cerr << i << " put2 window " << pwind[i] << " n_w.size=" << n_w.size()
+              << std::endl;
     locChange += _buffers[pwind[i]].putWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
                                                  buf, state);
   }
