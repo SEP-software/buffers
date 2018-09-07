@@ -103,8 +103,9 @@ long long buffer::readBuffer() {
     std::shared_ptr<storeByte> x(new storeByte(nelemFile));
     _buf = x;
     in.read(_buf->getPtr(), nelemFile);
-    float *xx = (float *)_buf->getPtr();
+    char *xx = (char *)_buf->getPtr();
 
+    std::cerr << "read " << xx[0] << " " << xx[1] << " " << xx[2] << std::endl;
     assert(!checkErrorBitsIn(&in));
 
     _bufferState = CPU_COMPRESSED;
