@@ -44,7 +44,6 @@ std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
 buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
                  const Json::Value &des, std::shared_ptr<memoryUsage> mem) {
   _hyper = hyper->clone();
-  std::cerr << "wjere 1 " << std::endl;
   if (des["blocking"].isNull()) {
     std::cerr << std::string(
                      "trouble grabbing parameter blocking from parameters")
@@ -118,9 +117,7 @@ void buffers::setDirectory(const std::string &dir, const bool createDirectory) {
 
 void buffers::createBuffers() {
   std::vector<int> ns = _hyper->getNs();
-  std::cerr << "in create 1" << std::endl;
   blockParams b = _blocking->makeBlocks(ns);
-  std::cerr << "in 2create 1" << std::endl;
 
   for (int i = 0; i < b._ns.size(); i++)
     _buffers.push_back(buffer(b._ns[i], b._fs[i], _compress));
@@ -276,11 +273,8 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   //      for (size_t i = r.begin(); i != r.end(); ++i) {
   long locChange = 0;
   for (int i = 0; i < pwind.size(); i++) {
-    std::cerr << " in local " << i << std::endl;
-    std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
     size_t pos =
         _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
-    std::cerr << " in cpu " << i << std::endl;
 
     locChange += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
                                                  buf, state);
@@ -321,12 +315,9 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < pwind.size(); i++) {
     std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
     long locChange;
-    std::cerr << "IN PUT WINDOW LOOOP " << i << std::endl;
     size_t pos =
         _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
 
-    std::cerr << i << " put2 window " << pwind[i] << " n_w.size=" << n_w.size()
-              << std::endl;
     locChange += _buffers[pwind[i]].putWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
                                                  buf, state);
   }

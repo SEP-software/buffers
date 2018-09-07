@@ -128,8 +128,7 @@ long long buffer::writeBuffer(bool keepState) {
   _buf->info("before write");
 
   changeState(CPU_COMPRESSED);
-  std::cerr << "COMPRESSS WRITE " << _n123 << "=old new=" << _buf->getSize()
-            << " file=" << _name << std::endl;
+
   assert(_nameSet);
   std::ofstream out(_name, std::ofstream::binary);
   assert(!checkErrorBitsOut(&out));
@@ -145,7 +144,6 @@ long long buffer::writeBuffer(bool keepState) {
     _buf->zero();
     _bufferState = ON_DISK;
   }
-  std::cerr << "closed file" << std::endl;
   return _buf->getSize() - oldSize;
 }
 long long buffer::getBufferCPU(std::shared_ptr<storeBase> buf,
@@ -191,6 +189,7 @@ long long buffer::getWindowCPU(const std::vector<int> &nwL,
   std::shared_ptr<storeBase> bufT = _buf;
   long long oldSize = _buf->getSize();
   changeState(CPU_DECOMPRESSED);
+  _buf->info("GET WINDOW CPU");
   _buf->getWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
   if (restore == state) {
     _bufferState = restore;
@@ -206,23 +205,14 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
                                const std ::vector<int> &fwG,
                                const std::vector<int> &blockG, const void *buf,
                                const bufferState state) {
-  std::cerr << "in put window cpu " << std::endl;
   bufferState restore = _bufferState;
-  std::cerr << "in 2put window cpu " << std::endl;
 
   long long oldSize = _buf->getSize();
-  std::cerr << "in3 put window cpu " << std::endl;
 
   changeState(CPU_DECOMPRESSED);
-  std::cerr << "AXIS 1 " << nwL[0] << "=nw0 fw0=" << fwL[0] << " " << nwG[0]
-            << "=ng fg=" << fwG[0] << " blockG=" << blockG[0] << std::endl;
-  std::cerr << "AXIS 2 " << nwL[1] << "=nw1 fw1=" << fwL[1] << " " << nwG[1]
-            << "=ng fg=" << fwG[1] << " blockG=" << blockG[1] << std::endl;
-  std::cerr << "AXIS 3 " << nwL[2] << "=nw2 fw2=" << fwL[2] << " " << nwG[2]
-            << "=ng fg=" << fwG[2] << " blockG=" << blockG[2] << std::endl;
+
   _buf->putWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
-  std::cerr << "WHAT PUTWINDOW " << std::endl;
-  _buf->info("put window");
+
   changeState(state);
 
   return _buf->getSize() - oldSize;
@@ -238,14 +228,12 @@ size_t buffer::localWindow(const std::vector<int> &nw,
   nwG.resize(7);
   fwG.resize(7);
   blockG[0] = 1;
-  std::cerr << "CHECK SIZE IN =" << n_w.size() << std::endl;
   size_t i = 0;
   for (i = 0; i < n_w.size(); i++) {
     // Number of samples used before this window
     int nusedBuf = ceilf(float(_f[i] - fw[i]) / float(jw[i]));
     int nusedGlobal = ceilf(float(_f[i]) / float(jw[i]));
-    std::cerr << "what is the p olem _f=" << _f[i] << " fw=" << f_w[i]
-              << " nused=" << nusedBuf << "," << nusedGlobal << std::endl;
+
     // First sample
     f_w[i] = nusedBuf * jw[i] + fw[i] - _f[i];
 
@@ -272,16 +260,12 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     assert(fwG[i] >= 0);
     assert(fwG[i] < nw[i]);
     blockG[i + 1] = blockG[i] * nw[i];
-    std::cerr << i << " =axis nw=" << nw[i] << " fw=" << fw[i]
-              << " n_w=" << n_w[i] << " f_w=" << f_w[i] << " ng=" << nwG[i]
-              << " fg=" << fwG[i] << std::endl;
   }
   return nelem;
 }
 
 long buffer::changeState(const bufferState state) {
   long long oldSize = _buf->getSize();
-  std::cerr << "in change state " << std::endl;
   switch (state) {
     case CPU_DECOMPRESSED:
       switch (_bufferState) {
@@ -293,9 +277,7 @@ long buffer::changeState(const bufferState state) {
         case CPU_DECOMPRESSED:
           break;
         case UNDEFINED:
-          std::cerr << "in undefined" << std::endl;
           _buf = returnStorage(_compress->getDataType(), _n123);
-          std::cerr << "return storage" << std::endl;
           break;
         default:
           assert(1 == 2);
@@ -348,6 +330,5 @@ long buffer::changeState(const bufferState state) {
 
   assert(state != UNDEFINED);
   _bufferState = state;
-  std::cerr << "SDDFSFDS 1" << std::endl;
   return _buf->getSize() - oldSize;
 }
