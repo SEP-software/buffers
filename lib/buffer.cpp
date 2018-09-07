@@ -252,7 +252,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     assert(f_w[i] < _n[i]);
     // if (f_w[i] > _n[i]) return 0;
 
-    assert(f_w[i] >= 0);
+    assert(f_w[i] > 0);
     // subtract off the points already used in previous cells
     n_w[i] = nw[i] - nused;
 
@@ -268,7 +268,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     n_w[i] = std::min(n_w[i], npos);
     nelem = nelem * npos;
     fwG[i] = -nused;
-    assert(fwG[i] >= 0);
+    assert(fwG[i] > 0);
     blockG[i + 1] = blockG[i] * nw[i];
     std::cerr << i << " =axis nw=" << nw[i] << " fw=" << fw[i]
               << " n_w=" << n_w[i] << " f_w=" << f_w[i] << " ng=" << nwG[i]
