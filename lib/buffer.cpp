@@ -234,7 +234,8 @@ size_t buffer::localWindow(const std::vector<int> &nw,
   fwG.resize(7);
   blockG[0] = 1;
   std::cerr << "CHECK SIZE IN =" << n_w.size() << std::endl;
-  for (auto i = 0; i < n_w.size(); i++) {
+  size_t i = 0;
+  for (i = 0; i < n_w.size(); i++) {
     // Number of samples used before this window
     int nused = ceilf(float(_f[i] - f_w[i]) / float(jw[i]));
 
@@ -264,6 +265,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
               << " fg=" << fwG[i] << std::endl;
     std::cerr << i << " compare " << n_w.size() << std::endl;
   }
+  std::cerr << "what the " << i << " " << n_w.size() << std::endl;
   return nelem;
 }
 
