@@ -239,6 +239,8 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     // Number of samples used before this window
     int nused = ceilf(float(_f[i] - f_w[i]) / float(jw[i]));
 
+    std::cerr << "what is the p olem _f=" << _f[i] << " fw=" << f_w[i]
+              << " nused=" << nused << std::endl;
     // First sample
     f_w[i] = nused * jw[i] + fw[i] - _f[i];
 
