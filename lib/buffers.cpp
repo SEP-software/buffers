@@ -263,7 +263,8 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   bufferState state = CPU_DECOMPRESSED;
   if (_defaultStateSet) state = _defState;
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
-  std::vector<int> n(7, 1), f(7, 0), j(7, 1), fG(7, 0), nG(7, 1);
+  std::vector<int> n(7, 1), f(7, 0), j(7, 1), fG(7, 0), nG(7, 1), f_w(7, 0),
+      n_w(7, 1);
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
