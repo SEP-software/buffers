@@ -306,8 +306,10 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, const void *buf) {
   bufferState state = CPU_DECOMPRESSED;
   if (_defaultStateSet) state = _defState;
+  std::cerr << "befoe parsed windows" << std::endl;
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
+  std::cerr << "after parsed windows " << std::endl;
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
