@@ -277,9 +277,11 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 
 long buffer::changeState(const bufferState state) {
   long long oldSize = _buf->getSize();
+  std::cerr << "in change state " << std::endl;
   switch (state) {
     case CPU_DECOMPRESSED:
       switch (_bufferState) {
+        std::cerr << "In change stat decompressed " << std::endl;
         case ON_DISK:
           readBuffer();
         case CPU_COMPRESSED:
@@ -288,9 +290,9 @@ long buffer::changeState(const bufferState state) {
         case CPU_DECOMPRESSED:
           break;
         case UNDEFINED:
-
+          std::cerr << "in undefined" << std::endl;
           _buf = returnStorage(_compress->getDataType(), _n123);
-
+          std::cerr < < < "return storage" << std::endl;
           break;
         default:
           assert(1 == 2);
