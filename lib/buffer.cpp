@@ -19,12 +19,12 @@ buffer::buffer(const std::string name, const std::vector<int> &n,
   _f = f;
   _compress = comp;
   _name = name;
-  _bufferState = UNDEFINED;
+  _bufferState = ON_DISK;
   _nameSet = true;
   setBlock();
 }
 buffer::buffer(const std::vector<int> &n, const std::vector<int> &f,
-               std::shared_ptr<compress> comp) {
+               std::shared_ptr<compress> comp, const bufferState state) {
   _n = n;
   _n123 = 1;
   for (int i : _n) _n123 *= i;
@@ -33,7 +33,7 @@ buffer::buffer(const std::vector<int> &n, const std::vector<int> &f,
   _nameSet = false;
   std::shared_ptr<storeByte> bb(new storeByte(0));
   _buf = bb;
-  _bufferState = UNDEFINED;
+  _bufferState = state;
 
   setBlock();
 }

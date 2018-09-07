@@ -72,7 +72,7 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
   _compress = ct.getCompressionObj();
 
   _defaultStateSet = false;
-  createBuffers();
+  createBuffers(ON_DISK);
   setDirectory(dir, false);
 }
 Json::Value buffers::getDescription() {
@@ -96,7 +96,7 @@ buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
   if (_blocking == nullptr) _blocking = createDefaultBlocking();
   if (_memory == nullptr) _memory = createDefaultMemory();
   blockParams v = _blocking->makeBlocks(_hyper->getNs());
-  createBuffers();
+  createBuffers(UNDEFINED);
   _defaultStateSet = false;
 }
 
@@ -115,12 +115,12 @@ void buffers::setDirectory(const std::string &dir, const bool createDirectory) {
   }
 }
 
-void buffers::createBuffers() {
+void buffers::createBuffers(const bufferState state) {
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
 
   for (int i = 0; i < b._ns.size(); i++)
-    _buffers.push_back(buffer(b._ns[i], b._fs[i], _compress));
+    _buffers.push_back(buffer(b._ns[i], b._fs[i], _compress, state));
 
   _n123blocking = b._nblocking;
   _axisBlocking = b._axesBlock;

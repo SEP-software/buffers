@@ -26,7 +26,7 @@ class buffers {
                  const std::vector<int> &jw, void *buf);
   void putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                  const std::vector<int> &jw, const void *buf);
-  void createBuffers();
+  void createBuffers(const bufferState state);
   void changeState(const bufferState state);
   Json::Value getDescription();
   void updateMemory(const long change);

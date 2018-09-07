@@ -17,7 +17,7 @@ class buffer {
          const std::vector<int> &f,
          std::shared_ptr<compress> comp);  // Read from file
   buffer(const std::vector<int> &n, const std::vector<int> &f,
-         std::shared_ptr<compress> comp);
+         std::shared_ptr<compress> comp, const bufferState state);
   void setName(const std::string name) {
     _name = name;
     _nameSet = true;
