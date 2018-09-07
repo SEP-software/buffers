@@ -221,6 +221,7 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
   std::cerr << "AXIS 3 " << nwL[2] << "=nw2 fw2=" << fwL[2] << " " << nwG[2]
             << "=ng fg=" << fwG[2] << " blockG=" << blockG[2] << std::endl;
   _buf->putWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
+  std::cerr << "WHAT PUTWINDOW " << std::endl;
   _buf->info("put window");
   changeState(state);
 
@@ -267,8 +268,9 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 
     n_w[i] = std::min(n_w[i], npos);
     nelem = nelem * npos;
-    fwG[i] = nw[i] - nused;
+    fwG[i] = _f[0] - nused;
     assert(fwG[i] >= 0);
+    assert(fwg[i] < nw[i]);
     blockG[i + 1] = blockG[i] * nw[i];
     std::cerr << i << " =axis nw=" << nw[i] << " fw=" << fw[i]
               << " n_w=" << n_w[i] << " f_w=" << f_w[i] << " ng=" << nwG[i]
