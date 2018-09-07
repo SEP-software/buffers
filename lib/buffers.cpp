@@ -119,8 +119,11 @@ void buffers::createBuffers(const bufferState state) {
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
 
-  for (int i = 0; i < b._ns.size(); i++)
+  for (int i = 0; i < b._ns.size(); i++) {
+    std::cerr << " CREARTW BUF " << i << " " << b._fs[i][0] << " "
+              << b._fs[i][1] << " " << b._fs[i][2] << std::endl;
     _buffers.push_back(buffer(b._ns[i], b._fs[i], _compress, state));
+  }
 
   _n123blocking = b._nblocking;
   _axisBlocking = b._axesBlock;
