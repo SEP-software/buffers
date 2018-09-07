@@ -206,6 +206,7 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
                                const std ::vector<int> &fwG,
                                const std::vector<int> &blockG, const void *buf,
                                const bufferState state) {
+  std::cerr << "in put window cpu " << std::endl;
   bufferState restore = _bufferState;
   long long oldSize = _buf->getSize();
 
@@ -267,9 +268,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     std::cerr << i << " =axis nw=" << nw[i] << " fw=" << fw[i]
               << " n_w=" << n_w[i] << " f_w=" << f_w[i] << " ng=" << nwG[i]
               << " fg=" << fwG[i] << std::endl;
-    std::cerr << i << " compare " << n_w.size() << std::endl;
   }
-  std::cerr << "what the " << i << " " << n_w.size() << std::endl;
   return nelem;
 }
 
