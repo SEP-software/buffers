@@ -258,6 +258,9 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     nelem = nelem * npos;
     fwG[i] = nused;
     blockG[i + 1] = blockG[i] * nw[i];
+    std::cerr << i << " =axis nw=" << nw[i] << " fw=" << fw[i]
+              << " n_w=" << n_w[i] << " f_w=" << f_w[i] << " ng=" << nwG[i]
+              << " fg=" << fwG[i] << std::endl;
   }
   return nelem;
 }
