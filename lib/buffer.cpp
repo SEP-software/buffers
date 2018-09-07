@@ -298,8 +298,8 @@ long buffer::changeState(const bufferState state) {
           assert(1 == 2);
           break;
       }
-      break;
       _bufferState = CPU_DECOMPRESSED;
+      break;
 
     case CPU_COMPRESSED:
 
@@ -316,8 +316,8 @@ long buffer::changeState(const bufferState state) {
           std::cerr << "Unknown conversion" << std::endl;
           assert(1 == 2);
       }
-      break;
       _bufferState = CPU_COMPRESSED;
+      break;
 
     case ON_DISK:
 
@@ -334,8 +334,8 @@ long buffer::changeState(const bufferState state) {
           std::cerr << "Unknown conversion" << std::endl;
           assert(1 == 2);
       }
-      break;
       _bufferState = ON_DISK;
+      break;
 
     default:
       std::cerr << "Can not change state" << std::endl;
@@ -345,5 +345,6 @@ long buffer::changeState(const bufferState state) {
 
   assert(state != UNDEFINED);
   _bufferState = state;
+  std::cerr << "SDDFSFDS 1" << std::endl;
   return _buf->getSize() - oldSize;
 }
