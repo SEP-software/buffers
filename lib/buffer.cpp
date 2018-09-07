@@ -245,7 +245,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     int nusedBuf = ceilf(float(_f[i] - fw[i]) / float(jw[i]));
     int nusedGlobal = ceilf(float(_f[i]) / float(jw[i]));
     std::cerr << "what is the p olem _f=" << _f[i] << " fw=" << f_w[i]
-              << " nused=" << nused << std::endl;
+              << " nused=" << nusedBuf << "," << nusedGlobal << std::endl;
     // First sample
     f_w[i] = nusedBuf * jw[i] + fw[i] - _f[i];
 
