@@ -282,7 +282,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
 
     std::cerr << i << " " << pwind[i] << " WHAT IS FG " << fG[0] << " " << fG[1]
               << " " << fG[2] << std::endl;
-    std::cerr << "WHAT IS NG " << nG[0] << " " << nG[1] << " " << fG[2]
+    std::cerr << "WHAT IS NG " << nG[0] << " " << nG[1] << " " << nG[2]
               << std::endl;
     std::cerr << "WHAT IS FW " << f_w[0] << " " << f_w[1] << " " << f_w[2]
               << std::endl;

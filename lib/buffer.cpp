@@ -105,7 +105,6 @@ long long buffer::readBuffer() {
     in.read(_buf->getPtr(), nelemFile);
     char *xx = (char *)_buf->getPtr();
 
-    std::cerr << "read " << xx[0] << " " << xx[1] << " " << xx[2] << std::endl;
     assert(!checkErrorBitsIn(&in));
 
     _bufferState = CPU_COMPRESSED;
@@ -261,6 +260,8 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     assert(fwG[i] >= 0);
     assert(fwG[i] < nw[i]);
     blockG[i + 1] = blockG[i] * nw[i];
+    std::cerr << "LOCAL WINDOW " << i << " " << nusedGlobal << " fwG=" << fwG[i]
+              << " _f=" << _f[i] << std::endl;
   }
   return nelem;
 }
