@@ -243,13 +243,15 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     f_w[i] = nused * jw[i] + fw[i] - _f[i];
 
     // Is the first sample outside this patch?
-    if (f_w[i] > _n[i]) return 0;
+    assert(f_w[i] < _n[i]);
+    // if (f_w[i] > _n[i]) return 0;
 
     // subtract off the points already used in previous cells
     n_w[i] = nw[i] - nused;
 
     // If less 0 we are done
-    if (n_w[i] < 1) return 0;
+    assert(n_w[i] > 0);
+    //    if (n_w[i] < 1) return 0;
     j_w[i] = jw[i];
 
     // Calculate total number of points in this cell with this sampling
