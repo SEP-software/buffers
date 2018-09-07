@@ -518,6 +518,7 @@ std::shared_ptr<storeBase> SEP::IO::returnStorage(const dataType state,
       return x;
     } break;
     case DATA_FLOAT: {
+      std::cerr << "in return storage " << n << std::endl;
       std::shared_ptr<storeFloat> y(new storeFloat(n));
       return y;
     } break;
@@ -534,6 +535,7 @@ std::shared_ptr<storeBase> SEP::IO::returnStorage(const dataType state,
       return b;
     } break;
     default:
+      std::cerr << "in default " << std::endl;
       assert(1 == 2);
   }
 }
