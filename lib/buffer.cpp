@@ -255,7 +255,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 
     assert(f_w[i] >= 0);
     // subtract off the points already used in previous cells
-    n_w[i] = nw[i] - nused;
+    n_w[i] = nw[i] - nusedLocal;
 
     // If less 0 we are done
     assert(n_w[i] > 0);
