@@ -292,7 +292,7 @@ long buffer::changeState(const bufferState state) {
         case UNDEFINED:
           std::cerr << "in undefined" << std::endl;
           _buf = returnStorage(_compress->getDataType(), _n123);
-          std::cerr < < < "return storage" << std::endl;
+          std::cerr << "return storage" << std::endl;
           break;
         default:
           assert(1 == 2);
