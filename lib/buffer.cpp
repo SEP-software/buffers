@@ -233,6 +233,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
   nwG.resize(7);
   fwG.resize(7);
   blockG[0] = 1;
+  std::cerr << "CHECK SIZE IN =" << n_w.size() << std::endl;
   for (auto i = 0; i < n_w.size(); i++) {
     // Number of samples used before this window
     int nused = ceilf(float(_f[i] - f_w[i]) / float(jw[i]));

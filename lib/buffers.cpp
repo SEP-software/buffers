@@ -319,6 +319,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < pwind.size(); i++) {
     std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
     long locChange;
+    std::cerr << "IN PUT WINDOW LOOOP " << i << std::endl;
     size_t pos =
         _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
 
