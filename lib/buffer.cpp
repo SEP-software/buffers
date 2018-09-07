@@ -208,7 +208,10 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
                                const bufferState state) {
   std::cerr << "in put window cpu " << std::endl;
   bufferState restore = _bufferState;
+  std::cerr << "in 2put window cpu " << std::endl;
+
   long long oldSize = _buf->getSize();
+  std::cerr << "in3 put window cpu " << std::endl;
 
   changeState(CPU_DECOMPRESSED);
   std::cerr << "AXIS 1 " << nwL[0] << "=nw0 fw0=" << fwL[0] << " " << nwG[0]
