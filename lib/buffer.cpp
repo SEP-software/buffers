@@ -242,12 +242,12 @@ size_t buffer::localWindow(const std::vector<int> &nw,
   size_t i = 0;
   for (i = 0; i < n_w.size(); i++) {
     // Number of samples used before this window
-    int nused = ceilf(float(_f[i]) / float(jw[i]));
-
+    int nusedBuf = ceilf(float(_f[i] - fw[i]) / float(jw[i]));
+    int nusedGlobal = ceilf(float(_f[i]) / float(jw[i]));
     std::cerr << "what is the p olem _f=" << _f[i] << " fw=" << f_w[i]
               << " nused=" << nused << std::endl;
     // First sample
-    f_w[i] = nused * jw[i] + fw[i] - _f[i];
+    f_w[i] = nusedBuf * jw[i] + fw[i] - _f[i];
 
     // Is the first sample outside this patch?
     assert(f_w[i] < _n[i]);
@@ -268,7 +268,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 
     n_w[i] = std::min(n_w[i], npos);
     nelem = nelem * npos;
-    fwG[i] = _f[i] - nused;
+    fwG[i] = _f[i] - nusedGlobal;
     assert(fwG[i] >= 0);
     assert(fwG[i] < nw[i]);
     blockG[i + 1] = blockG[i] * nw[i];
