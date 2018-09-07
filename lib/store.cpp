@@ -230,7 +230,8 @@ void storeFloat::getWindow(const std::vector<int> &nwL,
 
                            const std::vector<int> &nbG, void *bufIn) {
   float *buf = (float *)bufIn;
-
+  std::cerr << fwG[0] << " " << fwG[1] << " " << fwG[2] << " n-" << nwG[0]
+            << " " << nwG[1] << " " << nwG[2] << std::endl;
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
     size_t f6G = nbG[6] * (fwG[6] + i6L);
@@ -518,7 +519,6 @@ std::shared_ptr<storeBase> SEP::IO::returnStorage(const dataType state,
       return x;
     } break;
     case DATA_FLOAT: {
-      std::cerr << "in return storage " << n << std::endl;
       std::shared_ptr<storeFloat> y(new storeFloat(n));
       return y;
     } break;
