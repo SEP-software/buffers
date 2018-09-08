@@ -253,6 +253,9 @@ void storeFloat::getWindow(const std::vector<int> &nwL,
               for (size_t i0L = 0; i0L < nwL[0]; i0L++) {
                 //  std::cerr << "COPYING TO " << i0L + f1G << "  FROM "
                 //          << f1L + i0L * jwL[0] << std::endl;
+
+                if (244360800 == i0L + f1G)
+                  std::cerr << "IN WEIRD RANGE" << std::endl;
                 buf[i0L + f1G] = _buf[f1L + i0L * jwL[0]];
               }
             }
