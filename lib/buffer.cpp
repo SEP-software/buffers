@@ -256,9 +256,9 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 
     n_w[i] = std::min(n_w[i], npos);
     nelem = nelem * npos;
-    if (_f[i] > fw[i])
+    if (_f[i] < fw[i]) {
       fwG[i] = 0;
-    else {
+    } else {
       fwG[i] = (_f[i] - fw[i]) / jw[i];
     }
     assert(fwG[i] >= 0);
