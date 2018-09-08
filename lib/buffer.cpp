@@ -265,8 +265,8 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     assert(fwG[i] < nw[i]);
     blockG[i + 1] = blockG[i] * nw[i];
     std::cerr << "LOCAL WINDOW " << i << " fw=" << fw[i] << " f_w=" << f_w[i]
-              << " " << nusedGlobal << " fwG=" << fwG[i] << " _f=" << _f[i]
-              << std::endl;
+              << " nw=" << nw[i] << " n_w=" << n_w[i] << " fwG=" << fwG[i]
+              << " _f=" << _f[i] << std::endl;
   }
   return nelem;
 }
