@@ -21,8 +21,7 @@ std::shared_ptr<storeBase> noCompression::compressData(
   size_t n123 = getDataTypeSize(_typ);
   for (auto n : ns) n123 *= n;
   std::shared_ptr<storeByte> x(new storeByte(n123));
-  std::cerr << "222 change " << n123 << " " << getDataTypeSize(_typ)
-            << std::endl;
+
   memcpy(x->getPtr(), buf->getPtr(), n123);
   return x;
 }

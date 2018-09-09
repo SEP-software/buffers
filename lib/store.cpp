@@ -516,15 +516,12 @@ void storeComplex::putWindow(const std::vector<int> &nwL,
 
 std::shared_ptr<storeBase> SEP::IO::returnStorage(const dataType state,
                                                   const size_t n) {
-  std::cerr << "in return storage n=" << n << std::endl;
-  ;
   switch (state) {
     case DATA_INT: {
       std::shared_ptr<storeInt> x(new storeInt(n));
       return x;
     } break;
     case DATA_FLOAT: {
-      std::cerr << "allocating float" << std::endl;
       std::shared_ptr<storeFloat> y(new storeFloat(n));
       return y;
     } break;
@@ -537,7 +534,6 @@ std::shared_ptr<storeBase> SEP::IO::returnStorage(const dataType state,
       return a;
     } break;
     case DATA_BYTE: {
-      std::cerr << "allocating byte" << std::endl;
       std::shared_ptr<storeByte> b(new storeByte(n));
       return b;
     } break;

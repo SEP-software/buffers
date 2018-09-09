@@ -23,9 +23,11 @@ buffer::buffer(const std::string name, const std::vector<int> &n,
   _nameSet = true;
   setBlock();
 }
-buffer::buffer(const std::vector<int> &n, const std::vector<int> &f,
-               std::shared_ptr<compress> comp, const bufferState state) {
+buffer::buffer(const int ibuf, const std::vector<int> &n,
+               const std::vector<int> &f, std::shared_ptr<compress> comp,
+               const bufferState state) {
   _n = n;
+  _ibuf = ibuf;
   _n123 = 1;
   for (int i : _n) _n123 *= i;
   _f = f;
@@ -210,7 +212,10 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
   long long oldSize = _buf->getSize();
 
   changeState(CPU_DECOMPRESSED);
-
+  if (_ibuf == 240) {
+    std::cerr << " _f" << _f[2] << " nwl=" << nwL[2] << " fwL=" << fwL[2]
+              << " fwG" << fwG[2] << std::endl;
+  }
   _buf->putWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
 
   changeState(state);
