@@ -524,7 +524,7 @@ std::shared_ptr<storeBase> SEP::IO::returnStorage(const dataType state,
       return x;
     } break;
     case DATA_FLOAT: {
-      std::cer << "allocating float" << std::endl;
+      std::cerr << "allocating float" << std::endl;
       std::shared_ptr<storeFloat> y(new storeFloat(n));
       return y;
     } break;
