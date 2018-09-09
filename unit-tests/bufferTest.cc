@@ -19,7 +19,7 @@ TEST(writeBuffer, buffer) {
   for (auto i = 0; i < 20 * 20 * 20; i++) a[i] = i;
   std::shared_ptr<storeInt> store(new storeInt(20 * 20 * 20, (void *)a.data()));
 
-  buffer buf(n, f, comp, UNDEFINED);
+  buffer buf(0, n, f, comp, UNDEFINED);
 
   std::vector<int> nblock = buf.getBlock();
 
@@ -69,7 +69,7 @@ TEST(readWindowNoCompress, buffer) {
 
   std::shared_ptr<storeFloat> store = array();
   std::vector<int> n(3, 20), f(3, 0);
-  buffer buf(n, f, comp, UNDEFINED);
+  buffer buf(0, n, f, comp, UNDEFINED);
   buf.putBufferCPU(store, CPU_DECOMPRESSED);
   buf.setName("/tmp/junk2");
   std::shared_ptr<storeBase> storeCompare = store->clone();
@@ -95,7 +95,7 @@ TEST(readWindowCompress, buffer) {
 
   std::shared_ptr<storeFloat> store = array();
   std::vector<int> n(3, 20), f(3, 0);
-  buffer buf(n, f, z, UNDEFINED);
+  buffer buf(0, n, f, z, UNDEFINED);
   buf.putBufferCPU(store, CPU_DECOMPRESSED);
   buf.setName("/tmp/junk2");
   std::shared_ptr<storeBase> storeCompare = store->clone();
@@ -127,7 +127,7 @@ TEST(localWindow, buffer) {
 
   std::vector<int> nbuf(7, 20), fbuf(7, 11);
 
-  buffer buf(nbuf, fbuf, comp, UNDEFINED);
+  buffer buf(0, nbuf, fbuf, comp, UNDEFINED);
 
   std::vector<int> nw(1, 100), jw(1, 1), fw(1, 0), ng, fg, blockG;
   std::vector<int> nl(1, 1), jl(1, 1), fl(1, 0);
