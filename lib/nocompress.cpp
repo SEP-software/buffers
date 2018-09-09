@@ -9,7 +9,8 @@ std::shared_ptr<storeBase> noCompression::decompressData(
   if (_typ == DATA_BYTE) return buf;
   size_t n123 = 1;
   for (auto n : ns) n123 *= n;
-  std::shared_ptr<storeBase> x = returnStorage(_typ, n123);
+  std::shared_ptr<storeBase> x =
+      returnStorage(_typ, n123 * getDataTypeSize(_typ));
   memcpy(x->getPtr(), buf->getPtr(), n123 * getDataTypeSize(_typ));
   return x;
 }
