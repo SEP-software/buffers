@@ -122,7 +122,7 @@ void buffers::createBuffers(const bufferState state) {
   for (int i = 0; i < b._ns.size(); i++) {
     std::cerr << " CREARTW BUF " << i << " " << b._fs[i][0] << " "
               << b._fs[i][1] << " " << b._fs[i][2] << std::endl;
-    _buffers.push_back(buffer(b._ns[i], b._fs[i], _compress, state));
+    _buffers.push_back(buffer(i, b._ns[i], b._fs[i], _compress, state));
   }
 
   _n123blocking = b._nblocking;
