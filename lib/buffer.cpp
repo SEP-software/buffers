@@ -212,9 +212,9 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
   long long oldSize = _buf->getSize();
 
   changeState(CPU_DECOMPRESSED);
-  if (_ibuf == 240) {
-    std::cerr << " _f" << _f[2] << " nwl=" << nwL[2] << " fwL=" << fwL[2]
-              << " fwG" << fwG[2] << std::endl;
+  if (_ibuf == 280) {
+    std::cerr << "  LOOKFOR _f" << _f[2] << " nwl=" << nwL[2]
+              << " fwL=" << fwL[2] << " fwG=" << fwG[2] << std::endl;
   }
   _buf->putWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
 
