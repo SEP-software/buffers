@@ -212,10 +212,7 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
   long long oldSize = _buf->getSize();
 
   changeState(CPU_DECOMPRESSED);
-  if (_ibuf == 280) {
-    std::cerr << "  LOOKFOR _f" << _f[2] << " nwl=" << nwL[2]
-              << " fwL=" << fwL[2] << " fwG=" << fwG[2] << std::endl;
-  }
+
   _buf->putWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
 
   changeState(state);
@@ -277,11 +274,6 @@ size_t buffer::localWindow(const std::vector<int> &nw,
     assert(fwG[i] >= 0);
     assert(fwG[i] < nw[i]);
     blockG[i + 1] = blockG[i] * nw[i];
-    if (_ibuf == 280) {
-      std::cerr << "LOCAL WINDOW " << i << " fw=" << fw[i] << " f_w=" << f_w[i]
-                << " nw=" << nw[i] << " n_w=" << n_w[i] << " fwG=" << fwG[i]
-                << " _f=" << _f[i] << std::endl;
-    }
   }
   return nelem;
 }

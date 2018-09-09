@@ -120,8 +120,6 @@ void buffers::createBuffers(const bufferState state) {
   blockParams b = _blocking->makeBlocks(ns);
 
   for (int i = 0; i < b._ns.size(); i++) {
-    std::cerr << " CREARTW BUF " << i << " " << b._fs[i][0] << " "
-              << b._fs[i][1] << " " << b._fs[i][2] << std::endl;
     _buffers.push_back(buffer(i, b._ns[i], b._fs[i], _compress, state));
   }
 
@@ -271,72 +269,56 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
-  // long change = tbb::parallel_reduce(
-  //  tbb::blocked_range<size_t>(0, pwind.size()), long(0),
-  // [&](const tbb::blocked_range<size_t> &r, long locChange) {
-  //      for (size_t i = r.begin(); i != r.end(); ++i) {
-  long locChange = 0;
-  for (int i = 0; i < pwind.size(); i++) {
-    size_t pos =
-        _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
+  long change = tbb::parallel_reduce(
+      tbb::blocked_range<size_t>(0, pwind.size()), long(0),
+      [&](const tbb::blocked_range<size_t> &r, long locChange) {
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
+                                                      nG, fG, blockG);
 
-    std::cerr << i << " " << pwind[i] << " WHAT IS FG " << fG[0] << " " << fG[1]
-              << " " << fG[2] << std::endl;
-    std::cerr << "WHAT IS NG " << nG[0] << " " << nG[1] << " " << nG[2]
-              << std::endl;
-    std::cerr << "WHAT IS FW " << f_w[0] << " " << f_w[1] << " " << f_w[2]
-              << std::endl;
-    std::cerr << "WHAT IS NW " << n_w[0] << " " << n_w[1] << " " << n_w[2]
-              << std::endl;
-    locChange += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
-                                                 buf, state);
-  }
-  //    return locChange;
-  // },
-  // [](long a, long b) { return a + b; });
+          locChange += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG,
+                                                       blockG, buf, state);
+        }
+        return locChange;
+      },
+      [](long a, long b) { return a + b; });
 }
 void buffers::changeState(const bufferState state) {
-  // long change = tbb::parallel_reduce(
-  //   tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
-  // [&](const tbb::blocked_range<size_t> &r, long locChange) {
-  // for (size_t i = r.begin(); i != r.end(); ++i) {
-  long locChange = 0;
-  for (int i = 0; i < _buffers.size(); i++) {
-    locChange += _buffers[i].changeState(state);
-  }
-  // return locChange;
-  // },
-  // [](long a, long b) { return a + b; });
+  long change = tbb::parallel_reduce(
+      tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
+      [&](const tbb::blocked_range<size_t> &r, long locChange) {
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          locChange += _buffers[i].changeState(state);
+        }
+        return locChange;
+      },
+      [](long a, long b) { return a + b; });
 }
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, const void *buf) {
   bufferState state = CPU_DECOMPRESSED;
   if (_defaultStateSet) state = _defState;
-  std::cerr << "befoe parsed windows" << std::endl;
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
-  std::cerr << "after parsed windows " << std::endl;
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
 
-  //  long change = tbb::parallel_reduce(
-  //    tbb::blocked_range<size_t>(0, pwind.size()), long(0),
-  //  [&](const tbb::blocked_range<size_t> &r, long locChange) {
-  //  for (size_t i = r.begin(); i != r.end(); ++i) {
-  for (auto i = 0; i < pwind.size(); i++) {
-    std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
-    long locChange;
-    size_t pos =
-        _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
+  long change = tbb::parallel_reduce(
+      tbb::blocked_range<size_t>(0, pwind.size()), long(0),
+      [&](const tbb::blocked_range<size_t> &r, long locChange) {
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
+          size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
+                                                      nG, fG, blockG);
 
-    locChange += _buffers[pwind[i]].putWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
-                                                 buf, state);
-  }
+          locChange += _buffers[pwind[i]].putWindowCPU(n_w, f_w, j_w, nG, fG,
+                                                       blockG, buf, state);
+        }
 
-  //  return locChange;
-  // },
-  // [](long a, long b) { return a + b; });
+        return locChange;
+      },
+      [](long a, long b) { return a + b; });
 }
 // buffers(std::string diretory, std::shared_ptr<compress> comp = nullptr,
 //      std::shared_ptr<blocking> block = nullptr);

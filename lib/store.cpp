@@ -230,8 +230,7 @@ void storeFloat::getWindow(const std::vector<int> &nwL,
 
                            const std::vector<int> &nbG, void *bufIn) {
   float *buf = (float *)bufIn;
-  std::cerr << fwG[0] << " " << fwG[1] << " " << fwG[2] << " n-" << nwG[0]
-            << " " << nwG[1] << " " << nwG[2] << std::endl;
+
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
     size_t f6G = nbG[6] * (fwG[6] + i6L);
@@ -251,11 +250,6 @@ void storeFloat::getWindow(const std::vector<int> &nwL,
               size_t f1L = f2L + nbL[1] * (fwL[1] + jwL[1] * i1L) + fwL[0];
               size_t f1G = nbG[1] * (fwG[1] + i1L) + f2G + fwG[0];
               for (size_t i0L = 0; i0L < nwL[0]; i0L++) {
-                //  std::cerr << "COPYING TO " << i0L + f1G << "  FROM "
-                //          << f1L + i0L * jwL[0] << std::endl;
-
-                if (244360800 == i0L + f1G)
-                  std::cerr << "IN WEIRD RANGE" << std::endl;
                 buf[i0L + f1G] = _buf[f1L + i0L * jwL[0]];
               }
             }
