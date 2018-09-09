@@ -1,6 +1,7 @@
 
 #include "nocompress.h"
 #include <cassert>
+#include <iostream>
 using namespace SEP::IO;
 
 std::shared_ptr<storeBase> noCompression::decompressData(
