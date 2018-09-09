@@ -122,32 +122,32 @@ TEST(readWindowCompress, buffer) {
   compare(zpars, .012, 3., 7.);
   */
 
+void createAxisTest(const int _f, const int _n, const int nw, const int fw,
+                    const int jw, const int f_w, const int fG, const int n) {
+  std::shared_ptr<noCompression> comp(new noCompression(DATA_INT));
+
+  std::vector<int> nbuf(7, _n), fbuf(7, _f);
+  buffer buf(0, nbuf, fbuf, comp, UNDEFINED);
+  std::vector<int> nwS(1, nw), fwS(1, fw), jwS(1, jw), f_wR(1), fGR(1), nR(1),
+      blockG(2), jl(1), ng(1);
+  buf.localWindow(nwS, fwS, jwS, nR, f_wR, jl, ng, fGR, blockG);
+  EXPECT_EQ(nR[0], n);
+  EXPECT_EQ(f_wR[0], f_w);
+  EXPECT_EQ(fGR[0], fG);
+}
+
 TEST(localWindow, buffer) {
   std::shared_ptr<noCompression> comp(new noCompression(DATA_INT));
 
-  std::vector<int> nbuf(7, 20), fbuf(7, 11);
+  //              _f,  _n,   nw,  fw,   jw,   f_w,   fG,   n
+  std::cerr << "test1" << std::endl;
+  createAxisTest(11, 20, 100, 0, 1, 0, 11, 20);
+  std::cerr << "test2" << std::endl;
 
-  buffer buf(0, nbuf, fbuf, comp, UNDEFINED);
+  createAxisTest(11, 20, 100, 0, 3, 1, 4, 7);
+  std::cerr << "test3" << std::endl;
 
-  std::vector<int> nw(1, 100), jw(1, 1), fw(1, 0), ng, fg, blockG;
-  std::vector<int> nl(1, 1), jl(1, 1), fl(1, 0);
-
-  buf.localWindow(nw, fw, jw, nl, fl, jl, ng, fg, blockG);
-
-  EXPECT_EQ(nl[0], 20);
-  EXPECT_EQ(fl[0], 0);
-
-  jw[0] = 3;
-  size_t ierr = buf.localWindow(nw, fw, jw, nl, fl, jl, ng, fg, blockG);
-
-  EXPECT_EQ(ierr, 7);
-  EXPECT_EQ(nl[0], 7);
-  EXPECT_EQ(fl[0], 1);
-
-  fw[0] = 32;
-  size_t ierr2 = buf.localWindow(nw, fw, jw, nl, fl, jl, ng, fg, blockG);
-
-  EXPECT_EQ(ierr2, 0);
+  createAxisTest(240, 60, 248, 248, 1, 8, 0, 52);
 }
 
 /*

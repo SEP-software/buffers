@@ -236,42 +236,52 @@ size_t buffer::localWindow(const std::vector<int> &nw,
   size_t i = 0;
   for (i = 0; i < n_w.size(); i++) {
     // Number of samples used before this window
-    int nusedBuf = ceilf(float(_f[i] - fw[i]) / float(jw[i]));
+    int nusedLocalBuf = ceilf(float(_f[i] - fw[i]) / float(jw[i]));
+    int nusedWindow = ceilf((float)_f[i] / (float)(jw[i]));
     int nusedGlobal = ceilf(float(_f[i]) / float(jw[i]));
 
+    int nbeforeBuffer = 0;
     // First sample
-    f_w[i] = nusedBuf * jw[i] + fw[i] - _f[i];
+    if (fw[i] > _f[i]) {  // The window starts after the buffer
+      f_w[i] = ceilf(float(fw[i] - _f[i]) / jw[i]) * jw[i];
+    } else {  // We just need to figure what sample we start at
 
+      f_w[i] =
+          ceilf(float(_f[i] - fw[i]) / float(jw[i])) * jw[i] + fw[i] - _f[i];
+      nbeforeBuffer = int(float(_f[i] - fw[i]) / float(jw[i]));
+    }
+
+    assert(nbeforeBuffer < nw[i]);
+
+    n_w[i] = std::min((int)(ceilf(float(_n[i] - f_w[i]) / float(jw[i]))),
+                      nw[i] - nbeforeBuffer);
     // Is the first sample outside this patch?
     assert(f_w[i] < _n[i]);
     // if (f_w[i] > _n[i]) return 0;
 
     assert(f_w[i] >= 0);
     // subtract off the points already used in previous cells
-    n_w[i] = nw[i] - nusedBuf;
+    // n_w[i] = nw[i] - nusedBuf;
 
     // If less 0 we are done
     assert(n_w[i] > 0);
     //    if (n_w[i] < 1) return 0;
     j_w[i] = jw[i];
 
-    // Calculate total number of points in this cell with this sampling
-
-    int npos = ceilf(float(_n[i] - f_w[i]) / float(jw[i]));
-
-    n_w[i] = std::min(n_w[i], npos);
-    nelem = nelem * npos;
+    nelem = nelem * n_w[i];
     if (_f[i] < fw[i]) {
       fwG[i] = 0;
     } else {
-      fwG[i] = (_f[i] - fw[i]) / jw[i];
+      fwG[i] = ceilf(float((_f[i] - fw[i])) / float(jw[i]));
     }
     assert(fwG[i] >= 0);
     assert(fwG[i] < nw[i]);
     blockG[i + 1] = blockG[i] * nw[i];
-    std::cerr << "LOCAL WINDOW " << i << " fw=" << fw[i] << " f_w=" << f_w[i]
-              << " nw=" << nw[i] << " n_w=" << n_w[i] << " fwG=" << fwG[i]
-              << " _f=" << _f[i] << std::endl;
+    if (_ibuf == 280) {
+      std::cerr << "LOCAL WINDOW " << i << " fw=" << fw[i] << " f_w=" << f_w[i]
+                << " nw=" << nw[i] << " n_w=" << n_w[i] << " fwG=" << fwG[i]
+                << " _f=" << _f[i] << std::endl;
+    }
   }
   return nelem;
 }
