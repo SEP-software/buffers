@@ -63,34 +63,25 @@ std::shared_ptr<storeBase> ZfpCompression::decompressData(
   zfp_stream* zfp = zfp_stream_open(NULL);
   std::cerr << "opened" << std::endl;
   zfp_field* field = zfp_field_alloc();
-  std::cerr << "allocated" << std::endl;
   bitstream* stream = stream_open(buf->getPtr(), buf->getSize());
-  std::cerr << "allocaxted" << std::endl;
 
   zfp_stream_set_bit_stream(zfp, stream);
-  std::cerr << "allocat0ed" << std::endl;
 
   zfp_stream_rewind(zfp);
-  std::cerr << "alloca1ted" << std::endl;
 
   assert(zfp_read_header(zfp, field, ZFP_HEADER_FULL));
   zfp_type type = _ztype;
   size_t typesize = zfp_type_size(type);
-  std::cerr << "alloc2ated" << std::endl;
 
   std::shared_ptr<storeBase> storeOut = returnStorage(_typ, n123);
 
   zfp_field_set_pointer(field, storeOut->getPtr());
-  std::cerr << "allo3cated" << std::endl;
 
   assert(zfp_decompress(zfp, field));
-  std::cerr << "all4ocated" << std::endl;
 
   zfp_field_free(field);
-  std::cerr << "a5llocated" << std::endl;
 
   zfp_stream_close(zfp);
-  std::cerr << "r3allocated" << std::endl;
 
   stream_close(stream);
   return storeOut;
@@ -127,15 +118,21 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
 
   switch (_meth) {
     case ZFP_ACCURACY:
-
+      std::cerr << "in method init accuracy " << std::endl;
       zfp_stream_set_accuracy(zfp, _tolerance);
       break;
     case ZFP_PRECISION:
+      std::cerr << "in method init precision " << std::endl;
+
       zfp_stream_set_precision(zfp, _precision);
       break;
     case ZFP_RATE:
+      std::cerr << "in method init rate " << std::endl;
 
       zfp_stream_set_rate(zfp, _rate, _ztype, ndim, 0);
+      break;
+    default:
+      std::cerr << "Unknown compression method" << std::endl;
       break;
   }
 
