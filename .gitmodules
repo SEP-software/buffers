@@ -1,9 +1,9 @@
 [submodule "external/hypercube"]
 	path = external/hypercube
-	url = http://zapad.Stanford.EDU/bob/hypercube.git
+	url = http://171.64.169.69/bob/hypercube.git
 [submodule "external/json"]
 	path = external/json
-	url = http://zapad.Stanford.EDU/bob/json.git
+	url = http://171.64.169.69/bob/json.git
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest.git
