@@ -127,7 +127,6 @@ long long buffer::writeBuffer(bool keepState) {
     restore = _bufferState;
     buf = _buf->clone();
   }
-  _buf->info("before write");
 
   changeState(CPU_COMPRESSED);
 
@@ -191,7 +190,6 @@ long long buffer::getWindowCPU(const std::vector<int> &nwL,
   std::shared_ptr<storeBase> bufT = _buf;
   long long oldSize = _buf->getSize();
   changeState(CPU_DECOMPRESSED);
-  _buf->info("GET WINDOW CPU");
   _buf->getWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
   if (restore == state) {
     _bufferState = restore;

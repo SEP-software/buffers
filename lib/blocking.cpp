@@ -5,9 +5,7 @@
 using namespace SEP::IO;
 blockParams blocking::makeBlocks(const std::vector<int> &nsz) {
   blockParams x;
-  std::cerr << "before block axis" << std::endl;
   x._axesBlock = blockAxis(nsz);
-  std::cerr << "after block axis" << std::endl;
 
   std::vector<int> n(7, 1), f(7, 0), axis(7, 0);
   f[6] = 0;
