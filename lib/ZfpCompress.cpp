@@ -124,7 +124,8 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
   }
 
   size_t bufsize = zfp_stream_maximum_size(zfp, field);
-  assert(bufsize);
+
+  std::cerr << "BUFSIZE " << bufsize << std::endl;
   void* buffer = malloc(bufsize);
   assert(buffer);
 
