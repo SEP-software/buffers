@@ -7,7 +7,7 @@
 namespace SEP {
 namespace IO {
 
-enum zfpMethod { ZFP_ACCURACY, ZFP_TOLERANCE, ZFP_PRECISION, ZFP_UNDEFINED };
+enum zfpMethod { ZFP_ACCURACY, ZFP_RATE, ZFP_PRECISION, ZFP_UNDEFINED };
 
 class ZfpParams {
  public:
