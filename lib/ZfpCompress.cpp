@@ -12,7 +12,6 @@ ZfpCompression::ZfpCompression(const SEP::dataType typ, const ZfpParams pars) {
   _typ = typ;
 
   setGlobalZfp();
-  p
 }
 ZfpCompression::ZfpCompression(const Json::Value& des) {
   _rate = des["rate"].asFloat();
@@ -163,12 +162,12 @@ Json::Value ZfpCompression::getJsonDescription() {
 }
 std::string ZfpCompression::methodToString() {
   if (_meth == ZFP_ACCURACY) return "ACCURACY";
-  if (_meth == ZFP_TOLERANCE) return "TOLERANCE";
+  if (_meth == ZFP_RATE) return "RATE";
   if (_meth == ZFP_PRECISION) return "PRECISION";
   return "Unknown";
 }
 void ZfpCompression::stringToMethod(const std::string& meth) {
   if (meth == "ACCURACY") ZFP_ACCURACY;
-  if (meth == "TOLERANCE") ZFP_TOLERANCE;
+  if (meth == "RATE") ZFP_RATE;
   if (meth == "PRECISION") ZFP_PRECISION;
 }
