@@ -280,6 +280,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   // [&](const tbb::blocked_range<size_t> &r, long locChange) {
   // for (size_t i = r.begin(); i != r.end(); ++i) {
   for (size_t i = 0; i < pwind.size(); i++) {
+    std::cerr << "GETTING WINDOW " << i << std::endl;
     size_t pos =
         _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
 
