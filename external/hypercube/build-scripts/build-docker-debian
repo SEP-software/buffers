@@ -1,0 +1,1 @@
+docker build -t rgc007/hypercube-debian -f ./dockers/Dockerfile.debian dockers

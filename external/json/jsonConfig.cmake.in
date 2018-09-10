@@ -1,0 +1,15 @@
+# - Config file for the FooBar package
+# It defines the following variables
+
+@PACKAGE_INIT@
+
+  INCLUDE(${CMAKE_CURRENT_LIST_DIR}/jsonExports.cmake)
+
+
+
+set_and_check(json_DIRNAME_include "@PACKAGE_json_DIRNAME_include@")
+
+set_and_check(json_DIRNAME_lib "@PACKAGE_json_DIRNAME_lib@")
+set_and_check(json_DIRNAME_cmake "@PACKAGE_json_DIRNAME_cmake@")
+
+
