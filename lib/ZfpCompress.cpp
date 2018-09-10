@@ -12,6 +12,7 @@ ZfpCompression::ZfpCompression(const SEP::dataType typ, const ZfpParams pars) {
   _typ = typ;
 
   setGlobalZfp();
+  p
 }
 ZfpCompression::ZfpCompression(const Json::Value& des) {
   _rate = des["rate"].asFloat();
@@ -110,14 +111,14 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
   }
 
   switch (_meth) {
-    case ZFP_TOLERANCE:
+    case ZFP_ACCURACY:
 
       zfp_stream_set_accuracy(zfp, _tolerance);
       break;
     case ZFP_PRECISION:
       zfp_stream_set_precision(zfp, _precision);
       break;
-    case ZFP_ACCURACY:
+    case ZFP_RATE:
 
       zfp_stream_set_rate(zfp, _rate, _ztype, ndim, 0);
       break;
