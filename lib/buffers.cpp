@@ -270,7 +270,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
   int locChange = 0;
-   long change = tbb::parallel_reduce(
+  //  long change = tbb::parallel_reduce(
   //   tbb::blocked_range<size_t>(0, pwind.size()), long(0),
   //  [&](const tbb::blocked_range<size_t> &r, long locChange) {
   //   for (size_t i = r.begin(); i != r.end(); ++i) {
@@ -281,9 +281,9 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
     locChange += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
                                                  buf, state);
   }
-   // return locChange;
-   //  },
-   //  [](long a, long b) { return a + b; });
+  // return locChange;
+  //  },
+  //  [](long a, long b) { return a + b; });
 }
 void buffers::changeState(const bufferState state) {
   long change = tbb::parallel_reduce(
