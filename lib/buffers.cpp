@@ -270,8 +270,8 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
   for (int i = 0; i < pwind.size(); i++) {
-    std::cerr << " in get window changestate " < i << " " << pwind[i]
-                                                   << std::endl;
+    std::cerr << " in get window changestate " << i << " " << pwind[i]
+              << std::endl;
     _buffers[pwind[i]].changeState(CPU_COMPRESSED);
   }
 
