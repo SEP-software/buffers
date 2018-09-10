@@ -54,7 +54,7 @@ TEST(testAccuracyFloat, zfpCompress) {
   compare(zpars, .012, 3., 7.);
 
   zpars = ZfpParams();
-  zpars._meth = ZFP_TOLERANCE;
+  zpars._meth = ZFP_RATE;
   compare(zpars, .012, 3., 7.);
 
   zpars = ZfpParams();
