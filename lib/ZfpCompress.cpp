@@ -89,6 +89,7 @@ std::shared_ptr<storeBase> ZfpCompression::decompressData(
 
 std::shared_ptr<storeBase> ZfpCompression::compressData(
     const std::vector<int> ns, const std::shared_ptr<storeBase> buf) {
+  std::cerr << "IN compress data " << buf->getSize() << std::endl;
   if (_typ == DATA_BYTE) return buf;
 
   int ndim = 0;
@@ -113,12 +114,13 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
       break;
     case 3:
       zfp_field_set_size_3d(field, ns[0], ns[1], ns[2]);
+      std::cerr << "saw three d" << std::endl;
       break;
   }
 
   switch (_meth) {
     case ZFP_ACCURACY:
-      std::cerr << "in method init accuracy " << std::endl;
+      std::cerr << "in method init accuracy " << _tolerance << std::endl;
       zfp_stream_set_accuracy(zfp, _tolerance);
       break;
     case ZFP_PRECISION:
@@ -137,7 +139,7 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
   }
 
   size_t bufsize = zfp_stream_maximum_size(zfp, field);
-
+  assert(bufsize > 0);
   std::cerr << "BUFSIZE " << bufsize << std::endl;
   void* buffer = malloc(bufsize);
   assert(buffer);
