@@ -21,6 +21,7 @@ ZfpCompression::ZfpCompression(const Json::Value& des) {
   setDataType(toElementType(des["dataType"].asString()));
 
   stringToMethod(des["method"].asString());
+  setGlobalZfp();
 }
 
 void ZfpCompression::setGlobalZfp() {
