@@ -64,7 +64,7 @@ std::shared_ptr<storeFloat> array() {
 }
 TEST(readWindowNoCompress, buffer) {
   ZfpParams zpars = ZfpParams();
-  zpars._meth = ZFP_TOLERANCE;
+  zpars._meth = ZFP_RATE;
   std::shared_ptr<noCompression> comp(new noCompression(DATA_FLOAT));
 
   std::shared_ptr<storeFloat> store = array();
@@ -90,7 +90,7 @@ TEST(readWindowNoCompress, buffer) {
 
 TEST(readWindowCompress, buffer) {
   ZfpParams zpars = ZfpParams();
-  zpars._meth = ZFP_TOLERANCE;
+  zpars._meth = ZFP_RATE;
   std::shared_ptr<ZfpCompression> z(new ZfpCompression(DATA_FLOAT, zpars));
 
   std::shared_ptr<storeFloat> store = array();
