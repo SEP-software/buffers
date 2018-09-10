@@ -273,6 +273,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
     _buffers[pwind[i]].changeState(CPU_COMPRESSED);
   }
 
+  std::cerr << "finished change state " << std::endl;
   int locChange = 0;
   long change = tbb::parallel_reduce(
       tbb::blocked_range<size_t>(0, pwind.size()), long(0),
