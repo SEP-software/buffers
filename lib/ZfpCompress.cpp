@@ -1,4 +1,4 @@
-#include "Zfpcompress.h"
+#include "ZfpCompress.h"
 #include <cassert>
 #include <iostream>
 #include "ioTypes.h"
