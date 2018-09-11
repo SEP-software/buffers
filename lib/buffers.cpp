@@ -334,6 +334,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         return locChange;
       },
       [](long a, long b) { return a + b; });
+  std::cerr << "about to uodate " << change << std::endl;
   updateMemory(change);
 }
 // buffers(std::string diretory, std::shared_ptr<compress> comp = nullptr,
