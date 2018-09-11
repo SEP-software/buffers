@@ -153,14 +153,15 @@ void buffers::updateMemory(const long change2) {
       //  [&](const tbb::blocked_range<size_t> &r, long locChange) {
       //  for (size_t i = r.begin(); i != r.end(); ++i) {
       for (auto i = 0; i < a->_compress.size(); i++) {
-        std::cerr << "COMPRESSING " << a->_compress[i] << " " << locChange
-                  << std::endl;
+        std::cerr << change << "COMPRESSING " << a->_compress[i] << " "
+                  << locChange << std::endl;
         locChange += _buffers[a->_compress[i]].changeState(CPU_COMPRESSED);
       }
       //  return locChange;
       //  },
       //  [](long a, long b) { return a + b; });
       change += locChange;
+      std::cerr << "Sending change " << change << st::endl;
     }
   }
 }

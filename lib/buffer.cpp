@@ -322,10 +322,16 @@ long buffer::changeState(const bufferState state) {
         case ON_DISK:
           break;
         case CPU_DECOMPRESSED:
+          std::cerr << "see decompressed" << std::endl;
           _buf = _compress->compressData(_n, _buf);
           _bufferState = CPU_COMPRESSED;
         case CPU_COMPRESSED:
-          if (_modified) writeBuffer();
+        std:;
+          cerr << "in compressed " << std::endl;
+          if (_modified) {
+            std::cerr << "see modified " << std::endl;
+            writeBuffer();
+          }
           break;
         default:
           std::cerr << "Unknown conversion" << std::endl;
