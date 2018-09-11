@@ -161,7 +161,8 @@ long long buffer::getBufferCPU(std::shared_ptr<storeBase> buf,
   } else if (state != CPU_DECOMPRESSED) {
     changeState(state);
   }
-
+  std::cerr << "CHECK NEWSIZE OLDSIZE " << oldSize << " <-> " << _buf->getSize()
+            << std::endl;
   return _buf->getSize() - oldSize;
 }
 
