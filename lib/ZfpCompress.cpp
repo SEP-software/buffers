@@ -184,7 +184,7 @@ std::string ZfpCompression::methodToString() {
   return "Unknown";
 }
 void ZfpCompression::stringToMethod(const std::string& meth) {
-  if (meth == "ACCURACY") ZFP_ACCURACY;
-  if (meth == "RATE") ZFP_RATE;
-  if (meth == "PRECISION") ZFP_PRECISION;
+  if (meth == "ACCURACY") _meth = ZFP_ACCURACY;
+  if (meth == "RATE") _meth = ZFP_RATE;
+  if (meth == "PRECISION") _meth = ZFP_PRECISION;
 }
