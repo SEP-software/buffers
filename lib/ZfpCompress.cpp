@@ -118,17 +118,12 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
 
   switch (_meth) {
     case ZFP_ACCURACY:
-      std::cerr << "in method init accuracy " << _tolerance << std::endl;
       zfp_stream_set_accuracy(zfp, _tolerance);
       break;
     case ZFP_PRECISION:
-      std::cerr << "in method init precision " << std::endl;
-
       zfp_stream_set_precision(zfp, _precision);
       break;
     case ZFP_RATE:
-      std::cerr << "in method init rate " << std::endl;
-
       zfp_stream_set_rate(zfp, _rate, _ztype, ndim, 0);
       break;
     default:
@@ -138,7 +133,6 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
 
   size_t bufsize = zfp_stream_maximum_size(zfp, field);
   assert(bufsize > 0);
-  std::cerr << "BUFSIZE " << bufsize << std::endl;
   void* buffer = malloc(bufsize);
   assert(buffer);
 
