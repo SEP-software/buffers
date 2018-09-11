@@ -10,7 +10,8 @@ ZfpCompression::ZfpCompression(const SEP::dataType typ, const ZfpParams pars) {
   _tolerance = pars._tolerance;
   _precision = pars._precision;
   _typ = typ;
-
+  std::cerr << " rate " << _rate << " tolerance " << _tolerance << " precision "
+            << _precision << std::endl;
   setGlobalZfp();
 }
 ZfpCompression::ZfpCompression(const Json::Value& des) {
