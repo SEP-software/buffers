@@ -1,4 +1,5 @@
 #include "simpleMemoryLimit.h"
+#include <iostream>
 using namespace SEP::IO;
 
 simpleMemoryLimit::simpleMemoryLimit(const size_t cleanAt) {
@@ -14,6 +15,7 @@ void simpleMemoryLimit::updateRecentBuffers(const std::vector<int> &bufs) {
 std::shared_ptr<memoryReduce> simpleMemoryLimit::changeBufferState(
     const long memChange) {
   _curMem += memChange;
+  std::cerr << "Current usage " << _curMem << std::endl;
   std::vector<int> comp, disk;
   if (_curMem > _maxMem) {
     _compressed = std::min(_ibuf - 1, _compressed + 2);
