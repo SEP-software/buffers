@@ -15,7 +15,8 @@ void simpleMemoryLimit::updateRecentBuffers(const std::vector<int> &bufs) {
 std::shared_ptr<memoryReduce> simpleMemoryLimit::changeBufferState(
     const long memChange) {
   _curMem += memChange;
-  std::cerr << "Current usage " << _curMem / 1024 / 1024 << std::endl;
+  std::cerr << "Current usage " << _curMem / 1024 / 1024 << " " << _memChange
+            << std::endl;
   std::vector<int> comp, disk;
   if (_curMem > _maxMem) {
     _compressed = std::min(_ibuf - 1, _compressed + 2);
