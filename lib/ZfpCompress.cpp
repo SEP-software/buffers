@@ -59,10 +59,8 @@ std::shared_ptr<storeBase> ZfpCompression::decompressData(
     if (ns[i] > 1) ndim = i + 1;
     n123 *= ns[i];
   }
-  std::cerr << "BUF SIZE " << buf->getSize() << std::endl;
   assert(ndim <= 3);
   zfp_stream* zfp = zfp_stream_open(NULL);
-  std::cerr << "opened" << std::endl;
   zfp_field* field = zfp_field_alloc();
   bitstream* stream = stream_open(buf->getPtr(), buf->getSize());
 
@@ -90,7 +88,6 @@ std::shared_ptr<storeBase> ZfpCompression::decompressData(
 
 std::shared_ptr<storeBase> ZfpCompression::compressData(
     const std::vector<int> ns, const std::shared_ptr<storeBase> buf) {
-  std::cerr << "IN compress data " << buf->getSize() << std::endl;
   if (_typ == DATA_BYTE) return buf;
 
   int ndim = 0;

@@ -113,7 +113,6 @@ long long buffer::readBuffer() {
     in.close();
   }
   assert(_bufferState != UNDEFINED);
-  std::cerr << _ibuf << " after read " << _buf->getSize() << std::endl;
   return _buf->getSize() - oldSize;
 }
 

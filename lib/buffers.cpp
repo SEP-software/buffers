@@ -268,13 +268,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
-  for (int i = 0; i < pwind.size(); i++) {
-    std::cerr << " in get window changestate " << i << " " << pwind[i]
-              << std::endl;
-    _buffers[pwind[i]].changeState(CPU_COMPRESSED);
-  }
 
-  std::cerr << "finished change state " << std::endl;
   // int locChange = 0;
   long change = tbb::parallel_reduce(
       tbb::blocked_range<size_t>(0, pwind.size()), long(0),
@@ -283,7 +277,6 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
           // for (size_t i = 0; i < pwind.size(); i++) {
           std::vector<int> fG(7, 0), nG(7, 1), f_w(7, 0), n_w(7, 1), j_w(7, 1),
               blockG(7, 1);
-          std::cerr << "GETTING WINDOW " << i << " " << pwind[i] << std::endl;
           size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
                                                       nG, fG, blockG);
 
