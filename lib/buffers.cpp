@@ -161,7 +161,7 @@ void buffers::updateMemory(const long change2) {
       //  },
       //  [](long a, long b) { return a + b; });
       change += locChange;
-      std::cerr << "Sending change " << change << st::endl;
+      std::cerr << "Sending change " << change << std::endl;
     }
   }
 }
