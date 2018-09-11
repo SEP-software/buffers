@@ -1,7 +1,7 @@
 #include "simpleMemoryLimit.h"
 using namespace SEP::IO;
 
-simpleMemoryLimit::simpleMemoryLimit(const size_t cleanAt, const bool) {
+simpleMemoryLimit::simpleMemoryLimit(const size_t cleanAt) {
   _maxMem = cleanAt;
 }
 void simpleMemoryLimit::updateRecentBuffers(const std::vector<int> &bufs) {
