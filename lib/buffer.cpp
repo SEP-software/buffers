@@ -326,8 +326,7 @@ long buffer::changeState(const bufferState state) {
           _buf = _compress->compressData(_n, _buf);
           _bufferState = CPU_COMPRESSED;
         case CPU_COMPRESSED:
-        std:;
-          cerr << "in compressed " << std::endl;
+          std::cerr << "in compressed " << std::endl;
           if (_modified) {
             std::cerr << "see modified " << std::endl;
             writeBuffer();
