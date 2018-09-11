@@ -332,7 +332,7 @@ long buffer::changeState(const bufferState state) {
           assert(1 == 2);
       }
       _bufferState = ON_DISK;
-      _buf.zero();
+      _buf->zero();
       break;
 
     default:
