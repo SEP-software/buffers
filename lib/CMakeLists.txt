@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 2.8)
 project(buffers-lib)
 INCLUDE_DIRECTORIES(${ZFP_INCLUDE_DIR})
 set(SOURCES store.cpp buffer.cpp compress.cpp  blocking.cpp nocompress.cpp compressTypes.cpp
- memoryAll.cpp
+ memoryAll.cpp simpleMemoryLimit.cpp
  ZfpCompress.cpp
  buffers.cpp
 
 )
 set(INCLUDES store.h buffer.h compress.h compressTypes.h nocompress.h  memoryUsage.h  memoryAll.h
-ZfpCompress.h
+ZfpCompress.h  simpleMemoryLimit.h
 )
 
 

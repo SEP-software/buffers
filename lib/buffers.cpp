@@ -80,6 +80,7 @@ Json::Value buffers::getDescription() {
 
   des["blocking"] = _blocking->getJsonDescription();
   des["compression"] = _compress->getJsonDescription();
+
   return des;
 }
 buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
@@ -268,6 +269,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
+  _memory->updateRecentBuffers(pwind);
 
   // int locChange = 0;
   long change = tbb::parallel_reduce(
@@ -286,6 +288,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         return locChange;
       },
       [](long a, long b) { return a + b; });
+  updateMemory(change);
 }
 void buffers::changeState(const bufferState state) {
   long change = tbb::parallel_reduce(
@@ -297,6 +300,7 @@ void buffers::changeState(const bufferState state) {
         return locChange;
       },
       [](long a, long b) { return a + b; });
+  updateMemory(change);
 }
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, const void *buf) {
@@ -304,6 +308,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   if (_defaultStateSet) state = _defState;
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
+  _memory->updateRecentBuffers(pwind);
   for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
@@ -324,6 +329,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         return locChange;
       },
       [](long a, long b) { return a + b; });
+  updateMemory(change);
 }
 // buffers(std::string diretory, std::shared_ptr<compress> comp = nullptr,
 //      std::shared_ptr<blocking> block = nullptr);

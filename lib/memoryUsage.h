@@ -26,8 +26,8 @@ class memoryUsage {
       const long memChange) = 0;
   virtual void updateMemory(const long memChange) { curMem += memChange; }
 
- private:
-  long curMem;
+ protected:
+  long _curMem = 0;
 };
 
 }  // namespace IO
