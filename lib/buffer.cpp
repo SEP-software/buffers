@@ -175,8 +175,7 @@ long long buffer::putBufferCPU(std::shared_ptr<storeBase> buf,
   _buf->putData(buf);
 
   changeState(state);
-  std::cerr << "CHECK NEWSIZE OLDSIZE " << oldSize << " <-> " << _buf->getSize()
-            << std::endl;
+
   return _buf->getSize() - oldSize;
 }
 
@@ -344,5 +343,7 @@ long buffer::changeState(const bufferState state) {
 
   assert(state != UNDEFINED);
   _bufferState = state;
+  std::cerr << "CHECK NEWSIZE OLDSIZE " << oldSize << " <-> " << _buf->getSize()
+            << std::endl;
   return _buf->getSize() - oldSize;
 }
