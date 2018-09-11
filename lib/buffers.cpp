@@ -135,7 +135,7 @@ void buffers::updateMemory(const long change2) {
     if (a->_toDisk.size() == 0 && a->_compress.size() == 0) {
       done = true;
     } else {
-      long locChange = 0;
+      long locChange = 0, change = 0;
 
       // long change = tbb::parallel_reduce(
       //   tbb::blocked_range<size_t>(0, a->_toDisk.size()), long(0),
