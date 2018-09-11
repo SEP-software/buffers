@@ -112,7 +112,7 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
       break;
     case 3:
       zfp_field_set_size_3d(field, ns[0], ns[1], ns[2]);
-      std::cerr << "saw three d" << std::endl;
+
       break;
   }
 
