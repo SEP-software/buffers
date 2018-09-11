@@ -91,7 +91,7 @@ bool checkErrorBitsOut(std::ofstream *f) {
 }
 long long buffer::readBuffer() {
   long long oldSize = _buf->getSize();
-
+  _modified = false;
   /*Only need to do something if sitting on disk*/
   if (_bufferState == ON_DISK) {
     assert(_nameSet);
@@ -126,7 +126,8 @@ long long buffer::writeBuffer(bool keepState) {
   if (keepState) {
     restore = _bufferState;
     buf = _buf->clone();
-  }
+  } else
+    _buf->zero();
 
   changeState(CPU_COMPRESSED);
 
@@ -142,7 +143,6 @@ long long buffer::writeBuffer(bool keepState) {
     _buf = buf;
     _bufferState = restore;
   } else {
-    _buf->zero();
     _bufferState = ON_DISK;
   }
   return _buf->getSize() - oldSize;
@@ -206,7 +206,7 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
                                const std::vector<int> &blockG, const void *buf,
                                const bufferState state) {
   bufferState restore = _bufferState;
-
+  _modified = true;
   long long oldSize = _buf->getSize();
 
   changeState(CPU_DECOMPRESSED);
@@ -325,13 +325,14 @@ long buffer::changeState(const bufferState state) {
           _buf = _compress->compressData(_n, _buf);
           _bufferState = CPU_COMPRESSED;
         case CPU_COMPRESSED:
-          writeBuffer();
+          if (_modified) writeBuffer();
           break;
         default:
           std::cerr << "Unknown conversion" << std::endl;
           assert(1 == 2);
       }
       _bufferState = ON_DISK;
+      _buf.zero();
       break;
 
     default:

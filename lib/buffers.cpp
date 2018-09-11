@@ -139,7 +139,7 @@ void buffers::updateMemory(const long change2) {
           tbb::blocked_range<size_t>(0, a->_toDisk.size()), long(0),
           [&](const tbb::blocked_range<size_t> &r, long locChange) {
             for (size_t i = r.begin(); i != r.end(); ++i) {
-              std::vector<int> n_w(7), f_w(7), j_w(7);
+              std::cerr << "DUMPING TO DISK " << i << std::endl;
               locChange += _buffers[i].changeState(ON_DISK);
             }
             return locChange;
@@ -149,7 +149,7 @@ void buffers::updateMemory(const long change2) {
           tbb::blocked_range<size_t>(0, a->_compress.size()), long(0),
           [&](const tbb::blocked_range<size_t> &r, long locChange) {
             for (size_t i = r.begin(); i != r.end(); ++i) {
-              std::vector<int> n_w(7), f_w(7), j_w(7);
+              std::cerr << "COMPRESSING " << i << std::endl;
               locChange += _buffers[i].changeState(CPU_COMPRESSED);
             }
             return locChange;

@@ -19,12 +19,12 @@ class memoryReduce {
 
 class memoryUsage {
  public:
-  memoryUsage() { curMem = 0; }
+  memoryUsage() { _curMem = 0; }
 
   virtual void updateRecentBuffers(const std::vector<int> &bufs) = 0;
   virtual std::shared_ptr<memoryReduce> changeBufferState(
       const long memChange) = 0;
-  virtual void updateMemory(const long memChange) { curMem += memChange; }
+  virtual void updateMemory(const long memChange) { _curMem += memChange; }
 
  protected:
   long _curMem = 0;

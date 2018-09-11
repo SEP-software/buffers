@@ -67,7 +67,7 @@ class buffer {
   std::shared_ptr<storeBase> _buf;
   std::shared_ptr<compress> _compress;
   std::string _name;
-  bool _nameSet;
+  bool _nameSet, _modified = false;
   int _ibuf;
   long long _n123;
   bufferState _bufferState;

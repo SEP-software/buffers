@@ -1,7 +1,9 @@
 #include "simpleMemoryLimit.h"
 using namespace SEP::IO;
 
-simpleMemoryLimit(const size_t cleanAt) { _maxmMem = cleanAt; }
+simpleMemoryLimit::simpleMemoryLimit(const size_t cleanAt, const bool) {
+  _maxMem = cleanAt;
+}
 void simpleMemoryLimit::updateRecentBuffers(const std::vector<int> &bufs) {
   for (auto i = 0; i < bufs.size(); i++) {
     _recent[bufs[i]] = _ibuf;
@@ -36,6 +38,6 @@ std::shared_ptr<memoryReduce> simpleMemoryLimit::changeBufferState(
       }
     }
   }
-  std::shared_ptr<memoryReduce> x(new memoryReduce(a, b));
+  std::shared_ptr<memoryReduce> x(new memoryReduce(comp, disk));
   return x;
 }
