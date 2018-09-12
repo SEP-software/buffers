@@ -38,16 +38,12 @@ std::shared_ptr<compress> buffers::createDefaultCompress() {
   return c;
 }
 std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
-  std::cerr << "In memory usage " << std::endl;
   std::shared_ptr<memoryUsage> c(new memoryAll());
-  std::cerr << "In memor2y usage " << std::endl;
 
   return c;
 }
 buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
                  const Json::Value &des, std::shared_ptr<memoryUsage> mem) {
-  std::cerr << "in2 buffers create" << std::endl;
-
   _hyper = hyper->clone();
   if (des["blocking"].isNull()) {
     std::cerr << std::string(
@@ -68,9 +64,7 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
   }
 
   _memory = mem;
-  std::cerr << "in 2" << std::endl;
   if (!_memory) {
-    std::cerr << "before create default memory " << std::endl;
     _memory = createDefaultMemory();
   }
 
@@ -99,15 +93,11 @@ buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
   _blocking = block;
   _memory = mem;
   _hyper = hyper;
-  std::cerr << "in buffers create" << std::endl;
   if (_compress == nullptr) _compress = createDefaultCompress();
-  std::cerr << "in buffers create" << std::endl;
 
   if (_blocking == nullptr) _blocking = createDefaultBlocking();
-  std::cerr << "in buffers create" << std::endl;
 
   if (_memory == nullptr) _memory = createDefaultMemory();
-  std::cerr << "in buffers create" << std::endl;
 
   blockParams v = _blocking->makeBlocks(_hyper->getNs());
   createBuffers(UNDEFINED);
@@ -233,7 +223,6 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
     std::vector<bool> axisP(1, true);
     patches.push_back(axisP);
   }
-  std::cerr << "where 1" << std::endl;
   bufSearch.resize(ntot);
   int ib0, ib1, ib2, ib3, ib4, ib5, ib6, ic = 0;
   for (int i6 = 0; i6 < patches[6].size(); i6++) {
@@ -278,21 +267,15 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, void *buf) {
   bufferState state = CPU_DECOMPRESSED;
   if (_defaultStateSet) state = _defState;
-  std::cerr << "in get window " << std::endl;
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
-  std::cerr << "before update recent" << std::endl;
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
   for (auto i = 0; i < std::min(7, (int)nw.size()); i++) n[i] = nw[i];
   for (auto i = 0; i < std::min(7, (int)fw.size()); i++) f[i] = fw[i];
   for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
-  std::cerr << "before update recent 2" << pwind.size() << std::endl;
   assert(_memory);
-  std::cerr << "before update recent 3" << pwind.size() << std::endl;
 
   _memory->updateRecentBuffers(pwind);
-  for (int i = 0; i < pwind.size(); i++) {
-    std::cerr << i << " pwind " << pwind[i] << std::endl;
-  }
+
   // int locChange = 0;
   long change = tbb::parallel_reduce(
       tbb::blocked_range<size_t>(0, pwind.size()), long(0),
