@@ -25,7 +25,7 @@ std::shared_ptr<memoryReduce> simpleMemoryLimit::changeBufferState(
     for (auto i = _recent.begin(); i != _recent.end(); ++i) {
       std::cerr << "compare " << i->second << "> " << iold << " "
                 << " " << _compressed << " " << iold << std::endl;
-      if (i->second <= _compressed && i->second > iold) {
+      if (i->second <= _compressed && (int)i->second > iold) {
         std::cerr << "Passed first" << std::endl;
         if (_status[i->first] == 0) {
           comp.push_back(i->first);
@@ -38,7 +38,7 @@ std::shared_ptr<memoryReduce> simpleMemoryLimit::changeBufferState(
       int iold = _toDisk;
       _toDisk = std::min(_ibuf - 1, _toDisk + 2);
       for (auto i = _recent.begin(); i != _recent.end(); ++i) {
-        if (i->second <= _toDisk && i->second > iold) {
+        if (i->second <= _toDisk && (int)i->second > iold) {
           if (_status[i->first] != 2) {
             disk.push_back(i->first);
             _status[i->first] = 2;
