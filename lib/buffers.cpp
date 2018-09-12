@@ -131,39 +131,29 @@ void buffers::updateMemory(const long change2) {
   bool done = false;
   long change = change2;
   while (!done) {
-    std::cerr << "in updateMemor " << change << std::endl;
     std::shared_ptr<memoryReduce> a = _memory->changeBufferState(change);
     if (a->_toDisk.size() == 0 && a->_compress.size() == 0) {
       done = true;
     } else {
-      long locChange = 0;
-      change = 0;
-
-      // long change = tbb::parallel_reduce(
-      //   tbb::blocked_range<size_t>(0, a->_toDisk.size()), long(0),
-      // [&](const tbb::blocked_range<size_t> &r, long locChange) {
-      // for (size_t i = r.begin(); i != r.end(); ++i) {
-      for (auto i = 0; i < a->_toDisk.size(); i++) {
-        std::cerr << "DUMPING TO DISK " << a->_toDisk[i] << std::endl;
-        locChange += _buffers[a->_toDisk[i]].changeState(ON_DISK);
-      }
-      //      return locChange;
-      //  },
-      //  [](long a, long b) { return a + b; });
-      // change += tbb::parallel_reduce(
-      //  tbb::blocked_range<size_t>(0, a->_compress.size()), long(0),
-      //  [&](const tbb::blocked_range<size_t> &r, long locChange) {
-      //  for (size_t i = r.begin(); i != r.end(); ++i) {
-      for (auto i = 0; i < a->_compress.size(); i++) {
-        std::cerr << change << "COMPRESSING " << a->_compress[i] << " "
-                  << locChange << std::endl;
-        locChange += _buffers[a->_compress[i]].changeState(CPU_COMPRESSED);
-      }
-      //  return locChange;
-      //  },
-      //  [](long a, long b) { return a + b; });
-      change += locChange;
-      std::cerr << "Sending change " << change << std::endl;
+      long change = tbb::parallel_reduce(
+          tbb::blocked_range<size_t>(0, a->_toDisk.size()), long(0),
+          [&](const tbb::blocked_range<size_t> &r, long locChange) {
+            for (size_t i = r.begin(); i != r.end(); ++i) {
+              locChange += _buffers[a->_toDisk[i]].changeState(ON_DISK);
+            }
+            return locChange;
+          },
+          [](long a, long b) { return a + b; });
+      change += tbb::parallel_reduce(
+          tbb::blocked_range<size_t>(0, a->_compress.size()), long(0),
+          [&](const tbb::blocked_range<size_t> &r, long locChange) {
+            for (size_t i = r.begin(); i != r.end(); ++i) {
+              locChange +=
+                  _buffers[a->_compress[i]].changeState(CPU_COMPRESSED);
+            }
+            return locChange;
+          },
+          [](long a, long b) { return a + b; });
     }
   }
 }
@@ -338,7 +328,6 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         return locChange;
       },
       [](long a, long b) { return a + b; });
-  std::cerr << "about to uodate " << change << std::endl;
   updateMemory(change);
 }
 // buffers(std::string diretory, std::shared_ptr<compress> comp = nullptr,
