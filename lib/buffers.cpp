@@ -269,7 +269,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
   for (auto i = 0; i < std::min(7, (int)nw.size()); i++) {
-    std::cerr << "check " < nw.size() << " " << i << " " << nw[i] << std::endl;
+    std::cerr << "check " << nw.size() << " " << i << " " << nw[i] << std::endl;
     n[i] = nw[i];
   }
   for (auto i = 0; i < std::min(7, (int)fw.size()); i++) f[i] = fw[i];
