@@ -212,6 +212,10 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
 
   _buf->putWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
 
+  if (_ibuf == 280) {
+    std::cerr << " n " << _n[0] << " " << _n[1] << " " << _n[2] << std::endl;
+  }
+
   changeState(state);
 
   return _buf->getSize() - oldSize;
