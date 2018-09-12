@@ -24,8 +24,10 @@ std::shared_ptr<memoryReduce> simpleMemoryLimit::changeBufferState(
     std::cerr << "Looking for" << _compressed << " " << iold << std::endl;
     for (auto i = _recent.begin(); i != _recent.end(); ++i) {
       std::cerr << "compare " << i->second << " " << _status[i->first]
-                << std::endl;
+                << " "i->second >
+          iold << i->second <= _compressed << " " < < < < std::endl;
       if (i->second <= _compressed && i->second > iold) {
+        std::cerr << "Passed first" << std::endl;
         if (_status[i->first] == 0) {
           comp.push_back(i->first);
           _status[i->first] = 1;
