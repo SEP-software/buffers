@@ -323,6 +323,11 @@ long buffer::changeState(const bufferState state) {
           readBuffer();
           break;
         case CPU_DECOMPRESSED:
+          if (_ibuf == 280) {
+            float *ptr = (float *)_buf->getPtr();
+            std::cerr << " COMPRESSING "
+                      << " " << ptr[240 * 60 * 10 + 10] << std::endl;
+          }
           _buf = _compress->compressData(_n, _buf);
           break;
         case CPU_COMPRESSED:
