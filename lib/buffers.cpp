@@ -269,7 +269,9 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
   for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
   _memory->updateRecentBuffers(pwind);
-
+  for (int i = 0; i < pwind.size(); i++) {
+    std::cerr << i << " pwind " << pwind[i] << std::endl;
+  }
   // int locChange = 0;
   long change = tbb::parallel_reduce(
       tbb::blocked_range<size_t>(0, pwind.size()), long(0),
