@@ -268,7 +268,10 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   if (_defaultStateSet) state = _defState;
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
-  for (auto i = 0; i < std::min(7, (int)nw.size()); i++) n[i] = nw[i];
+  for (auto i = 0; i < std::min(7, (int)nw.size()); i++) {
+    std::cerr << "check " < nw.size() << " " << i << " " << nw[i] << std::endl;
+    n[i] = nw[i];
+  }
   for (auto i = 0; i < std::min(7, (int)fw.size()); i++) f[i] = fw[i];
   for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
   assert(_memory);
