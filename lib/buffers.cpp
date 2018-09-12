@@ -56,10 +56,8 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
 
     assert(1 == 2);
   }
-  std::cerr << "in2 abuffers create" << std::endl;
 
   _blocking.reset(new blocking(des["blocking"]));
-  std::cerr << "in2b buffers create" << std::endl;
 
   if (des["compression"].isNull()) {
     std::cerr << std::string(
@@ -68,23 +66,21 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
 
     assert(1 == 2);
   }
-  std::cerr << "in2v buffers create" << std::endl;
 
   _memory = mem;
-  std::cerr << "in 2d" << std::endl;
+  std::cerr << "in 2" << std::endl;
   if (!_memory) {
     std::cerr << "before create default memory " << std::endl;
     _memory = createDefaultMemory();
   }
-}
 
-SEP::IO::compressTypes ct = compressTypes(des["compression"]);
+  SEP::IO::compressTypes ct = compressTypes(des["compression"]);
 
-_compress = ct.getCompressionObj();
+  _compress = ct.getCompressionObj();
 
-_defaultStateSet = false;
-createBuffers(ON_DISK);
-setDirectory(dir, false);
+  _defaultStateSet = false;
+  createBuffers(ON_DISK);
+  setDirectory(dir, false);
 }
 Json::Value buffers::getDescription() {
   Json::Value des;
