@@ -38,7 +38,10 @@ std::shared_ptr<compress> buffers::createDefaultCompress() {
   return c;
 }
 std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
+  std::cerr << "In memory usage " << std::endl;
   std::shared_ptr<memoryUsage> c(new memoryAll());
+  std::cerr << "In memor2y usage " << std::endl;
+
   return c;
 }
 buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
@@ -92,10 +95,16 @@ buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
   _blocking = block;
   _memory = mem;
   _hyper = hyper;
-
+  std::cerr << "in buffers create" << std::endl;
   if (_compress == nullptr) _compress = createDefaultCompress();
+  std::cerr << "in buffers create" << std::endl;
+
   if (_blocking == nullptr) _blocking = createDefaultBlocking();
+  std::cerr << "in buffers create" << std::endl;
+
   if (_memory == nullptr) _memory = createDefaultMemory();
+  std::cerr << "in buffers create" << std::endl;
+
   blockParams v = _blocking->makeBlocks(_hyper->getNs());
   createBuffers(UNDEFINED);
   _defaultStateSet = false;
