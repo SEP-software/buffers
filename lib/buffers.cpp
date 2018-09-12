@@ -46,6 +46,8 @@ std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
 }
 buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
                  const Json::Value &des, std::shared_ptr<memoryUsage> mem) {
+  std::cerr << "in2 buffers create" << std::endl;
+
   _hyper = hyper->clone();
   if (des["blocking"].isNull()) {
     std::cerr << std::string(
