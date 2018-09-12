@@ -214,6 +214,8 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
 
   if (_ibuf == 280) {
     std::cerr << " n " << _n[0] << " " << _n[1] << " " << _n[2] << std::endl;
+    float *ptr = _buf->getPtr();
+    std::cerr << " in put window " << ptr[240 * 10 + 5] << std::endl;
   }
 
   changeState(state);
