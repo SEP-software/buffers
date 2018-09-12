@@ -289,6 +289,8 @@ long buffer::changeState(const bufferState state) {
           _buf = _compress->decompressData(_n, _buf);
           break;
         case CPU_DECOMPRESSED:
+          std::cerr << "already decompressed" << std::endl;
+
           break;
         case UNDEFINED:
           std::cerr << "creating new storage" << std::endl;
