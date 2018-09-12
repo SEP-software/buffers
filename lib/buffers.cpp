@@ -269,9 +269,9 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::cerr << "before update recent" << std::endl;
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
-  for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
-  for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
-  for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
+  for (auto i = 0; i < std::min(7, (int)nw.size()); i++) n[i] = nw[i];
+  for (auto i = 0; i < std::min(7, (int)fw.size()); i++) f[i] = fw[i];
+  for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
   _memory->updateRecentBuffers(pwind);
   for (int i = 0; i < pwind.size(); i++) {
     std::cerr << i << " pwind " << pwind[i] << std::endl;
