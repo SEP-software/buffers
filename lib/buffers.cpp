@@ -304,15 +304,18 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   updateMemory(change);
 }
 void buffers::changeState(const bufferState state) {
-  long change = tbb::parallel_reduce(
-      tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
-      [&](const tbb::blocked_range<size_t> &r, long locChange) {
-        for (size_t i = r.begin(); i != r.end(); ++i) {
-          locChange += _buffers[i].changeState(state);
-        }
-        return locChange;
-      },
-      [](long a, long b) { return a + b; });
+  // long change = tbb::parallel_reduce(
+  //   tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
+  //  [&](const tbb::blocked_range<size_t> &r, long locChange) {
+  //   for (size_t i = r.begin(); i != r.end(); ++i) {
+  long change = 0;
+  for (auto i = 0; i < _buffers.size(); i++) {
+    locChange += _buffers[i].changeState(state);
+  }
+  // }
+  // return locChange;
+  // },
+  // [](long a, long b) { return a + b; });
   updateMemory(change);
 }
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,

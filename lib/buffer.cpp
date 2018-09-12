@@ -342,15 +342,23 @@ long buffer::changeState(const bufferState state) {
       break;
 
     case ON_DISK:
-
+      std::cerr << _ibuf << " IN ON DISK " << std::endl;
       switch (_bufferState) {
         case ON_DISK:
+          std::cerr << _ibuf << " ALREADY ON DISK " << std::endl;
+
           break;
         case CPU_DECOMPRESSED:
+          std::cerr << _ibuf << " COMPRESSED " << std::endl;
+
           _buf = _compress->compressData(_n, _buf);
+          std::cerr << _ibuf << " DECOMPRESSED " << std::endl;
+
           _bufferState = CPU_COMPRESSED;
         case CPU_COMPRESSED:
           if (_modified) {
+            std::cerr << _ibuf << " WRITING " << std::endl;
+
             writeBuffer();
           }
           break;
