@@ -169,7 +169,7 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
   std::vector<int> first(1, 0);
   size_t ntot = 1;
   for (int i = ns.size(); i < nw.size(); i++) ns.push_back(1);
-  for (int i = 0; i < nw.size(); i++) {
+  for (int i = 0; i < std::min(7, nw.size()); i++) {
     bool fail = false;
     if (nw[i] < 1) {
       std::cerr << "axis[" << i << "] n < 1" << std::endl;
@@ -189,6 +189,8 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
                 << std::endl;
       fail = true;
     }
+    std::cerr << "wherea 1" << std::endl;
+
     if (fail) assert(1 == 2);
     std::vector<bool> axisP(_axisBlocking[i].size(), false);
     size_t ip = 0;
@@ -218,7 +220,7 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
     std::vector<bool> axisP(1, true);
     patches.push_back(axisP);
   }
-
+  std::cerr << "where 1" << std::endl;
   bufSearch.resize(ntot);
   int ib0, ib1, ib2, ib3, ib4, ib5, ib6, ic = 0;
   for (int i6 = 0; i6 < patches[6].size(); i6++) {
@@ -312,9 +314,9 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
   _memory->updateRecentBuffers(pwind);
-  for (auto i = 0; i < nw.size(); i++) n[i] = nw[i];
-  for (auto i = 0; i < fw.size(); i++) f[i] = fw[i];
-  for (auto i = 0; i < jw.size(); i++) j[i] = jw[i];
+  for (auto i = 0; i < std::min(7, nw.size()); i++) n[i] = nw[i];
+  for (auto i = 0; i < std::min(7, fw.size()); i++) f[i] = fw[i];
+  for (auto i = 0; i < std::min(7, jw.size()); i++) j[i] = jw[i];
   // int locChange = 0;
   long change = tbb::parallel_reduce(
       tbb::blocked_range<size_t>(0, pwind.size()), long(0),
