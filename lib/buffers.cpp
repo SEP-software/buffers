@@ -67,23 +67,24 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
               << std::endl;
 
     assert(1 == 2);
-    std::cerr << "in2v buffers create" << std::endl;
-
-    _memory = mem;
-    std::cerr << "in 2d" << std::endl;
-    if (!_memory) {
-      std::cerr << "before create default memory " << std::endl;
-      _memory = createDefaultMemory();
-    }
   }
+  std::cerr << "in2v buffers create" << std::endl;
 
-  SEP::IO::compressTypes ct = compressTypes(des["compression"]);
+  _memory = mem;
+  std::cerr << "in 2d" << std::endl;
+  if (!_memory) {
+    std::cerr << "before create default memory " << std::endl;
+    _memory = createDefaultMemory();
+  }
+}
 
-  _compress = ct.getCompressionObj();
+SEP::IO::compressTypes ct = compressTypes(des["compression"]);
 
-  _defaultStateSet = false;
-  createBuffers(ON_DISK);
-  setDirectory(dir, false);
+_compress = ct.getCompressionObj();
+
+_defaultStateSet = false;
+createBuffers(ON_DISK);
+setDirectory(dir, false);
 }
 Json::Value buffers::getDescription() {
   Json::Value des;
