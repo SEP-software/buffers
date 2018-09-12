@@ -67,7 +67,9 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
     assert(1 == 2);
 
     _memory = mem;
+    std::cerr << "in 2" << std::endl;
     if (!_memory) {
+      std::cerr << "before create default memory " << std::endl;
       _memory = createDefaultMemory();
     }
   }
