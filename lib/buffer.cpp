@@ -119,6 +119,7 @@ long long buffer::readBuffer() {
 long long buffer::writeBuffer(bool keepState) {
   long long oldSize = _buf->getSize();
 
+  if (_ibuf == 280) std::cerr << "in write buffer " << std::endl;
   std::shared_ptr<storeBase> buf;
   bufferState restore;
   assert(_bufferState != UNDEFINED);
@@ -129,12 +130,13 @@ long long buffer::writeBuffer(bool keepState) {
   }
 
   changeState(CPU_COMPRESSED);
-
+  if (_ibuf == 280) std::cerr << "data on disk " << std::endl;
   assert(_nameSet);
   std::ofstream out(_name, std::ofstream::binary);
   assert(!checkErrorBitsOut(&out));
   out.write(_buf->getPtr(), _buf->getSize());
   assert(!checkErrorBitsOut(&out));
+  if (_ibuf == 280) std::cerr << "write successful " << std::endl;
 
   out.close();
 
