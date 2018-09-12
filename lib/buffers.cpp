@@ -310,7 +310,7 @@ void buffers::changeState(const bufferState state) {
   //   for (size_t i = r.begin(); i != r.end(); ++i) {
   long change = 0;
   for (auto i = 0; i < _buffers.size(); i++) {
-    locChange += _buffers[i].changeState(state);
+    change += _buffers[i].changeState(state);
   }
   // }
   // return locChange;
