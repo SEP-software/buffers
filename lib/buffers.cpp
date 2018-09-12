@@ -143,7 +143,7 @@ void buffers::updateMemory(const long change2) {
       //   tbb::blocked_range<size_t>(0, a->_toDisk.size()), long(0),
       // [&](const tbb::blocked_range<size_t> &r, long locChange) {
       // for (size_t i = r.begin(); i != r.end(); ++i) {
-      for (size_t i = 0; i < a->_toDisk.size(); a++) {
+      for (size_t i = 0; i < a->_toDisk.size(); i++) {
         change += _buffers[a->_toDisk[i]].changeState(ON_DISK);
       }
       // return locChange;
