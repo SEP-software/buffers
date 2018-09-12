@@ -135,6 +135,8 @@ void buffers::updateMemory(const long change2) {
   long change = change2;
   while (!done) {
     std::shared_ptr<memoryReduce> a = _memory->changeBufferState(change);
+    std::cerr << " buf size " << _compress.size() << " " << _toDisk.size()
+              << std::endl;
     if (a->_toDisk.size() == 0 && a->_compress.size() == 0) {
       done = true;
     } else {
@@ -144,7 +146,7 @@ void buffers::updateMemory(const long change2) {
       // [&](const tbb::blocked_range<size_t> &r, long locChange) {
       // for (size_t i = r.begin(); i != r.end(); ++i) {
       for (size_t i = 0; i < a->_toDisk.size(); i++) {
-        std::cerr << "putting to disk " << i << std::endl;
+        std::cerr << "putting to disk " << a->_toDisk[i] << std::endl;
         change += _buffers[a->_toDisk[i]].changeState(ON_DISK);
       }
       // return locChange;
@@ -152,104 +154,106 @@ void buffers::updateMemory(const long change2) {
       // [](long a, long b) { return a + b; });
       std::cerr << "total compressed blocks " << a->_compress.size()
                 << std::endl;
-      change += tbb::parallel_reduce(
-          tbb::blocked_range<size_t>(0, a->_compress.size()), long(0),
-          [&](const tbb::blocked_range<size_t> &r, long locChange) {
-            for (size_t i = r.begin(); i != r.end(); ++i) {
-              locChange +=
-                  _buffers[a->_compress[i]].changeState(CPU_COMPRESSED);
-            }
-            return locChange;
-          },
-          [](long a, long b) { return a + b; });
-    }
-  }
-}
-std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
-                                        const std ::vector<int> &fw,
-                                        const std::vector<int> &jw) {
-  bool all = true;
-  int nbig1 = 0;
-  std::vector<int> bufSearch;
-  std::vector<int> n1s;
-  std::vector<int> ns = _hyper->getNs();
-  std::vector<std::vector<bool>> patches;
-  std::vector<int> first(1, 0);
-  size_t ntot = 1;
-  for (int i = ns.size(); i < nw.size(); i++) ns.push_back(1);
-  for (int i = 0; i < std::min(7, (int)nw.size()); i++) {
-    bool fail = false;
-    if (nw[i] < 1) {
-      std::cerr << "axis[" << i << "] n < 1" << std::endl;
-      fail = true;
-    }
-    if (fw[i] < 0) {
-      std::cerr << "axis[" << i << "] f < 0" << std::endl;
-      fail = true;
-    }
-    if (jw[i] < 1) {
-      std::cerr << "axis[" << i << "] j < 1" << std::endl;
-      fail = true;
-    }
-    if (fw[i] + jw[i] * (nw[i] - 1) > ns[i] - 1) {
-      std::cerr << "axis[" << i << "] window out of range f=" << fw[i]
-                << " j=" << jw[i] << " n=" << nw[i] << " ns=" << ns[i]
-                << std::endl;
-      fail = true;
-    }
-
-    if (fail) assert(1 == 2);
-    std::vector<bool> axisP(_axisBlocking[i].size(), false);
-    size_t ip = 0;
-    int ibeg = 0;
-    int iend = _axisBlocking[i][0];
-    // Loop through all of window we are reading
-    for (int iax = 0, ib = fw[i]; iax < nw[i]; iax++, ib += jw[i]) {
-      // Go until we reach the patch on the axis containing the
-
-      while (ip < _axisBlocking[i].size() && (ib < ibeg || ib >= iend)) {
-        ibeg = ibeg + _axisBlocking[i][ip];
-        ip++;
-        if (ip < axisP.size()) iend = ibeg + _axisBlocking[i][ip];
+      // change += tbb::parallel_reduce(
+      //  tbb::blocked_range<size_t>(0, a->_compress.size()), long(0),
+      // [&](const tbb::blocked_range<size_t> &r, long locChange) {
+      // for (size_t i = r.begin(); i != r.end(); ++i) {
+      for (size_t i = 0; i < a->_compress.size(); i++) {
+        change += _buffers[a->_compress[i]].changeState(CPU_COMPRESSED);
       }
-      if (ip < axisP.size()) {
-        axisP[ip] = true;
+      //      return locChange;
+      //  },
+      //      [](long a, long b) {
+      // return a + b; });
+      // }
+    }
+  }
+  std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
+                                          const std ::vector<int> &fw,
+                                          const std::vector<int> &jw) {
+    bool all = true;
+    int nbig1 = 0;
+    std::vector<int> bufSearch;
+    std::vector<int> n1s;
+    std::vector<int> ns = _hyper->getNs();
+    std::vector<std::vector<bool>> patches;
+    std::vector<int> first(1, 0);
+    size_t ntot = 1;
+    for (int i = ns.size(); i < nw.size(); i++) ns.push_back(1);
+    for (int i = 0; i < std::min(7, (int)nw.size()); i++) {
+      bool fail = false;
+      if (nw[i] < 1) {
+        std::cerr << "axis[" << i << "] n < 1" << std::endl;
+        fail = true;
       }
+      if (fw[i] < 0) {
+        std::cerr << "axis[" << i << "] f < 0" << std::endl;
+        fail = true;
+      }
+      if (jw[i] < 1) {
+        std::cerr << "axis[" << i << "] j < 1" << std::endl;
+        fail = true;
+      }
+      if (fw[i] + jw[i] * (nw[i] - 1) > ns[i] - 1) {
+        std::cerr << "axis[" << i << "] window out of range f=" << fw[i]
+                  << " j=" << jw[i] << " n=" << nw[i] << " ns=" << ns[i]
+                  << std::endl;
+        fail = true;
+      }
+
+      if (fail) assert(1 == 2);
+      std::vector<bool> axisP(_axisBlocking[i].size(), false);
+      size_t ip = 0;
+      int ibeg = 0;
+      int iend = _axisBlocking[i][0];
+      // Loop through all of window we are reading
+      for (int iax = 0, ib = fw[i]; iax < nw[i]; iax++, ib += jw[i]) {
+        // Go until we reach the patch on the axis containing the
+
+        while (ip < _axisBlocking[i].size() && (ib < ibeg || ib >= iend)) {
+          ibeg = ibeg + _axisBlocking[i][ip];
+          ip++;
+          if (ip < axisP.size()) iend = ibeg + _axisBlocking[i][ip];
+        }
+        if (ip < axisP.size()) {
+          axisP[ip] = true;
+        }
+      }
+      int ic = 0;
+      for (size_t iax = 0; iax < axisP.size(); iax++) {
+        if (axisP[iax]) ic++;
+      }
+      ntot *= ic;
+      patches.push_back(axisP);
     }
-    int ic = 0;
-    for (size_t iax = 0; iax < axisP.size(); iax++) {
-      if (axisP[iax]) ic++;
+    for (int i = patches.size(); i < 7; i++) {
+      std::vector<bool> axisP(1, true);
+      patches.push_back(axisP);
     }
-    ntot *= ic;
-    patches.push_back(axisP);
-  }
-  for (int i = patches.size(); i < 7; i++) {
-    std::vector<bool> axisP(1, true);
-    patches.push_back(axisP);
-  }
-  bufSearch.resize(ntot);
-  int ib0, ib1, ib2, ib3, ib4, ib5, ib6, ic = 0;
-  for (int i6 = 0; i6 < patches[6].size(); i6++) {
-    if (patches[6][i6]) {
-      ib6 = i6 * _n123blocking[6];
-      for (int i5 = 0; i5 < patches[5].size(); i5++) {
-        if (patches[5][i5]) {
-          ib5 = ib6 + _n123blocking[5] * i5;
-          for (int i4 = 0; i4 < patches[4].size(); i4++) {
-            if (patches[4][i4]) {
-              ib4 = ib5 + _n123blocking[4] * i4;
-              for (int i3 = 0; i3 < patches[3].size(); i3++) {
-                if (patches[3][i3]) {
-                  ib3 = ib4 + _n123blocking[3] * i3;
-                  for (int i2 = 0; i2 < patches[2].size(); i2++) {
-                    if (patches[2][i2]) {
-                      ib2 = ib3 + _n123blocking[2] * i2;
-                      for (int i1 = 0; i1 < patches[1].size(); i1++) {
-                        if (patches[1][i1]) {
-                          ib1 = ib2 + _n123blocking[1] * i1;
-                          for (int i0 = 0; i0 < patches[0].size(); i0++) {
-                            if (patches[0][i0]) {
-                              bufSearch[ic++] = i0 + ib1;
+    bufSearch.resize(ntot);
+    int ib0, ib1, ib2, ib3, ib4, ib5, ib6, ic = 0;
+    for (int i6 = 0; i6 < patches[6].size(); i6++) {
+      if (patches[6][i6]) {
+        ib6 = i6 * _n123blocking[6];
+        for (int i5 = 0; i5 < patches[5].size(); i5++) {
+          if (patches[5][i5]) {
+            ib5 = ib6 + _n123blocking[5] * i5;
+            for (int i4 = 0; i4 < patches[4].size(); i4++) {
+              if (patches[4][i4]) {
+                ib4 = ib5 + _n123blocking[4] * i4;
+                for (int i3 = 0; i3 < patches[3].size(); i3++) {
+                  if (patches[3][i3]) {
+                    ib3 = ib4 + _n123blocking[3] * i3;
+                    for (int i2 = 0; i2 < patches[2].size(); i2++) {
+                      if (patches[2][i2]) {
+                        ib2 = ib3 + _n123blocking[2] * i2;
+                        for (int i1 = 0; i1 < patches[1].size(); i1++) {
+                          if (patches[1][i1]) {
+                            ib1 = ib2 + _n123blocking[1] * i1;
+                            for (int i0 = 0; i0 < patches[0].size(); i0++) {
+                              if (patches[0][i0]) {
+                                bufSearch[ic++] = i0 + ib1;
+                              }
                             }
                           }
                         }
@@ -263,90 +267,91 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
         }
       }
     }
+
+    return bufSearch;
   }
+  void buffers::getWindow(const std::vector<int> &nw,
+                          const std ::vector<int> &fw,
+                          const std::vector<int> &jw, void *buf) {
+    bufferState state = CPU_DECOMPRESSED;
+    if (_defaultStateSet) state = _defState;
+    std::vector<int> pwind = parsedWindows(nw, fw, jw);
+    std::vector<int> n(7, 1), f(7, 0), j(7, 1);
+    for (auto i = 0; i < std::min(7, (int)nw.size()); i++) n[i] = nw[i];
+    for (auto i = 0; i < std::min(7, (int)fw.size()); i++) f[i] = fw[i];
+    for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
+    assert(_memory);
 
-  return bufSearch;
-}
-void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
-                        const std::vector<int> &jw, void *buf) {
-  bufferState state = CPU_DECOMPRESSED;
-  if (_defaultStateSet) state = _defState;
-  std::vector<int> pwind = parsedWindows(nw, fw, jw);
-  std::vector<int> n(7, 1), f(7, 0), j(7, 1);
-  for (auto i = 0; i < std::min(7, (int)nw.size()); i++) n[i] = nw[i];
-  for (auto i = 0; i < std::min(7, (int)fw.size()); i++) f[i] = fw[i];
-  for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
-  assert(_memory);
+    _memory->updateRecentBuffers(pwind);
 
-  _memory->updateRecentBuffers(pwind);
+    // int locChange = 0;
+    long change = tbb::parallel_reduce(
+        tbb::blocked_range<size_t>(0, pwind.size()), long(0),
+        [&](const tbb::blocked_range<size_t> &r, long locChange) {
+          for (size_t i = r.begin(); i != r.end(); ++i) {
+            // for (size_t i = 0; i < pwind.size(); i++) {
+            std::vector<int> fG(7, 0), nG(7, 1), f_w(7, 0), n_w(7, 1),
+                j_w(7, 1), blockG(7, 1);
+            size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
+                                                        nG, fG, blockG);
 
-  // int locChange = 0;
-  long change = tbb::parallel_reduce(
-      tbb::blocked_range<size_t>(0, pwind.size()), long(0),
-      [&](const tbb::blocked_range<size_t> &r, long locChange) {
-        for (size_t i = r.begin(); i != r.end(); ++i) {
-          // for (size_t i = 0; i < pwind.size(); i++) {
-          std::vector<int> fG(7, 0), nG(7, 1), f_w(7, 0), n_w(7, 1), j_w(7, 1),
-              blockG(7, 1);
-          size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
-                                                      nG, fG, blockG);
-
-          locChange += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG,
-                                                       blockG, buf, state);
-        }
-        return locChange;
-      },
-      [](long a, long b) { return a + b; });
-  updateMemory(change);
-}
-void buffers::changeState(const bufferState state) {
-  long change = tbb::parallel_reduce(
-      tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
-      [&](const tbb::blocked_range<size_t> &r, long locChange) {
-        for (size_t i = r.begin(); i != r.end(); ++i) {
-          locChange += _buffers[i].changeState(state);
-        }
-        return locChange;
-      },
-      [](long a, long b) { return a + b; });
-  updateMemory(change);
-}
-void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
-                        const std::vector<int> &jw, const void *buf) {
-  bufferState state = CPU_DECOMPRESSED;
-  if (_defaultStateSet) state = _defState;
-  std::vector<int> pwind = parsedWindows(nw, fw, jw);
-  std::vector<int> n(7, 1), f(7, 0), j(7, 1);
-  _memory->updateRecentBuffers(pwind);
-  for (auto i = 0; i < std::min(7, (int)nw.size()); i++) n[i] = nw[i];
-  for (auto i = 0; i < std::min(7, (int)fw.size()); i++) f[i] = fw[i];
-  for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
-  // int locChange = 0;
-  // long change = tbb::parallel_reduce(
-  //   tbb::blocked_range<size_t>(0, pwind.size()), long(0),
-  // [&](const tbb::blocked_range<size_t> &r, long locChange) {
-  // for (size_t i = r.begin(); i != r.end(); ++i) {
-  // for (size_t i = 0; i < pwind.size(); i++) {
-  long change = 0;
-  for (auto i = 0; i < pwind.size(); i++) {
-    std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
-    size_t pos =
-        _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
-
-    change += _buffers[pwind[i]].putWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
-                                              buf, state);
+            locChange += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG,
+                                                         blockG, buf, state);
+          }
+          return locChange;
+        },
+        [](long a, long b) { return a + b; });
+    updateMemory(change);
   }
+  void buffers::changeState(const bufferState state) {
+    long change = tbb::parallel_reduce(
+        tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
+        [&](const tbb::blocked_range<size_t> &r, long locChange) {
+          for (size_t i = r.begin(); i != r.end(); ++i) {
+            locChange += _buffers[i].changeState(state);
+          }
+          return locChange;
+        },
+        [](long a, long b) { return a + b; });
+    updateMemory(change);
+  }
+  void buffers::putWindow(const std::vector<int> &nw,
+                          const std ::vector<int> &fw,
+                          const std::vector<int> &jw, const void *buf) {
+    bufferState state = CPU_DECOMPRESSED;
+    if (_defaultStateSet) state = _defState;
+    std::vector<int> pwind = parsedWindows(nw, fw, jw);
+    std::vector<int> n(7, 1), f(7, 0), j(7, 1);
+    _memory->updateRecentBuffers(pwind);
+    for (auto i = 0; i < std::min(7, (int)nw.size()); i++) n[i] = nw[i];
+    for (auto i = 0; i < std::min(7, (int)fw.size()); i++) f[i] = fw[i];
+    for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
+    // int locChange = 0;
+    // long change = tbb::parallel_reduce(
+    //   tbb::blocked_range<size_t>(0, pwind.size()), long(0),
+    // [&](const tbb::blocked_range<size_t> &r, long locChange) {
+    // for (size_t i = r.begin(); i != r.end(); ++i) {
+    // for (size_t i = 0; i < pwind.size(); i++) {
+    long change = 0;
+    for (auto i = 0; i < pwind.size(); i++) {
+      std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
+      size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG,
+                                                  fG, blockG);
 
-  // return locChange;
-  // },
-  // [](long a, long b) { return a + b; });
-  updateMemory(change);
-  std::cerr << " through put window " << std::endl;
-}
-// buffers(std::string diretory, std::shared_ptr<compress> comp = nullptr,
-//      std::shared_ptr<blocking> block = nullptr);
+      change += _buffers[pwind[i]].putWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
+                                                buf, state);
+    }
 
-// void readDescription();
-// void writeDescription();
-// void readBlocking();
-// void writeBlocking();
+    // return locChange;
+    // },
+    // [](long a, long b) { return a + b; });
+    updateMemory(change);
+    std::cerr << " through put window " << std::endl;
+  }
+  // buffers(std::string diretory, std::shared_ptr<compress> comp = nullptr,
+  //      std::shared_ptr<blocking> block = nullptr);
+
+  // void readDescription();
+  // void writeDescription();
+  // void readBlocking();
+  // void writeBlocking();
