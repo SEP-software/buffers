@@ -285,7 +285,7 @@ long buffer::changeState(const bufferState state) {
           std::cerr << "reading from disk " << std::endl;
           readBuffer();
         case CPU_COMPRESSED:
-          srd::cerr << "decompressing " << std::endl;
+          std::cerr << "decompressing " << std::endl;
           _buf = _compress->decompressData(_n, _buf);
           break;
         case CPU_DECOMPRESSED:
