@@ -138,15 +138,17 @@ void buffers::updateMemory(const long change2) {
     if (a->_toDisk.size() == 0 && a->_compress.size() == 0) {
       done = true;
     } else {
-      long change = tbb::parallel_reduce(
-          tbb::blocked_range<size_t>(0, a->_toDisk.size()), long(0),
-          [&](const tbb::blocked_range<size_t> &r, long locChange) {
-            for (size_t i = r.begin(); i != r.end(); ++i) {
-              locChange += _buffers[a->_toDisk[i]].changeState(ON_DISK);
-            }
-            return locChange;
-          },
-          [](long a, long b) { return a + b; });
+      change = 0;
+      // change = tbb::parallel_reduce(
+      //   tbb::blocked_range<size_t>(0, a->_toDisk.size()), long(0),
+      // [&](const tbb::blocked_range<size_t> &r, long locChange) {
+      // for (size_t i = r.begin(); i != r.end(); ++i) {
+      for (size_t i = 0; i < a->_toDisk.size(); a++) {
+        change += _buffers[a->_toDisk[i]].changeState(ON_DISK);
+      }
+      // return locChange;
+      // },
+      // [](long a, long b) { return a + b; });
       change += tbb::parallel_reduce(
           tbb::blocked_range<size_t>(0, a->_compress.size()), long(0),
           [&](const tbb::blocked_range<size_t> &r, long locChange) {
@@ -269,7 +271,6 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
   for (auto i = 0; i < std::min(7, (int)nw.size()); i++) n[i] = nw[i];
-
   for (auto i = 0; i < std::min(7, (int)fw.size()); i++) f[i] = fw[i];
   for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
   assert(_memory);
