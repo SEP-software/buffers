@@ -192,7 +192,6 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
                 << std::endl;
       fail = true;
     }
-    std::cerr << "wherea 1" << std::endl;
 
     if (fail) assert(1 == 2);
     std::vector<bool> axisP(_axisBlocking[i].size(), false);
