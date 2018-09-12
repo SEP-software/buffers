@@ -344,6 +344,10 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   // return locChange;
   // },
   // [](long a, long b) { return a + b; });
+
+  float *ptr = (float *)_buffers[280]->getStore()->getPtr();
+  std::cerr << " OUT OF PUT WINDOW  "
+            << " " << ptr[240 * 60 * 10 + 10] << std::endl;
   updateMemory(change);
   std::cerr << " through put window " << std::endl;
 }
