@@ -126,8 +126,7 @@ long long buffer::writeBuffer(bool keepState) {
   if (keepState) {
     restore = _bufferState;
     buf = _buf->clone();
-  } else
-    _buf->zero();
+  }
 
   changeState(CPU_COMPRESSED);
 
@@ -277,6 +276,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 }
 
 long buffer::changeState(const bufferState state) {
+  std::cerr << "IN CHANGE STATE " << _buf->getSize() << std::endl;
   long long oldSize = _buf->getSize();
   switch (state) {
     case CPU_DECOMPRESSED:
