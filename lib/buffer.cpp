@@ -279,15 +279,19 @@ long buffer::changeState(const bufferState state) {
   long long oldSize = _buf->getSize();
   switch (state) {
     case CPU_DECOMPRESSED:
+      std::cerr << "in change state decompressed " << _ibuf;
       switch (_bufferState) {
         case ON_DISK:
+          std::cerr << "reading from disk " << std::endl;
           readBuffer();
         case CPU_COMPRESSED:
+          srd::cerr << "decompressing " << std::endl;
           _buf = _compress->decompressData(_n, _buf);
           break;
         case CPU_DECOMPRESSED:
           break;
         case UNDEFINED:
+          std::cerr << "creating new storage" << std::endl;
           _buf = returnStorage(_compress->getDataType(), _n123);
           break;
         default:
