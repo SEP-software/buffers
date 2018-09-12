@@ -302,6 +302,7 @@ long buffer::changeState(const bufferState state) {
       break;
 
     case CPU_COMPRESSED:
+      std::cerr << "in change state compressed " << _ibuf << std::endl;
 
       switch (_bufferState) {
         case ON_DISK:

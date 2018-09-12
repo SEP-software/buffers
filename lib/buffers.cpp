@@ -150,6 +150,8 @@ void buffers::updateMemory(const long change2) {
       // return locChange;
       // },
       // [](long a, long b) { return a + b; });
+      std::cerr << "total compressed blocks " << a->_compress.size()
+                << std::endl;
       change += tbb::parallel_reduce(
           tbb::blocked_range<size_t>(0, a->_compress.size()), long(0),
           [&](const tbb::blocked_range<size_t> &r, long locChange) {
