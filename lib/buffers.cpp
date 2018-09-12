@@ -339,6 +339,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   // },
   // [](long a, long b) { return a + b; });
   updateMemory(change);
+  std::cerr << " through put window " << std::endl;
 }
 // buffers(std::string diretory, std::shared_ptr<compress> comp = nullptr,
 //      std::shared_ptr<blocking> block = nullptr);
