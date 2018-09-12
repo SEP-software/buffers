@@ -356,8 +356,10 @@ long buffer::changeState(const bufferState state) {
 
           _bufferState = CPU_COMPRESSED;
         case CPU_COMPRESSED:
+          std::cerr << _ibuf << " 2WRITING " << std::endl;
+
           if (_modified) {
-            std::cerr << _ibuf << " WRITING " << std::endl;
+            std::cerr << _ibuf << " 3WRITING " << std::endl;
 
             writeBuffer();
           }
