@@ -295,11 +295,9 @@ long buffer::changeState(const bufferState state) {
           std::cerr << "decompressing " << std::endl;
           _buf = _compress->decompressData(_n, _buf);
           if (_ibuf == 280) {
-            std::cerr << " n " << _n[0] << " " << _n[1] << " " << _n[2]
-                      << std::endl;
             float *ptr = (float *)_buf->getPtr();
-            std::cerr << " DECOMPRESSING " << fwL[2] << " " << ptr[240 * 10 + 5]
-                      << std::endl;
+            std::cerr << " DECOMPRESSING "
+                      << " " << ptr[240 * 10 + 5] << std::endl;
           }
           break;
         case CPU_DECOMPRESSED:
