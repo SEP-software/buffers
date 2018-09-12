@@ -274,6 +274,8 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
   std::cerr << "before update recent 2" << pwind.size() << std::endl;
   assert(_memory);
+  std::cerr << "before update recent 3" << pwind.size() << std::endl;
+
   _memory->updateRecentBuffers(pwind);
   for (int i = 0; i < pwind.size(); i++) {
     std::cerr << i << " pwind " << pwind[i] << std::endl;
