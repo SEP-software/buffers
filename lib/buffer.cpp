@@ -119,7 +119,6 @@ long long buffer::readBuffer() {
 long long buffer::writeBuffer(bool keepState) {
   long long oldSize = _buf->getSize();
 
-  if (_ibuf == 280) std::cerr << "in write buffer " << std::endl;
   std::shared_ptr<storeBase> buf;
   bufferState restore;
   assert(_bufferState != UNDEFINED);
@@ -130,13 +129,12 @@ long long buffer::writeBuffer(bool keepState) {
   }
 
   changeState(CPU_COMPRESSED);
-  if (_ibuf == 280) std::cerr << "data on disk " << std::endl;
+
   assert(_nameSet);
   std::ofstream out(_name, std::ofstream::binary);
   assert(!checkErrorBitsOut(&out));
   out.write(_buf->getPtr(), _buf->getSize());
   assert(!checkErrorBitsOut(&out));
-  if (_ibuf == 280) std::cerr << "write successful " << std::endl;
 
   out.close();
 
@@ -207,19 +205,12 @@ long long buffer::putWindowCPU(const std::vector<int> &nwL,
                                const std::vector<int> &blockG, const void *buf,
                                const bufferState state) {
   bufferState restore = _bufferState;
-  _modified = true;
   long long oldSize = _buf->getSize();
 
   changeState(CPU_DECOMPRESSED);
 
   _buf->putWindow(nwL, fwL, jwL, _block, nwG, fwG, blockG, buf);
-
-  if (_ibuf == 280) {
-    std::cerr << " n " << _n[0] << " " << _n[1] << " " << _n[2] << std::endl;
-    float *ptr = (float *)_buf->getPtr();
-    std::cerr << " in put window fwL[2] " << fwL[2] << " " << _f[2] << " "
-              << ptr[240 * 60 * 10 + 10] << "mod " << _modified << std::endl;
-  }
+  _modified = true;
 
   changeState(state);
 
@@ -288,26 +279,15 @@ long buffer::changeState(const bufferState state) {
   long long oldSize = _buf->getSize();
   switch (state) {
     case CPU_DECOMPRESSED:
-      std::cerr << "in change state decompressed " << _ibuf << std::endl;
       switch (_bufferState) {
         case ON_DISK:
-          std::cerr << "reading from disk " << std::endl;
           readBuffer();
         case CPU_COMPRESSED:
-          std::cerr << "decompressing " << std::endl;
           _buf = _compress->decompressData(_n, _buf);
-          if (_ibuf == 280) {
-            float *ptr = (float *)_buf->getPtr();
-            std::cerr << " DECOMPRESSING "
-                      << " " << ptr[240 * 60 * 10 + 10] << std::endl;
-          }
           break;
         case CPU_DECOMPRESSED:
-          std::cerr << "already decompressed" << std::endl;
-
           break;
         case UNDEFINED:
-          std::cerr << "creating new storage" << std::endl;
           _buf = returnStorage(_compress->getDataType(), _n123);
           break;
         default:
@@ -318,18 +298,12 @@ long buffer::changeState(const bufferState state) {
       break;
 
     case CPU_COMPRESSED:
-      std::cerr << "in change state compressed " << _ibuf << std::endl;
 
       switch (_bufferState) {
         case ON_DISK:
           readBuffer();
           break;
         case CPU_DECOMPRESSED:
-          if (_ibuf == 280) {
-            float *ptr = (float *)_buf->getPtr();
-            std::cerr << " COMPRESSING "
-                      << " " << ptr[240 * 60 * 10 + 10] << std::endl;
-          }
           _buf = _compress->compressData(_n, _buf);
           break;
         case CPU_COMPRESSED:
@@ -342,25 +316,15 @@ long buffer::changeState(const bufferState state) {
       break;
 
     case ON_DISK:
-      std::cerr << _ibuf << " IN ON DISK " << std::endl;
+
       switch (_bufferState) {
         case ON_DISK:
-          std::cerr << _ibuf << " ALREADY ON DISK " << std::endl;
-
           break;
         case CPU_DECOMPRESSED:
-          std::cerr << _ibuf << " COMPRESSED " << std::endl;
-
           _buf = _compress->compressData(_n, _buf);
-          std::cerr << _ibuf << " DECOMPRESSED " << std::endl;
-
           _bufferState = CPU_COMPRESSED;
         case CPU_COMPRESSED:
-          std::cerr << _ibuf << " 2WRITING " << std::endl;
-
           if (_modified) {
-            std::cerr << _ibuf << " 3WRITING " << std::endl;
-
             writeBuffer();
           }
           break;
