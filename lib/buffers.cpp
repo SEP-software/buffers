@@ -7,6 +7,7 @@
 #include <tbb/tbb.h>
 #include "compressTypes.h"
 #include "memoryAll.h"
+#include "simpleMemoryLimit.h"
 #include "nocompress.h"
 using namespace SEP::IO;
 
@@ -38,7 +39,7 @@ std::shared_ptr<compress> buffers::createDefaultCompress() {
   return c;
 }
 std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
-  std::shared_ptr<memoryUsage> c(new memoryAll());
+  std::shared_ptr<memoryUsage> c(new simpleMemoryLimit(1024*1024*32));
 
   return c;
 }
