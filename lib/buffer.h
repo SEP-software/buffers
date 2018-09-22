@@ -73,4 +73,3 @@ class buffer {
 };
 }  // namespace IO
 }  // namespace SEP
-#endif
