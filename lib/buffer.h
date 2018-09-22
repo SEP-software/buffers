@@ -1,5 +1,4 @@
-#ifndef BUFFER_H
-#define BUFFER_H 1
+#pragma once
 #include <store.h>
 #include <cassert>
 #include <cstring>
