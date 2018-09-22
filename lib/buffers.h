@@ -33,7 +33,7 @@ class buffers {
   void setMemoryUsage(std::shared_ptr<memoryUsage> mem) { _memory = mem; }
   std::shared_ptr<compress> createDefaultCompress();
   std::shared_ptr<memoryUsage> createDefaultMemory();
-  void setDefaultState(const bufferState stat) {
+  void setDefaultState(const SEP::IO::bufferState stat) {
     _defState = stat;
     _defaultStateSet = true;
   }
@@ -47,7 +47,7 @@ class buffers {
 
  private:
   bool _defaultStateSet;
-  bufferState _defState;
+  SEP::IO::bufferState _defState;
   std::shared_ptr<blocking> _blocking;
   std::shared_ptr<memoryUsage> _memory;
   std::shared_ptr<compress> _compress;
