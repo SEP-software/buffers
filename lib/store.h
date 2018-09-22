@@ -42,10 +42,10 @@ class storeInt : public storeBase {
   storeInt(const int n) { _buf.resize(n); }
   storeInt(const int n, void *buf);
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
-  char *getPtr() { return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   virtual void zero() override { _buf.resize(0); }
-  virtual std::shared_ptr<storeBase> clone() const;
+  virtual std::shared_ptr<storeBase> clone() const override;
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
@@ -70,10 +70,10 @@ class storeByte : public storeBase {
   storeByte(const int n) { _buf.resize(n); }
   storeByte(const int n, void *buf);
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
-  char *getPtr() { return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   virtual void zero() override { _buf.resize(0); }
-  virtual std::shared_ptr<storeBase> clone() const;
+  virtual std::shared_ptr<storeBase> clone() const override;
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
@@ -100,10 +100,10 @@ class storeFloat : public storeBase {
   storeFloat(const int n) { _buf.resize(n); }
   storeFloat(const int n, void *buf);
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
-  char *getPtr() { return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   virtual void zero() override { _buf.resize(0); }
-  virtual std::shared_ptr<storeBase> clone() const;
+  virtual std::shared_ptr<storeBase> clone() const override;
   virtual void info(const std::string &v) const override;
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
@@ -129,10 +129,10 @@ class storeDouble : public storeBase {
   storeDouble(const int n) { _buf.resize(n); }
   storeDouble(const int n, void *buf);
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
-  char *getPtr() { return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   virtual void zero() override { _buf.resize(0); }
-  virtual std::shared_ptr<storeBase> clone() const;
+  virtual std::shared_ptr<storeBase> clone() const override;
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
@@ -157,10 +157,10 @@ class storeComplex : public storeBase {
   storeComplex(const int n) { _buf.resize(n); }
   storeComplex(const int n, void *buf);
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
-  char *getPtr() { return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   virtual void zero() override { _buf.resize(0); }
-  virtual std::shared_ptr<storeBase> clone() const;
+  virtual std::shared_ptr<storeBase> clone() const override;
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
