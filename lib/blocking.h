@@ -2,8 +2,8 @@
 #define BLOCKING_H 1
 #include <json.h>
 #include <memory>
-
 #include <vector>
+#include "hypercube.h"
 namespace SEP {
 namespace IO {
 class blockParams {
@@ -27,6 +27,8 @@ class blocking {
   void checkLogicBlocking();
   std::vector<std::vector<int>> blockAxis(const std::vector<int> &n);
   Json::Value getJsonDescription();
+  static std::shared_ptr<blocking> createDefaultBlocking(
+      std::shared_ptr<SEP::hypercube> hyper);
 
  private:
   std::vector<int> _nb, _blocksize;

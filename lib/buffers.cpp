@@ -7,39 +7,16 @@
 #include <tbb/tbb.h>
 #include "compressTypes.h"
 #include "memoryAll.h"
-#include "simpleMemoryLimit.h"
 #include "nocompress.h"
+#include "simpleMemoryLimit.h"
 using namespace SEP::IO;
 
-std::shared_ptr<blocking> buffers::createDefaultBlocking() {
-  std::vector<int> bs(3, 1), block(3, 1);
-  if (_hyper->getAxis(1).n > 16)
-    bs[0] = 1;
-  else
-    bs[0] = 16;
-
-  if (_hyper->getNdimG1() == 1) {
-    block[0] = 256 * 1024;
-  } else if (_hyper->getNdimG1() == 2) {
-    bs[1] = std::min(_hyper->getAxis(2).n, 4);
-    block[0] = 256;
-    block[1] = 1024;
-  } else {
-    bs[1] = std::min(_hyper->getAxis(2).n, 4);
-    bs[2] = std::min(_hyper->getAxis(3).n, 4);
-    block[0] = 256;
-    block[1] = 32;
-    block[2] = 32;
-  }
-  std::shared_ptr<blocking> b(new blocking(bs, block));
-  return b;
-}
 std::shared_ptr<compress> buffers::createDefaultCompress() {
   std::shared_ptr<compress> c(new noCompression(_typ));
   return c;
 }
 std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
-  std::shared_ptr<memoryUsage> c(new simpleMemoryLimit(1024*1024*32));
+  std::shared_ptr<memoryUsage> c(new simpleMemoryLimit(1024 * 1024 * 32));
 
   return c;
 }
@@ -77,6 +54,8 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
   createBuffers(ON_DISK);
   setDirectory(dir, false);
 }
+void getValsLocation(const std::vector<long long> locs, const void *buf) {}
+
 Json::Value buffers::getDescription() {
   Json::Value des;
 
@@ -96,7 +75,7 @@ buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
   _hyper = hyper;
   if (_compress == nullptr) _compress = createDefaultCompress();
 
-  if (_blocking == nullptr) _blocking = createDefaultBlocking();
+  if (_blocking == nullptr) _blocking = blocking::createDefaultBlocking(_hyper);
 
   if (_memory == nullptr) _memory = createDefaultMemory();
 

@@ -58,8 +58,8 @@ class storeInt : public storeBase {
       const std::vector<int> &jwL, const std::vector<int> &nbL,
       const std::vector<int> &nwG, const std::vector<int> &fwG,
       const std::vector<int> &nbG, const void *bufIn) override;
-  virtual size_t getElementSize() const { return sizeof(int); }
-  virtual size_t getSize() const { return _buf.size(); }
+  virtual size_t getElementSize() const override { return sizeof(int); }
+  virtual size_t getSize() const override { return _buf.size(); }
 
  private:
   std::vector<int> _buf;
@@ -86,8 +86,10 @@ class storeByte : public storeBase {
       const std::vector<int> &jwL, const std::vector<int> &nbL,
       const std::vector<int> &nwG, const std::vector<int> &fwG,
       const std::vector<int> &nbG, const void *bufIn) override;
-  virtual size_t getElementSize() const { return sizeof(unsigned char); }
-  virtual size_t getSize() const { return _buf.size(); }
+  virtual size_t getElementSize() const override {
+    return sizeof(unsigned char);
+  }
+  virtual size_t getSize() const override { return _buf.size(); }
 
  private:
   std::vector<unsigned char> _buf;
@@ -115,8 +117,8 @@ class storeFloat : public storeBase {
       const std::vector<int> &jwL, const std::vector<int> &nbL,
       const std::vector<int> &nwG, const std::vector<int> &fwG,
       const std::vector<int> &nbG, const void *bufIn) override;
-  virtual size_t getElementSize() const { return sizeof(float); }
-  virtual size_t getSize() const { return _buf.size(); }
+  virtual size_t getElementSize() const override { return sizeof(float); }
+  virtual size_t getSize() const override { return _buf.size(); }
 
  private:
   std::vector<float> _buf;
@@ -143,8 +145,8 @@ class storeDouble : public storeBase {
       const std::vector<int> &jwL, const std::vector<int> &nbL,
       const std::vector<int> &nwG, const std::vector<int> &fwG,
       const std::vector<int> &nbG, const void *bufIn) override;
-  virtual size_t getElementSize() const { return sizeof(double); }
-  virtual size_t getSize() const { return _buf.size(); }
+  virtual size_t getElementSize() const override { return sizeof(double); }
+  virtual size_t getSize() const override { return _buf.size(); }
 
  private:
   std::vector<double> _buf;
@@ -171,8 +173,10 @@ class storeComplex : public storeBase {
       const std::vector<int> &jwL, const std::vector<int> &nbL,
       const std::vector<int> &nwG, const std::vector<int> &fwG,
       const std::vector<int> &nbG, const void *bufIn) override;
-  virtual size_t getElementSize() const { return sizeof(std::complex<float>); }
-  virtual size_t getSize() const { return _buf.size(); }
+  virtual size_t getElementSize() const override {
+    return sizeof(std::complex<float>);
+  }
+  virtual size_t getSize() const override { return _buf.size(); }
 
  private:
   std::vector<std::complex<float>> _buf;

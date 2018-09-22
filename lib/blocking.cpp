@@ -72,7 +72,30 @@ blocking::blocking(const Json::Value &jsonArgs) {
 
   checkLogicBlocking();
 }
+std::shared_ptr<blocking> blocking::createDefaultBlocking(
+    std::shared_ptr<SEP::hypercube> hyper) {
+  std::vector<int> bs(3, 1), block(3, 1);
+  if (hyper->getAxis(1).n > 16)
+    bs[0] = 1;
+  else
+    bs[0] = 16;
 
+  if (hyper->getNdimG1() == 1) {
+    block[0] = 256 * 1024;
+  } else if (hyper->getNdimG1() == 2) {
+    bs[1] = std::min(hyper->getAxis(2).n, 4);
+    block[0] = 256;
+    block[1] = 1024;
+  } else {
+    bs[1] = std::min(hyper->getAxis(2).n, 4);
+    bs[2] = std::min(hyper->getAxis(3).n, 4);
+    block[0] = 256;
+    block[1] = 32;
+    block[2] = 32;
+  }
+  std::shared_ptr<blocking> b(new blocking(bs, block));
+  return b;
+}
 Json::Value blocking::getJsonDescription() {
   Json::Value v;
   Json::Value vals;

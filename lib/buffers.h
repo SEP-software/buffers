@@ -32,7 +32,6 @@ class buffers {
   void updateMemory(const long change);
   void setMemoryUsage(std::shared_ptr<memoryUsage> mem) { _memory = mem; }
   std::shared_ptr<compress> createDefaultCompress();
-  std::shared_ptr<blocking> createDefaultBlocking();
   std::shared_ptr<memoryUsage> createDefaultMemory();
   void setDefaultState(const bufferState stat) {
     _defState = stat;
