@@ -110,7 +110,6 @@ INCLUDE(CMakePackageConfigHelpers)
   )
 
 
-  install(FILES ${PROJECT_BINARY_DIR}/sepConfig.h  DESTINATION include)
   INSTALL(
   FILES
     ${CMAKE_CURRENT_BINARY_DIR}/bufferConfig.cmake

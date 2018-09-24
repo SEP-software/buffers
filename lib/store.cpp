@@ -296,8 +296,6 @@ void storeFloat::putWindow(const std::vector<int> &nwL,
               size_t f1L = f2L + nbL[1] * (fwL[1] + jwL[1] * i1L) + fwL[0];
               size_t f1G = nbG[1] * (fwG[1] + i1L) + f2G + fwG[0];
               for (size_t i0L = 0; i0L < nwL[0]; i0L++) {
-                if (240 * 60 * 10 + 10 == f1L + i0L * jwL[0])
-                  std::cerr << "putting value " << buf[i0L + f1G];
 
                 _buf[f1L + i0L * jwL[0]] = buf[i0L + f1G];
               }
