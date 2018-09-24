@@ -76,20 +76,6 @@ else()
 endif()
 
 
-if(APPLE)
-set(WITH_SZ false)
-else(APPLE) 
-set(WITH_SZ true)
-add_subdirectory(sz)
-endif(APPLE)
-
-
-
-
-configure_file (
-  "${PROJECT_SOURCE_DIR}/buffersConfig.h.in"
-  "${PROJECT_BINARY_DIR}/buffersConfig.h"
-  )
 
 enable_language(CXX)
 
