@@ -65,8 +65,6 @@ ExternalProject_Add (
 
      set(ZFP_LIBRARIES ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zfp${CMAKE_SHARED_LIBRARY_SUFFIX})
 
-
-
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
@@ -76,6 +74,22 @@ if(COMPILER_SUPPORTS_CXX11)
 else()
         message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
+
+
+if(APPLE)
+set(WITH_SZ false)
+else(APPLE) 
+set(WITH_SZ true)
+add_subdirectory(sz)
+endif(APPLE)
+
+
+
+
+configure_file (
+  "${PROJECT_SOURCE_DIR}/buffersConfig.h.in"
+  "${PROJECT_BINARY_DIR}/buffersConfig.h"
+  )
 
 enable_language(CXX)
 
@@ -96,7 +110,7 @@ INCLUDE(CMakePackageConfigHelpers)
   )
 
 
-  
+  install(FILES ${PROJECT_BINARY_DIR}/sepConfig.h  DESTINATION include)
   INSTALL(
   FILES
     ${CMAKE_CURRENT_BINARY_DIR}/bufferConfig.cmake
