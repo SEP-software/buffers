@@ -195,6 +195,20 @@ long long buffer::getWindowCPU(const std::vector<int> &nwL,
     _buf = bufT;
   } else
     changeState(state);
+
+  switch (state) {
+    case CPU_DECOMPRESSED:
+      std::cerr << "FINAL: DECOMPRESSED" << std::endl;
+      break;
+    case CPU_COMPRESSED:
+      std::cerr << "FINAL: COMPRESSED" << std::endl;
+      break;
+    case ON_DISK:
+      std::cerr << "FINAL: ON IDSK" << std::endl;
+      break;
+    default:
+      std::cerr << "FINAL: uNDEFINED" << std::endl;
+  }
   return _buf->getSize() - oldSize;
 }
 long long buffer::putWindowCPU(const std::vector<int> &nwL,
