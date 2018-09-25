@@ -16,8 +16,10 @@ std::shared_ptr<compress> buffers::createDefaultCompress() {
   return c;
 }
 std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
-  std::shared_ptr<memoryUsage> c(
-      new simpleMemoryLimit((long long)(1024 * 1024) * (long long)(4 * 1024)));
+  std::shared_ptr<memoryUsage>
+
+      c(new simpleMemoryLimit((long long)(1024 * 1024) *
+                              (long long)(4 * 1024)));
 
   return c;
 }
@@ -116,8 +118,6 @@ void buffers::updateMemory(const long change2) {
   long change = change2;
   while (!done) {
     std::shared_ptr<memoryReduce> a = _memory->changeBufferState(change);
-    std::cerr << a->_compress.size()
-              << " =compress todisk=" << a->_toDisk.size() << std::endl;
     if (a->_toDisk.size() == 0 && a->_compress.size() == 0) {
       done = true;
     } else {
@@ -257,26 +257,24 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   assert(_memory);
 
   _memory->updateRecentBuffers(pwind);
-  long change = 0;
-  // int locChange = 0;
-  //  long change = tbb::parallel_reduce(
-  //     tbb::blocked_range<size_t>(0, pwind.size()), long(0),
-  //    [&](const tbb::blocked_range<size_t> &r, long locChange) {
-  //    for (size_t i = r.begin(); i != r.end(); ++i) {
-  // for (size_t i = 0; i < pwind.size(); i++) {
-  for (auto i = 0; i < pwind.size(); i++) {
-    std::cerr << i << " " << pwind[i] << std::endl;
-    std::vector<int> fG(7, 0), nG(7, 1), f_w(7, 0), n_w(7, 1), j_w(7, 1),
-        blockG(7, 1);
-    size_t pos =
-        _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
 
-    change += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
-                                              buf, state);
-  }
-  //   return locChange;
-  //     },
-  //   [](long a, long b) { return a + b; });
+  // int locChange = 0;
+  long change = tbb::parallel_reduce(
+      tbb::blocked_range<size_t>(0, pwind.size()), long(0),
+      [&](const tbb::blocked_range<size_t> &r, long locChange) {
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          // for (size_t i = 0; i < pwind.size(); i++) {
+          std::vector<int> fG(7, 0), nG(7, 1), f_w(7, 0), n_w(7, 1), j_w(7, 1),
+              blockG(7, 1);
+          size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
+                                                      nG, fG, blockG);
+
+          locChange += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG,
+                                                       blockG, buf, state);
+        }
+        return locChange;
+      },
+      [](long a, long b) { return a + b; });
   updateMemory(change);
 }
 void buffers::changeState(const bufferState state) {
