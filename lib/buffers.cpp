@@ -16,7 +16,7 @@ std::shared_ptr<compress> buffers::createDefaultCompress() {
   return c;
 }
 std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
-  std::shared_ptr<memoryUsage> c(new simpleMemoryLimit(1024 * 1024 * 32));
+  std::shared_ptr<memoryUsage> c(new simpleMemoryLimit(1024 * 1024 * 4 * 1024));
 
   return c;
 }

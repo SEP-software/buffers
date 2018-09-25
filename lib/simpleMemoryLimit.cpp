@@ -16,7 +16,8 @@ std::shared_ptr<memoryReduce> simpleMemoryLimit::changeBufferState(
     const long memChange) {
   _curMem += memChange;
   std::cerr << "Current usage " << _curMem / 1024 / 1024 << " "
-            << memChange / 1024 / 1024 << " allowed=" << _maxMem << std::endl;
+            << memChange / 1024 / 1024 << " allowed=" << _maxMem / 1024 / 1024
+            << std::endl;
   std::vector<int> comp, disk;
   if (_curMem > _maxMem) {
     int iold = _compressed;
