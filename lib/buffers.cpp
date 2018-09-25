@@ -115,6 +115,8 @@ void buffers::updateMemory(const long change2) {
   long change = change2;
   while (!done) {
     std::shared_ptr<memoryReduce> a = _memory->changeBufferState(change);
+    std::cerr << a->_compress.size()
+              << " =compress todisk=" << a->_toDisk.size() << std::endl;
     if (a->_toDisk.size() == 0 && a->_compress.size() == 0) {
       done = true;
     } else {
