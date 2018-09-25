@@ -291,6 +291,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 
 long buffer::changeState(const bufferState state) {
   long long oldSize = _buf->getSize();
+  std::cerr << "IN changestate" << std::endl;
   switch (state) {
     case CPU_DECOMPRESSED:
       std::cerr << "in change state decompressed " << std::endl;
