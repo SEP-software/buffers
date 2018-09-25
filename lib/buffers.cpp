@@ -254,24 +254,26 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   assert(_memory);
 
   _memory->updateRecentBuffers(pwind);
-
+  long change = 0;
   // int locChange = 0;
-  long change = tbb::parallel_reduce(
-      tbb::blocked_range<size_t>(0, pwind.size()), long(0),
-      [&](const tbb::blocked_range<size_t> &r, long locChange) {
-        for (size_t i = r.begin(); i != r.end(); ++i) {
-          // for (size_t i = 0; i < pwind.size(); i++) {
-          std::vector<int> fG(7, 0), nG(7, 1), f_w(7, 0), n_w(7, 1), j_w(7, 1),
-              blockG(7, 1);
-          size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
-                                                      nG, fG, blockG);
+  //  long change = tbb::parallel_reduce(
+  //     tbb::blocked_range<size_t>(0, pwind.size()), long(0),
+  //    [&](const tbb::blocked_range<size_t> &r, long locChange) {
+  //    for (size_t i = r.begin(); i != r.end(); ++i) {
+  // for (size_t i = 0; i < pwind.size(); i++) {
+  for (auto i = 0; i < pwind.size(); i++) {
+    std::cerr << i << " " << pwind[i] << std::endl;
+    std::vector<int> fG(7, 0), nG(7, 1), f_w(7, 0), n_w(7, 1), j_w(7, 1),
+        blockG(7, 1);
+    size_t pos =
+        _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
 
-          locChange += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG,
-                                                       blockG, buf, state);
-        }
-        return locChange;
-      },
-      [](long a, long b) { return a + b; });
+    change += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG, blockG,
+                                              buf, state);
+  }
+  //   return locChange;
+  //     },
+  //   [](long a, long b) { return a + b; });
   updateMemory(change);
 }
 void buffers::changeState(const bufferState state) {
