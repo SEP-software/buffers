@@ -46,6 +46,7 @@ externalproject_add(ZFP_INSTALL
                     CMAKE_ARGS
                     -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
                     -DCMAKE_INSTALL_LIBDIR=lib
+                    -DZFP_WITH_OPENMP=false
                     GIT_REPOSITORY
                     "https://github.com/LLNL/zfp"
                     INSTALL_DIR
