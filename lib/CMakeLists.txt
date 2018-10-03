@@ -14,7 +14,7 @@ ZfpCompress.h  simpleMemoryLimit.h
 
 
 add_library(buffers ${SOURCES} ${INCLUDES})
-TARGET_LINK_LIBRARIES(buffers  hypercube ${ZFP_LIBRARIES}  )
+TARGET_LINK_LIBRARIES(buffers jsonCpp  hypercube ${ZFP_LIBRARIES}  )
 
 install(FILES ${INCLUDES} DESTINATION include)
 install(TARGETS buffers DESTINATION lib EXPORT bufferExports)
