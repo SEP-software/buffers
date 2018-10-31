@@ -3,4 +3,7 @@
 	url = https://github.com/google/googletest.git
 [submodule "external/json"]
 	path = external/json
-	url = http://171.64.169.69/bob/json.git
+	url = http://zapad.Stanford.EDU/bob/json.git
+[submodule "external/hypercube"]
+	path = external/hypercube
+	url = http://zapad.Stanford.EDU/bob/hypercube.git
