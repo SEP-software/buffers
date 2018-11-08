@@ -1,5 +1,20 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
+if(NOT SUBPACKAGE)
+  option(BUILD_ZFP "Build with ZFP support" ON)
+  option(BUILD_TESTS "Build with test support" OFF)
+else(NOT SUBPACKAGE)
+  option(BUILD_TESTS "Build with test support" ON)
+
+endif(NOT SUBPACKAGE)
+set(SUBPACKAGE true)
+
+message("ZFP" ${BUILD_ZFP})
+if(BUILD_ZFP)
+
+  set(USE_ZFP true)
+endif(BUILDZFP)
+
 project(buffer LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -21,6 +36,9 @@ set(buffer_VERSION_STRING ${buffer_MAJOR_VERSION}.${buffer_MINOR_VERSION})
 include_directories("${PROJECT_BINARY_DIR}")
 include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 
+configure_file("${PROJECT_SOURCE_DIR}/buffersConfig.h.in"
+               "${PROJECT_BINARY_DIR}/buffersConfig.h")
+
 if(NOT TARGET hypercube)
   execute_process(COMMAND git submodule update --init --recursive --
                           external/hypercube
@@ -29,10 +47,13 @@ if(NOT TARGET hypercube)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube/lib)
 endif(NOT TARGET hypercube)
 
+if(BUILD_TESTS)
 execute_process(COMMAND git submodule update --init --recursive --
                         external/googletest
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(external/googletest)
+endif(BUILD_TESTS)
+
 
 if(NOT TARGET jsonCpp)
   execute_process(COMMAND git submodule update --init --recursive --
@@ -42,23 +63,24 @@ if(NOT TARGET jsonCpp)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 endif(NOT TARGET jsonCpp)
 
-externalproject_add(ZFP_INSTALL
-                    CMAKE_ARGS
-                    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-                    -DCMAKE_INSTALL_LIBDIR=lib
-                    -DZFP_WITH_OPENMP=false
-                    GIT_REPOSITORY
-                    "https://github.com/LLNL/zfp"
-                    INSTALL_DIR
-                    ${CMAKE_INSTALL_PREFIX})
+if(BUILD_ZFP)
+  externalproject_add(ZFP_INSTALL
+                      CMAKE_ARGS
+                      -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+                      -DCMAKE_INSTALL_LIBDIR=lib
+                      -DZFP_WITH_OPENMP=false
+                      GIT_REPOSITORY
+                      "https://github.com/LLNL/zfp"
+                      INSTALL_DIR
+                      ${CMAKE_INSTALL_PREFIX})
 
-set(ZFP_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+  set(ZFP_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
 
-set(
-  ZFP_LIBRARIES
-  ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zfp${CMAKE_SHARED_LIBRARY_SUFFIX}
-  )
-
+  set(
+    ZFP_LIBRARIES
+    ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zfp${CMAKE_SHARED_LIBRARY_SUFFIX}
+    )
+endif(BUILD_ZFP)
 set(buffer_DIRNAME_cmake "cmake")
 set(buffer_DIRNAME_lib "lib")
 set(buffer_DIRNAME_include "include")
@@ -79,9 +101,8 @@ install(EXPORT bufferExports DESTINATION ${buffer_DIRNAME_cmake})
 
 add_subdirectory(lib)
 
-option(BUILD_TESTS "Build test" ON)
 if(BUILD_TESTS)
-add_subdirectory(unit-tests)
+  add_subdirectory(unit-tests)
 endif(BUILD_TESTS)
 
 include(InstallRequiredSystemLibraries)
