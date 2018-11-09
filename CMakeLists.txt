@@ -81,6 +81,7 @@ set(buffer_DIRNAME_cmake "cmake")
 set(buffer_DIRNAME_lib "lib")
 set(buffer_DIRNAME_include "include")
 include(CMakePackageConfigHelpers)
+if(NOT SUPPORT_LIBRARIES_BUILD)
 configure_package_config_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/bufferConfig.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/bufferConfig.cmake"
@@ -94,6 +95,7 @@ configure_package_config_file(
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/bufferConfig.cmake DESTINATION cmake)
 
 install(EXPORT bufferExports DESTINATION ${buffer_DIRNAME_cmake})
+endif(NOT SUPPORT_LIBRARIES_BUILD)
 
 add_subdirectory(lib)
 
