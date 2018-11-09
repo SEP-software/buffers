@@ -10,7 +10,7 @@ set(SUBPACKAGE true)
 
 if(BUILD_ZFP)
   set(USE_ZFP true)
-endif(BUILDZFP)
+endif(BUILD_ZFP)
 
 project(buffer LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
