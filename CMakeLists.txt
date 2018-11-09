@@ -8,7 +8,6 @@ else(NOT SUBPACKAGE)
 endif(NOT SUBPACKAGE)
 set(SUBPACKAGE true)
 
-message("ZFP" ${BUILD_ZFP})
 if(BUILD_ZFP)
   set(USE_ZFP true)
 endif(BUILDZFP)
