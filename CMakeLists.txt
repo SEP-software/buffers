@@ -1,17 +1,15 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
+option(BUILD_ZFP "Build with ZFP support" ON)
 if(NOT SUBPACKAGE)
-  option(BUILD_ZFP "Build with ZFP support" ON)
   option(BUILD_TESTS "Build with test support" OFF)
 else(NOT SUBPACKAGE)
   option(BUILD_TESTS "Build with test support" ON)
-
 endif(NOT SUBPACKAGE)
 set(SUBPACKAGE true)
 
 message("ZFP" ${BUILD_ZFP})
 if(BUILD_ZFP)
-
   set(USE_ZFP true)
 endif(BUILDZFP)
 
@@ -26,7 +24,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 enable_testing()
 
 # configure a header file to pass some of the CMake settings
-find_package(PythonInterp 3 REQUIRED)
 find_package(TBB REQUIRED)
 
 set(buffer_MAJOR_VERSION 0)
