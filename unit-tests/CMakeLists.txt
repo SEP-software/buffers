@@ -3,7 +3,9 @@ project(buffers-utest)
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../lib")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../external/googletest/googletest/include")
+ifdef(BUILD_ZFP)
 INCLUDE_DIRECTORIES(${ZFP_INCLUDE_DIR})
+endif(BUILD_ZFP)
 
   if (APPLE)
     add_definitions(-DGTEST_USE_OWN_TR1_TUPLE)
@@ -26,10 +28,11 @@ target_link_libraries(bufferTest    buffers gtest gtest_main gtest jsonCpp hyper
 add_test(AllStoreTests bufferTest)
 
 
-
+if(BUILD_ZFP)
 add_executable( ZfpCompressTest ZfpCompressTest.cc)
 target_link_libraries(ZfpCompressTest    buffers gtest gtest_main gtest jsonCpp)
 add_test(AllStoreTests ZfpCompressTest)
+ENDIF(BUILD_ZFP)
 
 
 
