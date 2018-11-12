@@ -94,8 +94,9 @@ configure_package_config_file(
   buffer_DIRNAME_cmake)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/bufferConfig.cmake DESTINATION cmake)
-
+if(NOT INSTALL_CMAKE_ENV)
 install(EXPORT bufferExports DESTINATION ${buffer_DIRNAME_cmake})
+endif(NOT INSTALL_CMAKE_ENV)
 endif(NOT SUPPORT_LIBRARIES_BUILD)
 
 add_subdirectory(lib)
