@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 option(BUILD_ZFP "Build with ZFP support" ON)
+option(BUILD_GCP "Build with GCP support" ON)
 if(NOT SUBPACKAGE)
   option(BUILD_TESTS "Build with test support" OFF)
   option(INSTALL_CMAKE_ENV "Install cmake build environment" ON)
@@ -12,6 +13,10 @@ set(SUBPACKAGE true)
 if(BUILD_ZFP)
   set(USE_ZFP true)
 endif(BUILD_ZFP)
+
+if(BUILD_GCP)
+  set(USE_GCP true)
+endif(BUILD_GCP)
 
 project(buffer LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
@@ -78,7 +83,35 @@ if(BUILD_ZFP)
     ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zfp${CMAKE_SHARED_LIBRARY_SUFFIX}
     )
 endif(BUILD_ZFP)
-set(buffer_DIRNAME_cmake "cmake")
+
+
+
+if(BUILD_GCP)
+  externalproject_add(STORAGE_INSTALL
+                      CMAKE_ARGS
+                      -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+                      -DCMAKE_INSTALL_LIBDIR=lib
+                      -DBUILD_TESTING=false
+                      -Bstorage_client
+                      GIT_REPOSITORY
+                      "https://github.com/GoogleCloudPlatform/google-cloud-cpp.git"
+                      PATCH_COMMAND git submodule update --init
+  BUILD_COMMAND ${CMAKE_COMMAND} -E echo "XXXStarting $<CONFIG> build"
+  COMMAND       ${CMAKE_COMMAND} --build <BINARY_DIR> --config $<CONFIG> --target storage_client -j 8
+  COMMAND       ${CMAKE_COMMAND} -E echo "$<CONFIG> build complete"
+                      INSTALL_DIR
+                      ${CMAKE_INSTALL_PREFIX})
+  set(GCP_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+
+  set(
+    GCP_LIBRARIES
+    ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zfp${CMAKE_SHARED_LIBRARY_SUFFIX}
+    )
+endif(BUILD_GCP)
+
+
+
+set(buffer_DIRNAME_cmake "lib/cmake")
 set(buffer_DIRNAME_lib "lib")
 set(buffer_DIRNAME_include "include")
 include(CMakePackageConfigHelpers)
@@ -93,7 +126,7 @@ configure_package_config_file(
   buffer_DIRNAME_lib
   buffer_DIRNAME_cmake)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/bufferConfig.cmake DESTINATION cmake)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/bufferConfig.cmake DESTINATION lib/cmake)
 if(NOT INSTALL_CMAKE_ENV)
 install(EXPORT bufferExports DESTINATION ${buffer_DIRNAME_cmake})
 endif(NOT INSTALL_CMAKE_ENV)
