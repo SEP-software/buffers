@@ -86,28 +86,28 @@ endif(BUILD_ZFP)
 
 
 
-if(BUILD_GCP)
-  externalproject_add(STORAGE_INSTALL
-                      CMAKE_ARGS
-                      -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-                      -DCMAKE_INSTALL_LIBDIR=lib
-                      -DBUILD_TESTING=false
-                      -Bstorage_client
-                      GIT_REPOSITORY
-                      "https://github.com/GoogleCloudPlatform/google-cloud-cpp.git"
-                      PATCH_COMMAND git submodule update --init
-  BUILD_COMMAND ${CMAKE_COMMAND} -E echo "XXXStarting $<CONFIG> build"
-  COMMAND       ${CMAKE_COMMAND} --build <BINARY_DIR> --config $<CONFIG> --target storage_client -j 8
-  COMMAND       ${CMAKE_COMMAND} -E echo "$<CONFIG> build complete"
-                      INSTALL_DIR
-                      ${CMAKE_INSTALL_PREFIX})
-  set(GCP_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
-
-  set(
-    GCP_LIBRARIES
-    ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zfp${CMAKE_SHARED_LIBRARY_SUFFIX}
-    )
-endif(BUILD_GCP)
+#if(BUILD_GCP)
+#  externalproject_add(STORAGE_INSTALL
+#                      CMAKE_ARGS
+#                      -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+#                      -DCMAKE_INSTALL_LIBDIR=lib
+#                      -DBUILD_TESTING=false
+#                      -Bstorage_client
+#                      GIT_REPOSITORY
+#                      "https://github.com/GoogleCloudPlatform/google-cloud-cpp.git"
+#                      PATCH_COMMAND git submodule update --init
+#  BUILD_COMMAND ${CMAKE_COMMAND} -E echo "XXXStarting $<CONFIG> build"
+#  COMMAND       ${CMAKE_COMMAND} --build <BINARY_DIR> --config $<CONFIG> --target storage_client -j 8
+#  COMMAND       ${CMAKE_COMMAND} -E echo "$<CONFIG> build complete"
+#                      INSTALL_DIR
+#                      ${CMAKE_INSTALL_PREFIX})
+#  set(GCP_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+#
+#  set(
+#    GCP_LIBRARIES
+#    ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zfp${CMAKE_SHARED_LIBRARY_SUFFIX}
+#    )
+#endif(BUILD_GCP)
 
 
 
