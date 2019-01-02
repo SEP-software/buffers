@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <buffer.h>
+#include <fileBuffer.h>
 #include <locale.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -130,9 +130,9 @@ fileBuffer::fileBuffer(const std::string name, const std::vector<int> &n,
   setCompress(comp);
   setBufferState(ON_DISK);
 }
-8fileBuffer ::fileBuffer(const std::vector<int> &n, const std::vector<int> &f,
-                         std::shared_ptr<compress> comp,
-                         const bufferState state) {
+fileBuffer::fileBuffer(const std::vector<int> &n, const std::vector<int> &f,
+                       std::shared_ptr<compress> comp,
+                       const bufferState state) {
   setLoc(n, f);
   setCompress(comp);
   setBufferState(state);

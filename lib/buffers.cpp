@@ -24,8 +24,8 @@ std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
   return c;
 }
 buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
-                 const Json::Value &des, std::shared_ptr<bufferTypes> bufT,
-                 std::shared_ptr<memoryUsage> mem) {
+                 const Json::Value &des, std::shared_ptr<memoryUsage> mem,
+                 std::shared_ptr<bufferTypes> bufT) {
   _hyper = hyper->clone();
   if (des["blocking"].isNull()) {
     std::cerr << std::string(
@@ -75,8 +75,9 @@ Json::Value buffers::getDescription() {
 buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
                  std::shared_ptr<compress> comp,
                  std::shared_ptr<blocking> block,
-                 std::shared_ptr<memoryUsage> mem,
-                 std::shared_ptr<bufferTypes> bufT) {
+
+                 std::shared_ptr<bufferTypes> bufT,
+                 std::shared_ptr<memoryUsage> mem) {
   _typ = dataType;
   _compress = comp;
   _blocking = block;

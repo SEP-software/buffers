@@ -22,9 +22,11 @@ TEST(parsedWindows, buffers) {
   std::shared_ptr<blocking> block(new blocking(blocksize, nb));
   std::shared_ptr<noCompression> comp(new noCompression(SEP::DATA_INT));
 
-  ASSERT_NO_THROW(buffers myb(hyper, SEP::DATA_INT, comp, block));
+  std::shared_ptr<bufferTypes> bufT(new bufferTypes(std::string("file")));
 
-  buffers myb(hyper, SEP::DATA_INT, comp, block);
+  // ASSERT_NO_THROW(buffers myb(hyper, SEP::DATA_INT, comp, bufT, block));
+
+  buffers myb(hyper, SEP::DATA_INT, comp, block, bufT);
   std::vector<int> nw(3, 1), fw(3, 0), jw(3, 1);
 
   ASSERT_NO_THROW(std::vector<int> windows = myb.parsedWindows(nw, fw, jw));
@@ -62,7 +64,9 @@ TEST(bigTest, buffers) {
   std::vector<int> blocksize(3, 5), nb(3, 10);
   std::shared_ptr<blocking> block(new blocking(blocksize, nb));
   std::shared_ptr<noCompression> comp(new noCompression(SEP::DATA_FLOAT));
-  buffers myb(hyper, SEP::DATA_FLOAT, comp, block);
+  std::shared_ptr<bufferTypes> bufT(new bufferTypes(std::string("file")));
+
+  buffers myb(hyper, SEP::DATA_FLOAT, comp, block, bufT);
 
   std::shared_ptr<storeFloat> whole(new storeFloat(100 * 100 * 100)),
       result(new storeFloat(100 * 100 * 100));
@@ -80,7 +84,6 @@ TEST(bigTest, buffers) {
 
   std::vector<int> ns(3, 100), fs(3, 0), js(3, 1);
   myb.putWindow(ns, fs, js, whole->getPtr());
-  std::cerr << "do ne with put window " << std::endl;
 
   /*std::shared_ptr<storeBase> bs = myb.getSpecificStore(1);
   std::shared_ptr<storeFloat> in = std::dynamic_pointer_cast<storeFloat>(bs);

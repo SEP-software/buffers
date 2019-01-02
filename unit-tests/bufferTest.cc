@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include "ZfpCompress.h"
-#include "buffer.h"
+#include "fileBuffer.h"
 #include "nocompress.h"
 using std::string;
 using namespace SEP::IO;
@@ -19,7 +19,7 @@ TEST(writeBuffer, buffer) {
   for (auto i = 0; i < 20 * 20 * 20; i++) a[i] = i;
   std::shared_ptr<storeInt> store(new storeInt(20 * 20 * 20, (void *)a.data()));
 
-  buffer buf(0, n, f, comp, UNDEFINED);
+  fileBuffer buf(n, f, comp, UNDEFINED);
 
   std::vector<int> nblock = buf.getBlock();
 
@@ -69,7 +69,7 @@ TEST(readWindowNoCompress, buffer) {
 
   std::shared_ptr<storeFloat> store = array();
   std::vector<int> n(3, 20), f(3, 0);
-  buffer buf(0, n, f, comp, UNDEFINED);
+  fileBuffer buf(n, f, comp, UNDEFINED);
   buf.putBufferCPU(store, CPU_DECOMPRESSED);
   buf.setName("/tmp/junk2");
   std::shared_ptr<storeBase> storeCompare = store->clone();
@@ -95,7 +95,7 @@ TEST(readWindowCompress, buffer) {
 
   std::shared_ptr<storeFloat> store = array();
   std::vector<int> n(3, 20), f(3, 0);
-  buffer buf(0, n, f, z, UNDEFINED);
+  fileBuffer buf(n, f, z, UNDEFINED);
   buf.putBufferCPU(store, CPU_DECOMPRESSED);
   buf.setName("/tmp/junk2");
   std::shared_ptr<storeBase> storeCompare = store->clone();
@@ -127,7 +127,7 @@ void createAxisTest(const int _f, const int _n, const int nw, const int fw,
   std::shared_ptr<noCompression> comp(new noCompression(DATA_INT));
 
   std::vector<int> nbuf(7, _n), fbuf(7, _f);
-  buffer buf(0, nbuf, fbuf, comp, UNDEFINED);
+  fileBuffer buf(nbuf, fbuf, comp, UNDEFINED);
   std::vector<int> nwS(1, nw), fwS(1, fw), jwS(1, jw), f_wR(1), fGR(1), nR(1),
       blockG(2), jl(1), ng(1);
   buf.localWindow(nwS, fwS, jwS, nR, f_wR, jl, ng, fGR, blockG);

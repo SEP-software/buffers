@@ -3,7 +3,7 @@ project(buffers-lib)
 INCLUDE_DIRECTORIES(${ZFP_INCLUDE_DIR})
 include_directories(${TBB_INCLUDE_DIRS})
 set(SOURCES store.cpp buffer.cpp compress.cpp  blocking.cpp nocompress.cpp compressTypes.cpp
- memoryAll.cpp simpleMemoryLimit.cpp bufferTypes.cpp
+ memoryAll.cpp simpleMemoryLimit.cpp bufferTypes.cpp fileBuffer.cpp
  buffers.cpp
 )
 if(USE_ZFP)

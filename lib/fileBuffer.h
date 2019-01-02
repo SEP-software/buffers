@@ -5,7 +5,7 @@
 #include <memory>
 #include <sstream>
 #include <vector>
-#include "compress.h"
+#include "buffer.h"
 namespace SEP {
 namespace IO {
 
