@@ -41,8 +41,8 @@ class buffer {
     _block.push_back(1);
     for (size_t i = 0; i < _n.size(); i++) _block.push_back(_block[i] * _n[i]);
   }
-  virtual long long readBuffer() = 0;
-  virtual long long writeBuffer(bool keepState = false) = 0;
+  virtual long long readBuffer() { ; }
+  virtual long long writeBuffer(bool keepState = false) { ; }
   virtual long long getBufferCPU(std::shared_ptr<storeBase> buf,
                                  const bufferState finalState);
   virtual long long putBufferCPU(std::shared_ptr<storeBase> buf,
