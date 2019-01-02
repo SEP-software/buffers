@@ -84,7 +84,9 @@ if(BUILD_ZFP)
     )
 endif(BUILD_ZFP)
 
-
+if(BUILD_GCP)
+  find_package(storage_client 0.3.0 REQUIRED)
+endif(BUILD_GCP)
 
 #if(BUILD_GCP)
 #  externalproject_add(STORAGE_INSTALL

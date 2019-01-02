@@ -1,0 +1,24 @@
+#pragma once
+#include <store.h>
+#include <cassert>
+#include <cstring>
+#include <memory>
+#include <sstream>
+#include <vector>
+#include "compress.h"
+namespace SEP {
+namespace IO {
+
+class fileBuffer : public buffer {
+ public:
+  fileBuffer(const std::string name, const std::vector<int> &n,
+             const std::vector<int> &f,
+             std::shared_ptr<compress> comp);  // Read from file
+  fileBuffer(const std::vector<int> &n, const std::vector<int> &f,
+             std::shared_ptr<compress> comp, const bufferState state);
+
+  virtual long long readBuffer();
+  virtual long long writeBuffer(bool keepState = false);
+};
+}  // namespace IO
+}  // namespace SEP

@@ -11,6 +11,35 @@
 #include <iostream>
 using namespace SEP::IO;
 
+buffer::buffer(const std::string name, const std::vector<int> &n,
+               const std::vector<int> &f, std::shared_ptr<compress> comp) {
+  _n = n;
+  _n123 = 1;
+  for (int i : _n) _n123 *= i;
+  _f = f;
+  _compress = comp;
+  _name = name;
+  _bufferState = ON_DISK;
+  _nameSet = true;
+  setBlock();
+}
+buffer::buffer(const int ibuf, const std::vector<int> &n,
+               const std::vector<int> &f, std::shared_ptr<compress> comp,
+               const bufferState state) {
+  _n = n;
+  _ibuf = ibuf;
+  _n123 = 1;
+  for (int i : _n) _n123 *= i;
+  _f = f;
+  _compress = comp;
+  _nameSet = false;
+  std::shared_ptr<storeByte> bb(new storeByte(0));
+  _buf = bb;
+  _bufferState = state;
+
+  setBlock();
+}
+
 long long buffer::getBufferCPU(std::shared_ptr<storeBase> buf,
                                const bufferState state) {
   bufferState restore = _bufferState;

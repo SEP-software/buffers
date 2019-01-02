@@ -24,7 +24,8 @@ std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
   return c;
 }
 buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
-                 const Json::Value &des, std::shared_ptr<memoryUsage> mem) {
+                 const Json::Value &des, std::shared_ptr<bufferTypes> bufT,
+                 std::shared_ptr<memoryUsage> mem) {
   _hyper = hyper->clone();
   if (des["blocking"].isNull()) {
     std::cerr << std::string(
@@ -54,6 +55,10 @@ buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
   _compress = ct.getCompressionObj();
 
   _defaultStateSet = false;
+  if (!bufT)
+    _bufferT = createDefaultBufferTypes();
+  else
+    _bufferT = bufT;
   createBuffers(ON_DISK);
   setDirectory(dir, false);
 }
@@ -70,21 +75,28 @@ Json::Value buffers::getDescription() {
 buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
                  std::shared_ptr<compress> comp,
                  std::shared_ptr<blocking> block,
-                 std::shared_ptr<memoryUsage> mem) {
+                 std::shared_ptr<memoryUsage> mem,
+                 std::shared_ptr<bufferTypes> bufT) {
   _typ = dataType;
   _compress = comp;
   _blocking = block;
   _memory = mem;
   _hyper = hyper;
+  _bufferT = bufT;
   if (_compress == nullptr) _compress = createDefaultCompress();
 
   if (_blocking == nullptr) _blocking = blocking::createDefaultBlocking(_hyper);
 
   if (_memory == nullptr) _memory = createDefaultMemory();
 
+  if (_bufferT == nullptr) _bufferT = createDefaultBufferTypes();
+
   blockParams v = _blocking->makeBlocks(_hyper->getNs());
   createBuffers(UNDEFINED);
   _defaultStateSet = false;
+}
+std::shared_ptr<bufferTypes> buffers::createDefaultBufferTypes() {
+  _bufferT = std::make_shared<bufferTypes>(std::string("file"));
 }
 
 void buffers::setDirectory(const std::string &dir, const bool createDirectory) {
@@ -98,16 +110,16 @@ void buffers::setDirectory(const std::string &dir, const bool createDirectory) {
     }
   }
   for (auto i = 0; i < _buffers.size(); i++) {
-    _buffers[i].setName(_directory + std::string("/buf") + std::to_string(i));
+    _buffers[i]->setName(_directory + std::string("/buf") + std::to_string(i));
   }
 }
-
 void buffers::createBuffers(const bufferState state) {
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
-
+  assert(_bufferT);
   for (int i = 0; i < b._ns.size(); i++) {
-    _buffers.push_back(buffer(i, b._ns[i], b._fs[i], _compress, state));
+    _buffers.push_back(
+        _bufferT->getBufferObj(b._ns[i], b._fs[i], _compress, state));
   }
 
   _n123blocking = b._nblocking;
@@ -125,7 +137,7 @@ void buffers::updateMemory(const long change2) {
           tbb::blocked_range<size_t>(0, a->_toDisk.size()), long(0),
           [&](const tbb::blocked_range<size_t> &r, long locChange) {
             for (size_t i = r.begin(); i != r.end(); ++i) {
-              locChange += _buffers[a->_toDisk[i]].changeState(ON_DISK);
+              locChange += _buffers[a->_toDisk[i]]->changeState(ON_DISK);
             }
             return locChange;
           },
@@ -135,7 +147,7 @@ void buffers::updateMemory(const long change2) {
           [&](const tbb::blocked_range<size_t> &r, long locChange) {
             for (size_t i = r.begin(); i != r.end(); ++i) {
               locChange +=
-                  _buffers[a->_compress[i]].changeState(CPU_COMPRESSED);
+                  _buffers[a->_compress[i]]->changeState(CPU_COMPRESSED);
             }
             return locChange;
           },
@@ -266,11 +278,11 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
           // for (size_t i = 0; i < pwind.size(); i++) {
           std::vector<int> fG(7, 0), nG(7, 1), f_w(7, 0), n_w(7, 1), j_w(7, 1),
               blockG(7, 1);
-          size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
-                                                      nG, fG, blockG);
+          size_t pos = _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w,
+                                                       nG, fG, blockG);
 
-          locChange += _buffers[pwind[i]].getWindowCPU(n_w, f_w, j_w, nG, fG,
-                                                       blockG, buf, state);
+          locChange += _buffers[pwind[i]]->getWindowCPU(n_w, f_w, j_w, nG, fG,
+                                                        blockG, buf, state);
         }
         return locChange;
       },
@@ -282,7 +294,7 @@ void buffers::changeState(const bufferState state) {
       tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
       [&](const tbb::blocked_range<size_t> &r, long locChange) {
         for (size_t i = r.begin(); i != r.end(); ++i) {
-          locChange += _buffers[i].changeState(state);
+          locChange += _buffers[i]->changeState(state);
         }
         return locChange;
       },
@@ -306,11 +318,11 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         for (size_t i = r.begin(); i != r.end(); ++i) {
           // for (size_t i = 0; i < pwind.size(); i++) {
           std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
-          size_t pos = _buffers[pwind[i]].localWindow(n, f, j, n_w, f_w, j_w,
-                                                      nG, fG, blockG);
+          size_t pos = _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w,
+                                                       nG, fG, blockG);
 
-          locChange += _buffers[pwind[i]].putWindowCPU(n_w, f_w, j_w, nG, fG,
-                                                       blockG, buf, state);
+          locChange += _buffers[pwind[i]]->putWindowCPU(n_w, f_w, j_w, nG, fG,
+                                                        blockG, buf, state);
         }
 
         return locChange;

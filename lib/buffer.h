@@ -12,11 +12,21 @@ enum bufferState { UNDEFINED, CPU_COMPRESSED, CPU_DECOMPRESSED, ON_DISK };
 
 class buffer {
  public:
-  buffer(const std::string name, const std::vector<int> &n,
-         const std::vector<int> &f,
-         std::shared_ptr<compress> comp);  // Read from file
-  buffer(const int ibuf, const std::vector<int> &n, const std::vector<int> &f,
-         std::shared_ptr<compress> comp, const bufferState state);
+  buffer() { ; }
+  void createStorageBuffer() {
+    std::shared_ptr<storeByte> bb(new storeByte(0));
+    _buf = bb;
+  }
+  void setBufferState(const bufferState state) { _bufferState = state; }
+  void setCompress(std::shared_ptr<compress> comp) { _compress = comp; }
+  void setLoc(const std::vector<int> &n, const std::vector<int> &f) {
+    _f = f;
+    _n = n;
+    _n123 = 1;
+    for (int i : _n) _n123 *= i;
+    setBlock();
+  }
+
   void setName(const std::string name) {
     _name = name;
     _nameSet = true;
@@ -31,8 +41,8 @@ class buffer {
     _block.push_back(1);
     for (size_t i = 0; i < _n.size(); i++) _block.push_back(_block[i] * _n[i]);
   }
-  virtual long long readBuffer();
-  virtual long long writeBuffer(bool keepState = false);
+  virtual long long readBuffer() = 0;
+  virtual long long writeBuffer(bool keepState = false) = 0;
   virtual long long getBufferCPU(std::shared_ptr<storeBase> buf,
                                  const bufferState finalState);
   virtual long long putBufferCPU(std::shared_ptr<storeBase> buf,
@@ -61,7 +71,7 @@ class buffer {
   std::vector<int> getBlock() { return _block; }
   std::shared_ptr<storeBase> getStorePtr() { return _buf; }
 
- private:
+ protected:
   std::vector<int> _f, _n, _block;
   std::shared_ptr<storeBase> _buf;
   std::shared_ptr<compress> _compress;
@@ -69,7 +79,7 @@ class buffer {
   bool _nameSet, _modified = false;
   int _ibuf;
   long long _n123;
-  bufferState _bufferState;
+  bufferState _bufferState = UNDEFINED;
 };
 }  // namespace IO
 }  // namespace SEP
