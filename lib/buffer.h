@@ -70,6 +70,7 @@ class buffer {
   long changeState(const bufferState state);
   std::vector<int> getBlock() { return _block; }
   std::shared_ptr<storeBase> getStorePtr() { return _buf; }
+  virtual ~buffer() { ; }
 
  protected:
   std::vector<int> _f, _n, _block;
