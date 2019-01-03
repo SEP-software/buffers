@@ -23,7 +23,45 @@ std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
 
   return c;
 }
+buffers::buffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
+                 const Json::Value &des, std::shared_ptr<memoryUsage> mem,
+                 std::shared_ptr<bufferTypes> bufT) {
+  _hyper = hyper->clone();
+  if (des["blocking"].isNull()) {
+    std::cerr << std::string(
+                     "trouble grabbing parameter blocking from parameters")
+              << std::endl;
 
+    assert(1 == 2);
+  }
+
+  _blocking.reset(new blocking(des["blocking"]));
+
+  if (des["compression"].isNull()) {
+    std::cerr << std::string(
+                     "trouble grabbing parameter blocking from parameters")
+              << std::endl;
+
+    assert(1 == 2);
+  }
+
+  _memory = mem;
+  if (!_memory) {
+    _memory = createDefaultMemory();
+  }
+
+  SEP::IO::compressTypes ct = compressTypes(des["compression"]);
+
+  _compress = ct.getCompressionObj();
+
+  _defaultStateSet = false;
+  if (!bufT)
+    _bufferT = createDefaultBufferTypes();
+  else
+    _bufferT = bufT;
+  createBuffers(ON_DISK);
+  setDirectory(dir, false);
+}
 void getValsLocation(const std::vector<long long> locs, const void *buf) {}
 
 Json::Value buffers::getDescription() {
@@ -34,7 +72,60 @@ Json::Value buffers::getDescription() {
 
   return des;
 }
+buffers::buffers(std::shared_ptr<hypercube> hyper, const dataType dataType,
+                 std::shared_ptr<compress> comp,
+                 std::shared_ptr<blocking> block,
 
+                 std::shared_ptr<bufferTypes> bufT,
+                 std::shared_ptr<memoryUsage> mem) {
+  _typ = dataType;
+  _compress = comp;
+  _blocking = block;
+  _memory = mem;
+  _hyper = hyper;
+  _bufferT = bufT;
+  if (_compress == nullptr) _compress = createDefaultCompress();
+
+  if (_blocking == nullptr) _blocking = blocking::createDefaultBlocking(_hyper);
+
+  if (_memory == nullptr) _memory = createDefaultMemory();
+
+  if (_bufferT == nullptr) _bufferT = createDefaultBufferTypes();
+
+  blockParams v = _blocking->makeBlocks(_hyper->getNs());
+  createBuffers(UNDEFINED);
+  _defaultStateSet = false;
+}
+std::shared_ptr<bufferTypes> buffers::createDefaultBufferTypes() {
+  _bufferT = std::make_shared<bufferTypes>(std::string("file"));
+}
+
+void buffers::setDirectory(const std::string &dir, const bool createDirectory) {
+  _directory = dir;
+  if (createDirectory) {
+    const int dir_err =
+        mkdir(_directory.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (-1 == dir_err) {
+      std::cerr << "Error creating directory, exists? DIR=" << dir << std::endl;
+      exit(1);
+    }
+  }
+  for (auto i = 0; i < _buffers.size(); i++) {
+    _buffers[i]->setName(_directory + std::string("/buf") + std::to_string(i));
+  }
+}
+void buffers::createBuffers(const bufferState state) {
+  std::vector<int> ns = _hyper->getNs();
+  blockParams b = _blocking->makeBlocks(ns);
+  assert(_bufferT);
+  for (int i = 0; i < b._ns.size(); i++) {
+    _buffers.push_back(
+        _bufferT->getBufferObj(b._ns[i], b._fs[i], _compress, state));
+  }
+
+  _n123blocking = b._nblocking;
+  _axisBlocking = b._axesBlock;
+}
 void buffers::updateMemory(const long change2) {
   bool done = false;
   long change = change2;

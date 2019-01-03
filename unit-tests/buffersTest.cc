@@ -5,7 +5,7 @@
 #include <string>
 #include "ZfpCompress.h"
 #include "buffer.h"
-#include "buffers.h"
+#include "fileBuffers.h"
 #include "nocompress.h"
 using std::string;
 using namespace SEP::IO;
@@ -22,11 +22,9 @@ TEST(parsedWindows, buffers) {
   std::shared_ptr<blocking> block(new blocking(blocksize, nb));
   std::shared_ptr<noCompression> comp(new noCompression(SEP::DATA_INT));
 
-  std::shared_ptr<bufferTypes> bufT(new bufferTypes(std::string("file")));
+  ASSERT_NO_THROW(fileBuffers myb(hyper, SEP::DATA_INT, comp, block));
 
-  // ASSERT_NO_THROW(buffers myb(hyper, SEP::DATA_INT, comp, bufT, block));
-
-  buffers myb(hyper, SEP::DATA_INT, comp, block, bufT);
+  fileBuffers myb(hyper, SEP::DATA_INT, comp, block);
   std::vector<int> nw(3, 1), fw(3, 0), jw(3, 1);
 
   ASSERT_NO_THROW(std::vector<int> windows = myb.parsedWindows(nw, fw, jw));
@@ -64,9 +62,8 @@ TEST(bigTest, buffers) {
   std::vector<int> blocksize(3, 5), nb(3, 10);
   std::shared_ptr<blocking> block(new blocking(blocksize, nb));
   std::shared_ptr<noCompression> comp(new noCompression(SEP::DATA_FLOAT));
-  std::shared_ptr<bufferTypes> bufT(new bufferTypes(std::string("file")));
 
-  buffers myb(hyper, SEP::DATA_FLOAT, comp, block, bufT);
+  fileBuffers myb(hyper, SEP::DATA_FLOAT, comp, block);
 
   std::shared_ptr<storeFloat> whole(new storeFloat(100 * 100 * 100)),
       result(new storeFloat(100 * 100 * 100));
@@ -98,7 +95,6 @@ TEST(bigTest, buffers) {
   }
   */
   myb.getWindow(ns, fs, js, result->getPtr());
-  std::cerr << "done with get window" << std::endl;
   for (size_t ii = 0; ii < 100 * 100 * 100; ii += 23) {
     EXPECT_EQ(rawP[ii], rawC[ii]);
   }
