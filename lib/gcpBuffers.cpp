@@ -1,4 +1,4 @@
-#include "fileBuffers.h"
+#include "gcpBuffers.h"
 #include <sys/stat.h>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
@@ -6,14 +6,16 @@
 
 #include <tbb/tbb.h>
 #include "compressTypes.h"
+#include "google/cloud/storage/client.h"
+#include "google/cloud/storage/oauth2/google_credentials.h"
 #include "memoryAll.h"
 #include "nocompress.h"
 #include "simpleMemoryLimit.h"
 using namespace SEP::IO;
 
-fileBuffers::fileBuffers(const std::shared_ptr<hypercube> hyper,
-                         const std::string dir, const Json::Value &des,
-                         std::shared_ptr<memoryUsage> mem) {
+gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
+                       const std::string dir, const Json::Value &des,
+                       std::shared_ptr<memoryUsage> mem) {
   _hyper = hyper->clone();
   if (des["blocking"].isNull()) {
     std::cerr << std::string(
@@ -46,12 +48,18 @@ fileBuffers::fileBuffers(const std::shared_ptr<hypercube> hyper,
 
   createBuffers(ON_DISK);
   setName(dir, false);
+
+  _projectID = getEnvVar("projectID", "NONE");
+  _region = getEnvVar("region", "us-west1");
+  if (_projectID == std::string("NONE")) {
+    std::cerr << "Must set environmental variable " << _projectID << std::endl;
+    exit(1);
+  }
 }
-fileBuffers::fileBuffers(std::shared_ptr<hypercube> hyper,
-                         const dataType dataType,
-                         std::shared_ptr<compress> comp,
-                         std::shared_ptr<blocking> block,
-                         std::shared_ptr<memoryUsage> mem) {
+gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
+                       const dataType dataType, std::shared_ptr<compress> comp,
+                       std::shared_ptr<blocking> block,
+                       std::shared_ptr<memoryUsage> mem) {
   _typ = dataType;
   _compress = comp;
   _blocking = block;
@@ -64,32 +72,44 @@ fileBuffers::fileBuffers(std::shared_ptr<hypercube> hyper,
   blockParams v = _blocking->makeBlocks(_hyper->getNs());
   createBuffers(UNDEFINED);
   _defaultStateSet = false;
-}
-std::shared_ptr<bufferTypes> buffers::createDefaultBufferTypes() {
-  _bufferT = std::make_shared<bufferTypes>(std::string("file"));
+
+  _projectID = getEnvVar("projectID", "NONE");
+  _region = getEnvVar("region", "us-west1");
+  if (_projectID == std::string("NONE")) {
+    std::cerr << "Must set environmental variable " << _projectID << std::endl;
+    exit(1);
+  }
 }
 
-void fileBuffers::setName(const std::string &dir, const bool create) {
-  _directory = dir;
-  if (createDirectory) {
-    const int dir_err =
-        mkdir(_directory.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    if (-1 == dir_err) {
-      std::cerr << "Error creating directory, exists? DIR=" << dir << std::endl;
-      exit(1);
+void gcpBuffers::setName(const std::string &dir, const bool create) {
+  _name = dir;
+  if (create) {
+    try {
+      namespace gcs = google::cloud::storage;
+
+      // Create a client to communicate with Google Cloud Storage. This client
+      // uses the default configuration for authentication and project id.
+      gcs::Client client;
+
+      gcs::BucketMetadata metadata = client.CreateBucketForProject(
+          _name, _projectID,
+          gcs::BucketMetadata().set_location(_region).set_storage_class(
+              gcs::storage_class::Regional()));
+
+    } catch (std::exception const &ex) {
+      std::cerr << "Trouble creating bucket " << _name;
     }
   }
   for (auto i = 0; i < _buffers.size(); i++) {
-    _buffers[i]->setName(_directory + std::string("/buf") + std::to_string(i));
+    _buffers[i]->setName(std::string("buf") + std::to_string(i));
   }
 }
-void fileBuffers::createBuffers(const bufferState state) {
+void gcpBuffers::createBuffers(const bufferState state) {
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
-  assert(_bufferT);
   for (int i = 0; i < b._ns.size(); i++) {
-    _buffers.push_back(
-        std::make_shared<fileBuffer>(b._ns[i], b._fs[i], _compress, state));
+    _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
+                                                   _compress, state));
   }
 
   _n123blocking = b._nblocking;

@@ -7,7 +7,7 @@ using namespace SEP::IO;
 
 TEST(logicTest, blocking) {
   std::vector<int> blocksize(1, 4), nb(1, 10);
-  EXPECT_DEATH(blocking(blocksize, nb), ".*failed.*");
+  //  EXPECT_DEATH(blocking(blocksize, nb), ".*failed.*");
   blocksize[0] = 5;
   ASSERT_NO_THROW(blocking(blocksize, nb));
 }

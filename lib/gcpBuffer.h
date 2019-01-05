@@ -5,21 +5,25 @@
 #include <memory>
 #include <sstream>
 #include <vector>
-#include "compress.h"
+#include "buffer.h"
 namespace SEP {
 namespace IO {
 
 class gcpBuffer : public buffer {
  public:
-  gcpBuffer(const std::string name, const std::vector<int> &n,
-            const std::vector<int> &f,
+  gcpBuffer(const std::string &bucketName, const std::string name,
+            const std::vector<int> &n, const std::vector<int> &f,
             std::shared_ptr<compress> comp);  // Read from file
-  gcpBuffer(const int ibuf, const std::vector<int> &n,
+  gcpBuffer(const std::string &bucketName, const std::vector<int> &n,
             const std::vector<int> &f, std::shared_ptr<compress> comp,
             const bufferState state);
 
-  virtual long long readBuffer();
-  virtual long long writeBuffer(bool keepState = false);
+  virtual long long readBuffer() override;
+  virtual long long writeBuffer(bool keepState = false) override;
+  virtual ~gcpBuffer() { ; }
+
+ private:
+  std::string _bucketName;
 };
 }  // namespace IO
 }  // namespace SEP

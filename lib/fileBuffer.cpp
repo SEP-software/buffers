@@ -11,8 +11,6 @@
 #include <iostream>
 using namespace SEP::IO;
 
-// NEW
-
 bool checkErrorBitsIn(std::ifstream *f) {
   bool stop = false;
 

@@ -90,6 +90,14 @@ class storeByte : public storeBase {
     return sizeof(unsigned char);
   }
   virtual size_t getSize() const override { return _buf.size(); }
+  std::string toString() {
+    return std::string(reinterpret_cast<const char *>(&_buf[0]), _buf.size());
+  }
+  void fromString(const std::string str) {
+    const unsigned char *raw_memory =
+        reinterpret_cast<const unsigned char *>(str.c_str());
+    _buf = std::vector<unsigned char>(raw_memory, raw_memory + str.size());
+  }
 
  private:
   std::vector<unsigned char> _buf;

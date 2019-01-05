@@ -51,7 +51,7 @@ class buffers {
   std::vector<int> _lastUsed;
   std::vector<std::vector<int>> _axisBlocking;
   std::vector<int> _n123blocking;
-  std::string _directory;
+  std::string _name;
 };
 }  // namespace IO
 }  // namespace SEP

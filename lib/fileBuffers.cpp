@@ -67,17 +67,17 @@ fileBuffers::fileBuffers(std::shared_ptr<hypercube> hyper,
 }
 
 void fileBuffers::setName(const std::string &dir, const bool create) {
-  _directory = dir;
+  _name = dir;
   if (create) {
     const int dir_err =
-        mkdir(_directory.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        mkdir(_name.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     if (-1 == dir_err) {
       std::cerr << "Error creating directory, exists? DIR=" << dir << std::endl;
       exit(1);
     }
   }
   for (auto i = 0; i < _buffers.size(); i++) {
-    _buffers[i]->setName(_directory + std::string("/buf") + std::to_string(i));
+    _buffers[i]->setName(_name + std::string("/buf") + std::to_string(i));
   }
 }
 void fileBuffers::createBuffers(const bufferState state) {

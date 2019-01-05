@@ -14,9 +14,8 @@ if(BUILD_ZFP)
   set(USE_ZFP true)
 endif(BUILD_ZFP)
 
-if(BUILD_GCP)
-  set(USE_GCP true)
-endif(BUILD_GCP)
+
+
 
 project(buffer LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
@@ -84,9 +83,7 @@ if(BUILD_ZFP)
     )
 endif(BUILD_ZFP)
 
-if(BUILD_GCP)
-  find_package(storage_client 0.3.0 REQUIRED)
-endif(BUILD_GCP)
+
 
 #if(BUILD_GCP)
 #  externalproject_add(STORAGE_INSTALL
@@ -111,6 +108,19 @@ endif(BUILD_GCP)
 #    )
 #endif(BUILD_GCP)
 
+
+
+
+if(BUILD_GCP)
+  set(USE_GCP true)
+  find_package(storage_client 0.3.0 REQUIRED )
+
+ if(GOOGLE_STORAGE_ROOT)
+    include_directories(${GOOGLE_STORAGE_ROOT}/include)
+ else(GOOGLE_STORAGE_ROOT)
+    MESSAGE(FATAL_ERROR "Must specitfy GOOGLE_STORAGE_ROOT")
+ endif(GOOGLE_STORAGE_ROOT)
+endif(BUILD_GCP)
 
 
 set(buffer_DIRNAME_cmake "lib/cmake")

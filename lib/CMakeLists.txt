@@ -10,6 +10,8 @@ if(USE_ZFP)
 set(SOURCES ${SOURCES} ZfpCompress.cpp)
 endif(USE_ZFP)
 
+
+message("XXXX " ${USE_GCP} ${BUILD_GCP})
 if(USE_GCP)
 set(SOURCES ${SOURCES} gcpBuffer.cpp gcpBuffers.cpp)
 endif(USE_GCP)
