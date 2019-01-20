@@ -1,6 +1,5 @@
 #pragma once
 #include <store.h>
-#include <cassert>
 #include <cstring>
 #include <memory>
 #include <sstream>

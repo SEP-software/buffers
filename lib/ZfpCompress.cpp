@@ -1,6 +1,6 @@
 #include "ZfpCompress.h"
-#include <cassert>
 #include <iostream>
+#include "SEPException.h"
 #include "ioTypes.h"
 using namespace SEP::IO;
 ZfpCompression::ZfpCompression(const SEP::dataType typ, const ZfpParams pars) {
@@ -39,13 +39,12 @@ void ZfpCompression::setGlobalZfp() {
       _ztype = zfp_type_none;
       break;
     case DATA_COMPLEX:
-      std::cerr << "Not supporting complex yet" << std::endl;
-      assert(1 == 2);
+      throw(SEPException(std::string("Not supporting complex yet")));
+
       _ztype = zfp_type_float;
       break;
     default:
-      std::cerr << "Unknown type" << std::endl;
-      assert(1 == 2);
+      throw(SEPException(std::string("Unknown type")));
   }
 }
 
@@ -59,7 +58,8 @@ std::shared_ptr<storeBase> ZfpCompression::decompressData(
     if (ns[i] > 1) ndim = i + 1;
     n123 *= ns[i];
   }
-  assert(ndim <= 3);
+  if (ndim > 4) throw(SEPException(std::string("Only support up to 4-D")));
+
   zfp_stream* zfp = zfp_stream_open(NULL);
   zfp_field* field = zfp_field_alloc();
   bitstream* stream = stream_open(buf->getPtr(), buf->getSize());
@@ -68,7 +68,8 @@ std::shared_ptr<storeBase> ZfpCompression::decompressData(
 
   zfp_stream_rewind(zfp);
 
-  assert(zfp_read_header(zfp, field, ZFP_HEADER_FULL));
+  if (!zfp_read_header(zfp, field, ZFP_HEADER_FULL))
+    throw SEPException(std::string("Trouble reading zfp headeer"));
   zfp_type type = _ztype;
   size_t typesize = zfp_type_size(type);
 
@@ -76,7 +77,8 @@ std::shared_ptr<storeBase> ZfpCompression::decompressData(
 
   zfp_field_set_pointer(field, storeOut->getPtr());
 
-  assert(zfp_decompress(zfp, field));
+  if (!zfp_decompress(zfp, field))
+    throw SEPException(std::string("Trouble decompressing buffer"));
 
   zfp_field_free(field);
 
@@ -94,7 +96,8 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
   for (int i = 0; i < ns.size(); i++) {
     if (ns[i] > 1) ndim = i + 1;
   }
-  assert(ndim <= 3);
+  if (ndim > 4)
+    throw(SEPException(std::string("Only support up to 4-D compression")));
 
   zfp_field* field = zfp_field_alloc();
   zfp_stream* zfp = zfp_stream_open(NULL);
@@ -132,15 +135,16 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
   }
 
   size_t bufsize = zfp_stream_maximum_size(zfp, field);
-  assert(bufsize > 0);
+  if (bufsize <= 0) throw SEPException(std::string("Buffersize 0"));
   void* buffer = malloc(bufsize);
-  assert(buffer);
+  if (!buffer) throw SEPException(std::string("Trouble allocating buffer"));
 
   bitstream* stream = stream_open(buffer, bufsize);
-  assert(stream);
+  if (!stream) throw SEPException(std::string("Trouble opening stream"));
   zfp_stream_set_bit_stream(zfp, stream);
 
-  assert(zfp_write_header(zfp, field, ZFP_HEADER_FULL));
+  if (!zfp_write_header(zfp, field, ZFP_HEADER_FULL))
+    throw SEPException(std::string("Trouble writing zfp header"));
 
   size_t zfpsize = zfp_compress(zfp, field);
 

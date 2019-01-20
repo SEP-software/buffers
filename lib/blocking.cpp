@@ -1,7 +1,7 @@
 #include "blocking.h"
-#include <cassert>
 #include <cmath>
 #include <iostream>
+#include "SEPException.h"
 using namespace SEP::IO;
 blockParams blocking::makeBlocks(const std::vector<int> &nsz) {
   blockParams x;
@@ -53,21 +53,14 @@ blockParams blocking::makeBlocks(const std::vector<int> &nsz) {
 }
 
 blocking::blocking(const Json::Value &jsonArgs) {
-  if (jsonArgs["blocksize"].isNull()) {
-    std::cerr << std::string(
-                     "trouble grabbing parameter blocksize from parameters")
-              << std::endl;
+  if (jsonArgs["blocksize"].isNull())
+    throw SEPException(std::string("trouble grabing blocksize"));
 
-    assert(1 == 2);
-  }
   for (auto itr : jsonArgs["blocksize"]) _blocksize.push_back(itr.asInt());
 
-  if (jsonArgs["nb"].isNull()) {
-    std::cerr << std::string("trouble grabbing parameter nb from parameters")
-              << std::endl;
+  if (jsonArgs["nb"].isNull())
+    throw SEPException(std::string("trouble grabing nb"));
 
-    assert(1 == 2);
-  }
   for (auto itr : jsonArgs["nb"]) _nb.push_back(itr.asInt());
 
   checkLogicBlocking();
@@ -145,9 +138,10 @@ void blocking::checkLogicBlocking() {
   for (int i = 0; i < _nb.size(); i++) {
     if (_blocksize.size() > i) {
       if (int(_nb[i] / _blocksize[i]) * _blocksize[i] != _nb[i]) {
-        std::cerr << "axis " << i << " blockElement=" << _nb[i]
-                  << " blockSize=" << _blocksize[i] << std::endl;
-        assert(1 == 2);
+        throw SEPException(std::string("axis ") + std::to_string(i) +
+                           std::string(" blockElement=") +
+                           std::to_string(_nb[i]) + std::string(" blockSize=") +
+                           std::to_string(_blocksize[i]));
       }
     }
   }

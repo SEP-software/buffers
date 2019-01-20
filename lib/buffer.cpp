@@ -206,8 +206,7 @@ long buffer::changeState(const bufferState state) {
       assert(1 == 2);
       break;
   }
-
-  assert(state != UNDEFINED);
+  if (state == UNDEFINED) throw SEPException(std::string("state is undefined"));
   _bufferState = state;
 
   return _buf->getSize() - oldSize;

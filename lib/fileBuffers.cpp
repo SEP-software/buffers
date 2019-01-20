@@ -3,8 +3,8 @@
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 #include <tbb/parallel_reduce.h>
-
 #include <tbb/tbb.h>
+#include "SEPException.h"
 #include "compressTypes.h"
 #include "memoryAll.h"
 #include "nocompress.h"
@@ -15,23 +15,13 @@ fileBuffers::fileBuffers(const std::shared_ptr<hypercube> hyper,
                          const std::string dir, const Json::Value &des,
                          std::shared_ptr<memoryUsage> mem) {
   _hyper = hyper->clone();
-  if (des["blocking"].isNull()) {
-    std::cerr << std::string(
-                     "trouble grabbing parameter blocking from parameters")
-              << std::endl;
-
-    assert(1 == 2);
-  }
+  if (des["blocking"].isNull())
+    throw SEPException(std::string("Trouble grabbing block parameters"));
 
   _blocking.reset(new blocking(des["blocking"]));
 
-  if (des["compression"].isNull()) {
-    std::cerr << std::string(
-                     "trouble grabbing parameter blocking from parameters")
-              << std::endl;
-
-    assert(1 == 2);
-  }
+  if (des["compression"].isNull())
+    throw SEPException(std::string("Trouble grabbing compression parameters"));
 
   _memory = mem;
   if (!_memory) {

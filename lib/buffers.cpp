@@ -79,26 +79,25 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
   for (int i = ns.size(); i < nw.size(); i++) ns.push_back(1);
   for (int i = 0; i < std::min(7, (int)nw.size()); i++) {
     bool fail = false;
-    if (nw[i] < 1) {
-      std::cerr << "axis[" << i << "] n < 1" << std::endl;
-      fail = true;
-    }
-    if (fw[i] < 0) {
-      std::cerr << "axis[" << i << "] f < 0" << std::endl;
-      fail = true;
-    }
-    if (jw[i] < 1) {
-      std::cerr << "axis[" << i << "] j < 1" << std::endl;
-      fail = true;
-    }
-    if (fw[i] + jw[i] * (nw[i] - 1) > ns[i] - 1) {
-      std::cerr << "axis[" << i << "] window out of range f=" << fw[i]
-                << " j=" << jw[i] << " n=" << nw[i] << " ns=" << ns[i]
-                << std::endl;
-      fail = true;
-    }
+    if (nw[i] < 1)
+      throw SEPException(std::string("axis[") + std::to_string(i) +
+                         std::string("] n < 1"));
 
-    if (fail) assert(1 == 2);
+    if (fw[i] < 0)
+      throw SEPException(std::string("axis[") + std::to_string(i) +
+                         std::string("] f < 0"));
+
+    if (jw[i] < 1)
+      throw SEPException(std::string("axis[") + std::to_string(i) +
+                         std::string("] j < 1"));
+
+    if (fw[i] + jw[i] * (nw[i] - 1) > ns[i] - 1)
+      throw SEPException(
+          std::string("axis[") + std::to_string(i) +
+          std::string("] window out of range f=") + std::to_string(fw[i]) +
+          std::string(" j=") + std::to_string(jw[i]) + std::string(" n=") +
+          std::to_string(nw[i]) + std::string(" ns=") + std::to_string(ns[i]));
+
     std::vector<bool> axisP(_axisBlocking[i].size(), false);
     size_t ip = 0;
     int ibeg = 0;
@@ -176,7 +175,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < std::min(7, (int)nw.size()); i++) n[i] = nw[i];
   for (auto i = 0; i < std::min(7, (int)fw.size()); i++) f[i] = fw[i];
   for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
-  assert(_memory);
+  if (!_memory) throw SEPException(std::string("Memory has not been set"));
 
   _memory->updateRecentBuffers(pwind);
 

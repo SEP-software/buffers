@@ -1,28 +1,18 @@
 
 #include "compressTypes.h"
-#include <cassert>
 #include <iostream>
 #ifdef USE_ZFP
 #include "ZfpCompress.h"
 #endif
+#include "SEPException.h"
 #include "nocompress.h"
 using namespace SEP::IO;
 
 compressTypes::compressTypes(const Json::Value &des) {
-  if (des["dataType"].isNull()) {
-    std::cerr << std::string(
-                     "trouble grabbing parameter compressType from parameters")
-              << std::endl;
-
-    assert(1 == 2);
-  }
-  if (des["compressType"].isNull()) {
-    std::cerr << std::string(
-                     "trouble grabbing parameter compressType from parameters")
-              << std::endl;
-
-    assert(1 == 2);
-  }
+  if (des["dataType"].isNull())
+    throw SEPException(std::string("dataType not in parameters"));
+  if (des["compressType"].isNull())
+    throw SEPException(std::string("compressTypw not in parameters"));
   std::string typ = des["compressType"].asString();
   dataType ele = toElementType(des["dataType"].asString());
   if (typ == std::string("noCompression")) {
@@ -32,7 +22,6 @@ compressTypes::compressTypes(const Json::Value &des) {
     _compress.reset(new ZfpCompression(des));
 #endif
   } else {
-    std::cerr << "Unknown compression type " << typ << std::endl;
-    assert(1 == 2);
+    throw SEPException(std::string("Unknown compression type " + typ));
   }
 }

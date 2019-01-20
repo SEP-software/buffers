@@ -9,6 +9,7 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include "SEPException.h"
 using namespace SEP::IO;
 
 bool checkErrorBitsIn(std::ifstream *f) {
@@ -17,20 +18,20 @@ bool checkErrorBitsIn(std::ifstream *f) {
   if (f->eof()) {
     char msg[500];
     strerror_r(errno, msg, 500);
-    std::cerr << "1: " << msg << std::endl;
+    throw(SEPException(std::string(msg)));
   }
 
   if (f->fail()) {
     char msg[500];
     strerror_r(errno, msg, 500);
-    std::cerr << "2: " << msg << std::endl;
+    throw(SEPException(std::string(msg)));
     stop = true;
   }
 
   if (f->bad()) {
     char msg[500];
     strerror_r(errno, msg, 500);
-    std::cerr << "3: " << msg << std::endl;
+    throw(SEPException(std::string(msg)));
     stop = true;
   }
 
@@ -42,20 +43,20 @@ bool checkErrorBitsOut(std::ofstream *f) {
   if (f->eof()) {
     char msg[500];
     strerror_r(errno, msg, 500);
-    std::cerr << "1: " << msg << std::endl;
+    throw(SEPException(std::string(msg)));
   }
 
   if (f->fail()) {
     char msg[500];
     strerror_r(errno, msg, 500);
-    std::cerr << "2: " << msg << std::endl;
+    throw(SEPException(std::string(msg)));
     stop = true;
   }
 
   if (f->bad()) {
     char msg[500];
     strerror_r(errno, msg, 500);
-    std::cerr << "3: " << msg << std::endl;
+    throw(SEPException(std::string(msg)));
     stop = true;
   }
 
@@ -67,7 +68,9 @@ long long fileBuffer::writeBuffer(bool keepState) {
 
   std::shared_ptr<storeBase> buf;
   bufferState restore;
-  assert(_bufferState != UNDEFINED);
+  if (_bufferState == UNDEFINED)
+    throw SEPException(
+        std::string("Trying to write buffer that hasn't been created"));
   if (_bufferState == ON_DISK) return 0;
   if (keepState) {
     restore = _bufferState;
@@ -76,11 +79,11 @@ long long fileBuffer::writeBuffer(bool keepState) {
 
   changeState(CPU_COMPRESSED);
 
-  assert(_nameSet);
+  if (!_nameSet)
+    throw SEPException(
+        std::string("Trying to write buffer when name has not been set"));
   std::ofstream out(_name, std::ofstream::binary);
-  assert(!checkErrorBitsOut(&out));
   out.write(_buf->getPtr(), _buf->getSize());
-  assert(!checkErrorBitsOut(&out));
 
   out.close();
 
@@ -98,10 +101,13 @@ long long fileBuffer::readBuffer() {
   _modified = false;
   /*Only need to do something if sitting on disk*/
   if (_bufferState == ON_DISK) {
-    assert(_nameSet);
+    if (!_nameSet)
+      throw SEPException(
+          std::string("Trying to write buffer when name has not been set"));
     std::ifstream in(_name, std::iostream::in | std::iostream::binary);
 
-    assert(in);
+    if (!in)
+      throw SEPException(std::string("Trouble opening stream for reading"));
     in.seekg(0, std::iostream::end);
     int nelemFile = in.tellg();
     in.seekg(0, std::iostream::beg);
@@ -111,12 +117,11 @@ long long fileBuffer::readBuffer() {
     in.read(_buf->getPtr(), nelemFile);
     char *xx = (char *)_buf->getPtr();
 
-    assert(!checkErrorBitsIn(&in));
-
     _bufferState = CPU_COMPRESSED;
     in.close();
   }
-  assert(_bufferState != UNDEFINED);
+  if (!_bufferState == UNDEFINED)
+    throw SEPException(std::string("bufferstate is undefined"));
   return _buf->getSize() - oldSize;
 }
 

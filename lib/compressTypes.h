@@ -6,6 +6,7 @@
 #include <memory>
 #include <sstream>
 #include <vector>
+#include "SEPException.h"
 #include "compress.h"
 namespace SEP {
 namespace IO {
@@ -15,7 +16,7 @@ class compressTypes {
   compressTypes(const Json::Value &val);
   std::shared_ptr<compress> getCompressionObj() { return _compress; }
   dataType getDataType() {
-    assert(_compress->_typ);
+    if (!_compress->_typ) throw SEPException(std::string("Data type not set"));
     return _compress->_typ;
   }
 

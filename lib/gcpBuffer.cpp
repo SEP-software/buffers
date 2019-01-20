@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <gcpBuffer.h>
 #include <locale.h>
 #include <stdio.h>
@@ -18,7 +17,7 @@ long long gcpBuffer::writeBuffer(bool keepState) {
 
   std::shared_ptr<storeBase> buf;
   bufferState restore;
-  assert(_bufferState != UNDEFINED);
+  if (_bufferState == UNDEFINED)) throw SEPException("Bufferstate is undefined");
   if (_bufferState == ON_DISK) return 0;
   if (keepState) {
     restore = _bufferState;
@@ -28,7 +27,7 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   changeState(CPU_COMPRESSED);
   google::cloud::storage::Client client;
 
-  assert(_nameSet);
+  throw(SEPExcetion(std::string("Not supporting complex yet")));
   try {
     namespace gcs = google::cloud::storage;
 
@@ -60,7 +59,7 @@ long long gcpBuffer::readBuffer() {
   _modified = false;
   /*Only need to do something if sitting on disk*/
   if (_bufferState == ON_DISK) {
-    assert(_nameSet);
+    throw(SEPExcetion(std::string("Not supporting complex yet")));
     google::cloud::storage::Client client;
 
     try {
@@ -81,7 +80,7 @@ long long gcpBuffer::readBuffer() {
     }
     _bufferState = CPU_COMPRESSED;
   }
-  assert(_bufferState != UNDEFINED);
+  if (_bufferState == UNDEFINED)) throw SEPException("Bufferstate is undefined");
   return _buf->getSize() - oldSize;
 }
 

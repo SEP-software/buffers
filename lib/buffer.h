@@ -1,10 +1,10 @@
 #pragma once
 #include <store.h>
-#include <cassert>
 #include <cstring>
 #include <memory>
 #include <sstream>
 #include <vector>
+#include "SEPException.h"
 #include "compress.h"
 namespace SEP {
 namespace IO {
@@ -32,7 +32,7 @@ class buffer {
     _nameSet = true;
   }
   std::string getFileName() {
-    assert(_nameSet);
+    if (!_nameSet) throw SEPException(std::string("Name of file not set"));
     size_t found = _name.find_last_of("/\\");
 
     return _name.substr(found + 1);

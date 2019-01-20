@@ -1,6 +1,5 @@
 
 #include "nocompress.h"
-#include <cassert>
 #include <iostream>
 using namespace SEP::IO;
 

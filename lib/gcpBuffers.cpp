@@ -18,21 +18,15 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
                        std::shared_ptr<memoryUsage> mem) {
   _hyper = hyper->clone();
   if (des["blocking"].isNull()) {
-    std::cerr << std::string(
-                     "trouble grabbing parameter blocking from parameters")
-              << std::endl;
-
-    assert(1 == 2);
+    throw SEPException(
+        std::string("Trouble grabbing blocking from parameters"));
   }
 
   _blocking.reset(new blocking(des["blocking"]));
 
   if (des["compression"].isNull()) {
-    std::cerr << std::string(
-                     "trouble grabbing parameter blocking from parameters")
-              << std::endl;
-
-    assert(1 == 2);
+    throw SEPException(
+        std::string("Trouble grabbing compression from parameters"));
   }
 
   _memory = mem;
