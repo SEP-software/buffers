@@ -113,7 +113,9 @@ endif(BUILD_ZFP)
 
 if(BUILD_GCP)
   set(USE_GCP true)
-  find_package(storage_client 0.3.0 REQUIRED )
+  find_package(Threads REQUIRED)
+  find_package(CURL REQUIRED)
+  find_package(google_cloud_cpp_common 0.4.0 REQUIRED )
 
  if(GOOGLE_STORAGE_ROOT)
     include_directories(${GOOGLE_STORAGE_ROOT}/include)
