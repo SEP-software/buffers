@@ -1,4 +1,5 @@
-#pragma once
+#ifndef gcp_buffers_h
+#define gcp_buffers_h 1
 #include <store.h>
 #include <cstring>
 #include <memory>
@@ -35,3 +36,4 @@ class gcpBuffers : public buffers {
 };
 }  // namespace IO
 }  // namespace SEP
+#endif

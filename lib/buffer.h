@@ -1,4 +1,5 @@
-#pragma once
+#ifndef buffer_h
+#define buffer_h 1
 #include <store.h>
 #include <cstring>
 #include <memory>
@@ -84,3 +85,4 @@ class buffer {
 };
 }  // namespace IO
 }  // namespace SEP
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef file_buffer_h
+#define file_buffer_h 1
 #include <store.h>
 #include <cstring>
 #include <memory>
@@ -22,3 +23,4 @@ class fileBuffer : public buffer {
 };
 }  // namespace IO
 }  // namespace SEP
+#endif
