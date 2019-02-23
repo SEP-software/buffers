@@ -6,7 +6,7 @@ if(NOT SUBPACKAGE)
   option(BUILD_TESTS "Build with test support" ON)
   option(INSTALL_CMAKE_ENV "Install cmake build environment" ON)
 else(NOT SUBPACKAGE)
-  option(BUILD_TESTS "Build with test support" OFF)
+  option(BUILD_TEST "Build with test support" OFF)
 endif(NOT SUBPACKAGE)
 set(SUBPACKAGE true)
 
@@ -48,12 +48,38 @@ if(NOT TARGET hypercube)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube/lib)
 endif(NOT TARGET hypercube)
 
-if(BUILD_TESTS)
+
+if(BUILD_TESTS AND NOT BUILD_GCP)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googletest/include)
+
 execute_process(COMMAND git submodule update --init --recursive --
                         external/googletest
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(external/googletest)
-endif(BUILD_TESTS)
+  message("2BUILD GOOGLETEST")
+else()
+  message("NOT2BUILD GOOGLETEST")
+endif(BUILD_TESTS AND NOT BUILD_GCP)
+
+
+
+if(BUILD_GCP)
+  set(BUILD_TESTING FALSE)
+ 
+ execute_process(COMMAND git submodule update --init --recursive --
+                          external/cloud
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+ 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googletest/include)
+
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/cloud)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googlemock/include)
+    include_directories(${CMAKE_CURRENT_BINARY_DIR}/external/cloud)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/cloud)
+
+endif(BUILD_GCP)
+
+
 
 
 if(NOT TARGET jsonCpp)
@@ -64,12 +90,15 @@ if(NOT TARGET jsonCpp)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 endif(NOT TARGET jsonCpp)
 
+
+
 if(BUILD_ZFP)
   externalproject_add(ZFP_INSTALL
                       CMAKE_ARGS
                       -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
                       -DCMAKE_INSTALL_LIBDIR=lib
                       -DZFP_WITH_OPENMP=false
+                      -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                       GIT_REPOSITORY
                       "https://github.com/LLNL/zfp"
                       INSTALL_DIR
@@ -114,15 +143,6 @@ endif(BUILD_ZFP)
 
 if(BUILD_GCP)
   set(USE_GCP true)
-  find_package(Threads REQUIRED)
-  find_package(CURL REQUIRED)
-  find_package(google_cloud_cpp_common 0.4.0 REQUIRED )
-
- if(GOOGLE_STORAGE_ROOT)
-    include_directories(${GOOGLE_STORAGE_ROOT}/include)
- else(GOOGLE_STORAGE_ROOT)
-    MESSAGE(FATAL_ERROR "Must specitfy GOOGLE_STORAGE_ROOT")
- endif(GOOGLE_STORAGE_ROOT)
 endif(BUILD_GCP)
 
 
