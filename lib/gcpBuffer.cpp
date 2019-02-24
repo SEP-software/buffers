@@ -25,9 +25,9 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   }
 
   changeState(CPU_COMPRESSED);
-  google::cloud::storage::Client client;
-
-  throw(SEPExcetion(std::string("Not supporting complex yet")));
+  StatusOr<gcs::Client> client = gcs::Client::CreateDefaultClient();
+  if (!client)
+    throw(SEPException(std::string("Trouble creating default client")));
   try {
     namespace gcs = google::cloud::storage;
 
@@ -59,8 +59,9 @@ long long gcpBuffer::readBuffer() {
   _modified = false;
   /*Only need to do something if sitting on disk*/
   if (_bufferState == ON_DISK) {
-    throw(SEPExcetion(std::string("Not supporting complex yet")));
-    google::cloud::storage::Client client;
+    StatusOr<gcs::Client> client = gcs::Client::CreateDefaultClient();
+    if (!client)
+      throw(SEPException(std::string("Trouble creating default client")));
 
     try {
       namespace gcs = google::cloud::storage;
