@@ -143,6 +143,7 @@ endif(BUILD_ZFP)
 
 if(BUILD_GCP)
   set(USE_GCP true)
+  include_directories(${CMAKE_CURRENT_BINARY_DIR}/external/nlohmann_json/include)
 endif(BUILD_GCP)
 
 

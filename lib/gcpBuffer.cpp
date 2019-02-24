@@ -17,7 +17,7 @@ long long gcpBuffer::writeBuffer(bool keepState) {
 
   std::shared_ptr<storeBase> buf;
   bufferState restore;
-  if (_bufferState == UNDEFINED)) throw SEPException("Bufferstate is undefined");
+  if (_bufferState == UNDEFINED) throw SEPException("Bufferstate is undefined");
   if (_bufferState == ON_DISK) return 0;
   if (keepState) {
     restore = _bufferState;
