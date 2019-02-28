@@ -6,6 +6,7 @@
 
 #include <tbb/tbb.h>
 #include "compressTypes.h"
+#include "google/cloud/status_or.h"
 #include "google/cloud/storage/client.h"
 #include "google/cloud/storage/oauth2/google_credentials.h"
 #include "memoryAll.h"
@@ -83,9 +84,14 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
 
       // Create a client to communicate with Google Cloud Storage. This client
       // uses the default configuration for authentication and project id.
-      gcs::Client client;
+      
+          namespace gcs = google::cloud::storage;
+            google::cloud::v0::StatusOr<gcs::Client> client = gcs::Client::CreateDefaultClient();
+			          if (!client)
+					        throw(SEPException(std::string("Trouble creating default client")));
 
-      gcs::BucketMetadata metadata = client.CreateBucketForProject(
+
+				  google::cloud::StatusOr<gcs::BucketMetadata> metadata = client->CreateBucketForProject(
           _name, _projectID,
           gcs::BucketMetadata().set_location(_region).set_storage_class(
               gcs::storage_class::Regional()));

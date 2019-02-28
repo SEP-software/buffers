@@ -49,7 +49,7 @@ if(NOT TARGET hypercube)
 endif(NOT TARGET hypercube)
 
 
-if(BUILD_TESTS AND NOT BUILD_GCP)
+if(BUILD_TESTS )
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googletest/include)
 
 execute_process(COMMAND git submodule update --init --recursive --
@@ -59,7 +59,7 @@ add_subdirectory(external/googletest)
   message("2BUILD GOOGLETEST")
 else()
   message("NOT2BUILD GOOGLETEST")
-endif(BUILD_TESTS AND NOT BUILD_GCP)
+endif(BUILD_TESTS)
 
 
 
@@ -76,6 +76,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googletest/i
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googlemock/include)
     include_directories(${CMAKE_CURRENT_BINARY_DIR}/external/cloud)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/cloud)
+  include_directories(${PROTOBUF_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+
 
 endif(BUILD_GCP)
 

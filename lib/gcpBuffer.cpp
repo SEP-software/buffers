@@ -10,6 +10,8 @@
 #include <iostream>
 #include "google/cloud/storage/client.h"
 #include "google/cloud/storage/oauth2/google_credentials.h"
+#include "google/cloud/status_or.h"
+//#include "statusor.h"
 using namespace SEP::IO;
 
 long long gcpBuffer::writeBuffer(bool keepState) {
@@ -25,21 +27,32 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   }
 
   changeState(CPU_COMPRESSED);
-  StatusOr<gcs::Client> client = gcs::Client::CreateDefaultClient();
+    namespace gcs = google::cloud::storage;
+  google::cloud::v0::StatusOr<gcs::Client> client = gcs::Client::CreateDefaultClient();
   if (!client)
     throw(SEPException(std::string("Trouble creating default client")));
   try {
-    namespace gcs = google::cloud::storage;
 
-    [](gcs::Client client, std::string bucket_name, std::string object_name,
-       std::shared_ptr<storeByte> buf) {
+    [](
+		    gcs::Client client, 
+		    std::string bucket_name, 
+	    std::string object_name,
+      std::shared_ptr<storeByte> buf
+       ) {
       gcs::ObjectWriteStream stream =
           client.WriteObject(bucket_name, object_name);
       std::string str = buf->toString();
       std::ostreambuf_iterator<char> out_it(stream);
       std::copy(str.begin(), str.end(), out_it);
-    }(std::move(client), _bucketName, _name,
-      std::dynamic_pointer_cast<storeByte>(_buf));
+    }(
+		    std::move(
+			    client.value()
+			    )
+		    , 
+		    _bucketName, 
+		    _name,
+     std::dynamic_pointer_cast<storeByte>(_buf)
+      );
   } catch (std::exception const &ex) {
     std::cerr << "Trouble writing to bucket " << _name << std::endl;
     exit(1);
@@ -58,13 +71,13 @@ long long gcpBuffer::readBuffer() {
   long long oldSize = _buf->getSize();
   _modified = false;
   /*Only need to do something if sitting on disk*/
+      namespace gcs = google::cloud::storage;
   if (_bufferState == ON_DISK) {
-    StatusOr<gcs::Client> client = gcs::Client::CreateDefaultClient();
+	  google::cloud::v0::StatusOr<gcs::Client> client = gcs::Client::CreateDefaultClient();
     if (!client)
       throw(SEPException(std::string("Trouble creating default client")));
 
     try {
-      namespace gcs = google::cloud::storage;
 
       [](gcs::Client client, std::string bucket_name, std::string object_name,
          std::shared_ptr<storeByte> buf) {
@@ -73,7 +86,7 @@ long long gcpBuffer::readBuffer() {
 
         std::string data(std::istreambuf_iterator<char>(stream), {});
         buf->fromString(data);
-      }(std::move(client), _bucketName, _name,
+      }(std::move(client.value()), _bucketName, _name,
         std::dynamic_pointer_cast<storeByte>(_buf));
     } catch (std::exception const &ex) {
       std::cerr << "Trouble writing to bucket " << _name << std::endl;
@@ -81,7 +94,7 @@ long long gcpBuffer::readBuffer() {
     }
     _bufferState = CPU_COMPRESSED;
   }
-  if (_bufferState == UNDEFINED)) throw SEPException("Bufferstate is undefined");
+  if (_bufferState == UNDEFINED) throw SEPException("Bufferstate is undefined");
   return _buf->getSize() - oldSize;
 }
 
