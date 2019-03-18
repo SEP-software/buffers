@@ -18,9 +18,11 @@ class gcpBuffer : public buffer {
             const std::vector<int> &f, std::shared_ptr<compress> comp,
             const bufferState state);
 
+  void setBucketName(const std::string nm){ _bucketName=nm;}
   virtual long long readBuffer() override;
   virtual long long writeBuffer(bool keepState = false) override;
   virtual ~gcpBuffer() { ; }
+   
 
  private:
   std::string _bucketName;

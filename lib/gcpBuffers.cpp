@@ -52,8 +52,9 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
   }
 }
 gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
-                       const dataType dataType, std::shared_ptr<compress> comp,
+                       const dataType dataType, 
                        std::shared_ptr<blocking> block,
+		       std::shared_ptr<compress> comp,
                        std::shared_ptr<memoryUsage> mem) {
   _typ = dataType;
   _compress = comp;
@@ -93,8 +94,16 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
 
 				  google::cloud::StatusOr<gcs::BucketMetadata> metadata = client->CreateBucketForProject(
           _name, _projectID,
-          gcs::BucketMetadata().set_location(_region).set_storage_class(
-              gcs::storage_class::Regional()));
+          gcs::BucketMetadata()
+	  .set_location(_region).set_storage_class(
+              gcs::storage_class::Regional())
+	      );
+
+
+				  if(!metadata) {
+                                 std::cerr<<metadata.status()<<std::endl;
+				throw SEPException(std::string("Trouble creating bucket "));
+				  }
 
     } catch (std::exception const &ex) {
       std::cerr << "Trouble creating bucket " << _name;
@@ -102,6 +111,8 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
   }
   for (auto i = 0; i < _buffers.size(); i++) {
     _buffers[i]->setName(std::string("buf") + std::to_string(i));
+    std::shared_ptr<gcpBuffer> b=std::dynamic_pointer_cast<gcpBuffer>(_buffers[i]);
+    b->setBucketName(dir);
   }
 }
 void gcpBuffers::createBuffers(const bufferState state) {

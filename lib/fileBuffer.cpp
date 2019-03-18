@@ -120,7 +120,7 @@ long long fileBuffer::readBuffer() {
     _bufferState = CPU_COMPRESSED;
     in.close();
   }
-  if (!_bufferState == UNDEFINED)
+  if (_bufferState == UNDEFINED)
     throw SEPException(std::string("bufferstate is undefined"));
   return _buf->getSize() - oldSize;
 }

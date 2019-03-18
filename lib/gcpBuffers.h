@@ -17,8 +17,8 @@ namespace IO {
 class gcpBuffers : public buffers {
  public:
   gcpBuffers(const std::shared_ptr<hypercube>, const dataType dataType,
-             std::shared_ptr<compress> comp = nullptr,
              std::shared_ptr<blocking> block = nullptr,
+             std::shared_ptr<compress> comp = nullptr,
              std::shared_ptr<memoryUsage> mem = nullptr);
   gcpBuffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
              const Json::Value &jsonArgs,

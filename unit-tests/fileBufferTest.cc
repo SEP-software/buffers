@@ -75,8 +75,8 @@ TEST(readWindowNoCompress, buffer) {
   std::shared_ptr<storeBase> storeCompare = store->clone();
 
   ASSERT_NO_THROW(buf.writeBuffer());
-  std::cerr<<buf._bufferState<<std::endl;
   buf.readBuffer();
+  
   ASSERT_NO_THROW(buf.readBuffer());
 
   std::shared_ptr<storeFloat> x(new storeFloat(20 * 20 * 20));
