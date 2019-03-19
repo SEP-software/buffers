@@ -7,7 +7,7 @@ if(BUILD_ZFP)
 INCLUDE_DIRECTORIES(${ZFP_INCLUDE_DIR})
 endif(BUILD_ZFP)
 
-cmake_policy(SET CMP0083 NEW)
+#cmake_policy(SET CMP0083 NEW)
   if (APPLE)
     add_definitions(-DGTEST_USE_OWN_TR1_TUPLE)
     add_definitions(-D__GLIBCXX__)
