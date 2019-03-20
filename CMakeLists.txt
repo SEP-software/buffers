@@ -42,7 +42,6 @@ if(NOT TARGET hypercube)
                           external/hypercube
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube/lib)
 endif(NOT TARGET hypercube)
 
 if(BUILD_TESTS)
@@ -53,9 +52,7 @@ if(BUILD_TESTS)
                           external/googletest
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   add_subdirectory(external/googletest)
-  message("2BUILD GOOGLETEST")
 else()
-  message("NOT2BUILD GOOGLETEST")
 endif(BUILD_TESTS)
 
 if(BUILD_GCP)
@@ -124,27 +121,20 @@ if(BUILD_GCP)
     ${CMAKE_CURRENT_BINARY_DIR}/external/nlohmann_json/include)
 endif(BUILD_GCP)
 
-#set(buffer_DIRNAME_cmake "lib/cmake")
-#set(buffer_DIRNAME_lib "lib")
-#set(buffer_DIRNAME_include "include")
+# set(buffer_DIRNAME_cmake "lib/cmake") set(buffer_DIRNAME_lib "lib")
+# set(buffer_DIRNAME_include "include")
 include(CMakePackageConfigHelpers)
 if(NOT SUPPORT_LIBRARIES_BUILD)
 
-  #configure_package_config_file(
-  #  "${CMAKE_CURRENT_SOURCE_DIR}/bufferConfig.cmake.in"
-   # "${CMAKE_CURRENT_BINARY_DIR}/bufferConfig.cmake"
-  #  INSTALL_DESTINATION
-   # ${buffer_DIRNAME_cmake}
-   # PATH_VARS
-   # buffer_DIRNAME_include
-    #buffer_DIRNAME_lib
-   # buffer_DIRNAME_cmake)
+  # configure_package_config_file(
+  # "${CMAKE_CURRENT_SOURCE_DIR}/bufferConfig.cmake.in"
+  # "${CMAKE_CURRENT_BINARY_DIR}/bufferConfig.cmake" INSTALL_DESTINATION
+  # ${buffer_DIRNAME_cmake} PATH_VARS buffer_DIRNAME_include buffer_DIRNAME_lib
+  # buffer_DIRNAME_cmake)
 
- # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/bufferConfig.cmake
-  #        DESTINATION lib/cmake)
-  #if(NOT INSTALL_CMAKE_ENV)
-  #  install(EXPORT bufferExports DESTINATION ${buffer_DIRNAME_cmake})
-  #endif(NOT INSTALL_CMAKE_ENV)
+  # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/bufferConfig.cmake DESTINATION
+  # lib/cmake) if(NOT INSTALL_CMAKE_ENV) install(EXPORT bufferExports
+  # DESTINATION ${buffer_DIRNAME_cmake}) endif(NOT INSTALL_CMAKE_ENV)
 endif(NOT SUPPORT_LIBRARIES_BUILD)
 
 add_subdirectory(lib)
