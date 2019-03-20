@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.7)
 project(buffers-lib)
 include_directories(${ZFP_INCLUDE_DIR})
 include_directories(${TBB_INCLUDE_DIRS})
+set(DEP_LIBS )
 set(SOURCES
     store.cpp
     buffer.cpp
@@ -16,10 +17,12 @@ set(SOURCES
     buffers.cpp)
 if(USE_ZFP)
   set(SOURCES ${SOURCES} ZfpCompress.cpp)
+  set(DEP_LIBS zfp)
 endif(USE_ZFP)
 
 if(USE_GCP)
   set(SOURCES ${SOURCES} gcpBuffer.cpp gcpBuffers.cpp)
+  set(DEP_LIBS  ${DEP_LIBS} storage_client)
 endif(USE_GCP)
 
 set(INCLUDES
@@ -45,7 +48,7 @@ target_include_directories(
          $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
-target_link_libraries(buffers hypercube ${TBB_LIBRARIES})
+ target_link_libraries(buffers hypercube jsonCpp ${DEP_LIBS} ${TBB_LIBRARIES})
 if(NOT SUPPORT_LIBRARIES_BUILD)
   install(FILES ${INCLUDES} DESTINATION include)
   install(TARGETS buffers DESTINATION lib EXPORT buffersTargets)

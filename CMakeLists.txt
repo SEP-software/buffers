@@ -79,27 +79,13 @@ if(NOT TARGET jsonCpp)
                           external/json
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 endif(NOT TARGET jsonCpp)
 
 if(BUILD_ZFP)
-  externalproject_add(ZFP_INSTALL
-                      CMAKE_ARGS
-                      -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-                      -DCMAKE_INSTALL_LIBDIR=lib
-                      -DZFP_WITH_OPENMP=false
-                      -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                      GIT_REPOSITORY
-                      "https://github.com/LLNL/zfp"
-                      INSTALL_DIR
-                      ${CMAKE_INSTALL_PREFIX})
-
-  set(ZFP_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
-
-  set(
-    ZFP_LIBRARIES
-    ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}zfp${CMAKE_SHARED_LIBRARY_SUFFIX}
-    )
+  execute_process(COMMAND git submodule update --init --recursive --
+                          external/zfp
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/zfp)
 endif(BUILD_ZFP)
 
 # if(BUILD_GCP) externalproject_add(STORAGE_INSTALL CMAKE_ARGS
