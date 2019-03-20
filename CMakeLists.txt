@@ -128,6 +128,13 @@ add_subdirectory(lib)
 if(BUILD_TESTS)
   add_subdirectory(unit-tests)
 endif(BUILD_TESTS)
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(buffersConfig.cmake.in
+                              "${CMAKE_CURRENT_BINARY_DIR}/buffersConfig.cmake"
+                              INSTALL_DESTINATION
+                              cmake/SEP/IO)
+
 install(EXPORT buffersTargets
         FILE buffersTargets.cmake
         NAMESPACE SEP::IO
