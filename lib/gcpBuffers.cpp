@@ -52,9 +52,8 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
   }
 }
 gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
-                       const dataType dataType, 
-                       std::shared_ptr<blocking> block,
-		       std::shared_ptr<compress> comp,
+                       const dataType dataType, std::shared_ptr<blocking> block,
+                       std::shared_ptr<compress> comp,
                        std::shared_ptr<memoryUsage> mem) {
   _typ = dataType;
   _compress = comp;
@@ -78,40 +77,44 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
 }
 
 void gcpBuffers::setName(const std::string &dir, const bool create) {
-  _name = dir;
+  if ((pos = dir.find("/")) == std::string::npos) {  // No subdirectory
+    _bucket = dir;
+    _baseName = "";
+  } else {
+    _baseName;
+    _bucket = _baseName.substr(0, s.find("/"));
+    _baseName.erase(0, _baseNamefind("/") + 1);
+  }
+
   if (create) {
-    try {
-      namespace gcs = google::cloud::storage;
+    namespace gcs = google::cloud::storage;
 
-      // Create a client to communicate with Google Cloud Storage. This client
-      // uses the default configuration for authentication and project id.
-      
-          namespace gcs = google::cloud::storage;
-            google::cloud::v0::StatusOr<gcs::Client> client = gcs::Client::CreateDefaultClient();
-			          if (!client)
-					        throw(SEPException(std::string("Trouble creating default client")));
+    // Create a client to communicate with Google Cloud Storage. This client
+    // uses the default configuration for authentication and project id.
 
+    namespace gcs = google::cloud::storage;
+    google::cloud::v0::StatusOr<gcs::Client> client =
+        gcs::Client::CreateDefaultClient();
+    if (!client)
+      throw(SEPException(std::string("Trouble creating default client")));
 
-				  google::cloud::StatusOr<gcs::BucketMetadata> metadata = client->CreateBucketForProject(
-          _name, _projectID,
-          gcs::BucketMetadata()
-	  .set_location(_region).set_storage_class(
-              gcs::storage_class::Regional())
-	      );
+    google::cloud::StatusOr<gcs::BucketMetadata> metadata =
+        client->CreateBucketForProject(
+            _bucket, _projectID,
+            gcs::BucketMetadata().set_location(_region).set_storage_class(
+                gcs::storage_class::Regional()));
 
-
-				  if(!metadata) {
-                                 std::cerr<<metadata.status()<<std::endl;
-				throw SEPException(std::string("Trouble creating bucket "));
-				  }
-
-    } catch (std::exception const &ex) {
-      std::cerr << "Trouble creating bucket " << _name;
+    if (!metadata) {
+      if (metadata.status().StatusCode() != kAlreadyExists) {
+        std::cerr << metadata.status().message() << std::endl;
+        throw SEPException(std::string("Trouble creating bucket "));
+      }
     }
   }
   for (auto i = 0; i < _buffers.size(); i++) {
-    _buffers[i]->setName(std::string("buf") + std::to_string(i));
-    std::shared_ptr<gcpBuffer> b=std::dynamic_pointer_cast<gcpBuffer>(_buffers[i]);
+    _buffers[i]->setName(_baseName, std::string("/buf") + std::to_string(i));
+    std::shared_ptr<gcpBuffer> b =
+        std::dynamic_pointer_cast<gcpBuffer>(_buffers[i]);
     b->setBucketName(dir);
   }
 }

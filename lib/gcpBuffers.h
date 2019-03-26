@@ -33,6 +33,7 @@ class gcpBuffers : public buffers {
 
  private:
   std::string _projectID, _region;
+  std::string _bucket, _baseName;
 };
 }  // namespace IO
 }  // namespace SEP

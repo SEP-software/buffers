@@ -38,6 +38,7 @@ class buffers {
   std::shared_ptr<storeBase> getSpecificStore(int ibuf) {
     return _buffers[ibuf]->getStorePtr();
   }
+  std::shared_ptr<compress> getCompressObj() { return _compress; }
 
  protected:
   bool _defaultStateSet;
