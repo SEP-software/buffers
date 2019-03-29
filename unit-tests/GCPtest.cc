@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>  // googletest header file
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -7,6 +8,8 @@
 #include "google/cloud/storage/client.h"
 #include "google/cloud/storage/oauth2/google_credentials.h"
 #include "ioTypes.h"
+using namespace std::chrono;
+
 using std::string;
 using namespace SEP::IO;
 
@@ -39,21 +42,41 @@ TEST(TESTBucketCreation, gcpBuffers) {
   std::shared_ptr<SEP::hypercube> hyper(new SEP::hypercube(axes));
 
   std::string bucket = std::string("testbucket993");
-  std::string bucket1 = bucket + std::string("/buf1");
-  std::string bucket2 = bucket + std::string("/buf2");
+  std::string bucket1 = bucket + std::string("/dataset1");
+  std::string bucket2 = bucket + std::string("/dataset2");
+
 
   // Create Default blocking
-  std::shared_ptr<SEP::IO::blocking> block =
-      SEP::IO::blocking::createDefaultBlocking(hyper);
+//  std::shared_ptr<SEP::IO::blocking> block =
+//      SEP::IO::blocking::createDefaultBlocking(hyper);
+
+   std::vector<int> big(4,10),bs(4,2) ;
+	   big[0]=100;
+   
+  std::shared_ptr<SEP::IO::blocking> block( new SEP::IO::blocking(bs,big));
 
   // Create simple file and write to disk
   SEP::IO::gcpBuffers gcp(hyper, SEP::DATA_FLOAT, block);
-  ASSERT_NO_THROW(gcp.setName(bucket, true));
+  ASSERT_NO_THROW(gcp.setName(bucket1, true));
 
   std::vector<float> vals(n123);
 
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+
   ASSERT_NO_THROW(gcp.putWindow(ns, fs, js, vals.data()));
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
   ASSERT_NO_THROW(gcp.changeState(ON_DISK));
+    high_resolution_clock::time_point t3 = high_resolution_clock::now();
+
+      auto d1 = duration_cast<microseconds>(t2 - t1).count();
+        auto d2 = duration_cast<microseconds>(t3 - t2).count();
+	  double s1=(double) n123*4/d1;
+	  double s2=(double) n123*4/d2;
+
+	  std::cerr <<"To buffer " << s1 << " MB/s " << std::endl; ;
+	      std::cerr << "To cloud " <<s2 << " MB/s " << std::endl;
+
 
   // Create a second directory in same bucket
   SEP::IO::gcpBuffers gcp2(hyper, SEP::DATA_FLOAT, block);
@@ -65,10 +88,20 @@ TEST(TESTBucketCreation, gcpBuffers) {
   // Now read the bucket from disk
   Json::Value val;
   val["blocking"] = block->getJsonDescription();
-  val["compression"] = gcp->getCompressObj()->getJsonDescription();
+  val["compression"] = gcp.getCompressObj()->getJsonDescription();
   std::vector<float> vals2(n123);
   SEP::IO::gcpBuffers gcp3(hyper, bucket1, val);
-  ASSSERT_NO_THROW(gcp3.getWindow(ns, fs, js, vals2.data()));
+    t2 = high_resolution_clock::now();
+
+  ASSERT_NO_THROW(gcp3.getWindow(ns, fs, js, vals2.data()));
+
+    t3 = high_resolution_clock::now();
+      d2 = duration_cast<microseconds>(t3 - t2).count();
+      std::cerr << "From cloud " << (double) n123 * 4 /d2 << " MB/s "
+	                  << std::endl;
+        ;
+
+
 
   namespace gcs = google::cloud::storage;
   google::cloud::v0::StatusOr<gcs::Client> client =

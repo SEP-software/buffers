@@ -34,6 +34,8 @@ class gcpBuffers : public buffers {
  private:
   std::string _projectID, _region;
   std::string _bucket, _baseName;
+  google::cloud::v0::StatusOr<google::cloud::storage::Client> _client;
+  
 };
 }  // namespace IO
 }  // namespace SEP
