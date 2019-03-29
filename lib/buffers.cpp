@@ -58,7 +58,13 @@ void buffers::updateMemory(const long change2) {
             },
             i));
       change = 0;
-      for (auto &n : changes) change += n.get();
+      for (auto &n : changes) {
+        try {
+          change += n.get();
+        } catch (std::exception e) {
+          throw e;
+        }
+      }
       /*
     }
   long change = tbb::parallel_reduce(
@@ -240,11 +246,11 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
           for (size_t i = r.begin(); i != r.end(); ++i) {
             // for (size_t i = 0; i < pwind.size(); i++) {
             std::vector<int> fG(7, 0), nG(7, 1), f_w(7, 0), n_w(7, 1), j_w(7,
-    1), blockG(7, 1); size_t pos = _buffers[pwind[i]]->localWindow(n, f, j, n_w,
-    f_w, j_w, nG, fG, blockG);
+    1), blockG(7, 1); size_t pos = _buffers[pwind[i]]->localWindow(n, f, j,
+    n_w, f_w, j_w, nG, fG, blockG);
 
-            locChange += _buffers[pwind[i]]->getWindowCPU(n_w, f_w, j_w, nG, fG,
-                                                          blockG, buf, state);
+            locChange += _buffers[pwind[i]]->getWindowCPU(n_w, f_w, j_w, nG,
+    fG, blockG, buf, state);
           }
           return locChange;
         },
