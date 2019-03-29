@@ -37,6 +37,13 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
 
   SEP::IO::compressTypes ct = compressTypes(des["compression"]);
 
+    namespace gcs = google::cloud::storage;
+    google::cloud::v0::StatusOr<gcs::Client> client =
+        gcs::Client::CreateDefaultClient();
+    if (!client)
+      throw(SEPException(std::string("Trouble creating default client")));
+
+    _client=client;
   _compress = ct.getCompressionObj();
 
   _defaultStateSet = false;
@@ -47,7 +54,7 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
   if (_projectID == std::string("NONE")) {
-    std::cerr << "Must set environmental variable " << _projectID << std::endl;
+    std::cerr << "Must set environmental variable projectID" << _projectID << std::endl;
     exit(1);
   }
 }
@@ -74,16 +81,26 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
     std::cerr << "Must set environmental variable " << _projectID << std::endl;
     exit(1);
   }
+    namespace gcs = google::cloud::storage;
+    google::cloud::v0::StatusOr<gcs::Client> client =
+        gcs::Client::CreateDefaultClient();
+    if (!client)
+      throw(SEPException(std::string("Trouble creating default client")));
+
+    _client=client;
 }
 
 void gcpBuffers::setName(const std::string &dir, const bool create) {
+
+
+	int pos;
   if ((pos = dir.find("/")) == std::string::npos) {  // No subdirectory
     _bucket = dir;
     _baseName = "";
   } else {
-    _baseName;
-    _bucket = _baseName.substr(0, s.find("/"));
-    _baseName.erase(0, _baseNamefind("/") + 1);
+    _baseName=dir;
+    _bucket = _baseName.substr(0, _baseName.find("/"));
+    _baseName.erase(0, _baseName.find("/") + 1);
   }
 
   if (create) {
@@ -92,39 +109,48 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     // Create a client to communicate with Google Cloud Storage. This client
     // uses the default configuration for authentication and project id.
 
-    namespace gcs = google::cloud::storage;
-    google::cloud::v0::StatusOr<gcs::Client> client =
-        gcs::Client::CreateDefaultClient();
-    if (!client)
-      throw(SEPException(std::string("Trouble creating default client")));
+
+    gcs::ListBucketsReader bucket_list = _client->ListBucketsForProject(_projectID);
+    bool found=false;
+      for (auto&& bucket_metadata : bucket_list) {
+          if (!bucket_metadata) {
+	        throw std::runtime_error(bucket_metadata.status().message());
+	    }
+          if(bucket_metadata->name()==_bucket) found=true;
+      }
+
+
 
     google::cloud::StatusOr<gcs::BucketMetadata> metadata =
-        client->CreateBucketForProject(
+        _client->CreateBucketForProject(
             _bucket, _projectID,
             gcs::BucketMetadata().set_location(_region).set_storage_class(
                 gcs::storage_class::Regional()));
 
+     if(!found){
     if (!metadata) {
-      if (metadata.status().StatusCode() != kAlreadyExists) {
         std::cerr << metadata.status().message() << std::endl;
         throw SEPException(std::string("Trouble creating bucket "));
       }
-    }
+     }
   }
-  for (auto i = 0; i < _buffers.size(); i++) {
-    _buffers[i]->setName(_baseName, std::string("/buf") + std::to_string(i));
+  for (auto i = 0; i < _buffers.size(); i++) { 
+    _buffers[i]->setName(_baseName+ std::string("/buf") + std::to_string(i));
     std::shared_ptr<gcpBuffer> b =
         std::dynamic_pointer_cast<gcpBuffer>(_buffers[i]);
-    b->setBucketName(dir);
+    b->setBucketName(_bucket);
   }
 }
 void gcpBuffers::createBuffers(const bufferState state) {
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
   for (int i = 0; i < b._ns.size(); i++) {
-    _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
+    _buffers.push_back(std::make_shared<gcpBuffer>(_name,_client, b._ns[i], b._fs[i],
                                                    _compress, state));
+
   }
+
+  std::cerr<<_buffers[0]->_n[0]<<" "<<_buffers[0]->_n[1]<<" "<<_buffers[0]->_n[2]<<" "<<_buffers[0]->_n[3]<<std::endl;
 
   _n123blocking = b._nblocking;
   _axisBlocking = b._axesBlock;

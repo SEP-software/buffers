@@ -1,11 +1,9 @@
 #include "buffers.h"
 #include <sys/stat.h>
-/*
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 #include <tbb/parallel_reduce.h>
 #include <tbb/tbb.h>
-*/
 #include <functional>
 #include <numeric>
 
@@ -287,6 +285,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
   // int locChange = 0;
 
+  /*
   std::vector<std::future<long long>> changes;
 
   for (auto i = 0; i < _buffers.size(); i++)
@@ -303,7 +302,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         i));
   long long change = 0;
   for (auto &n : changes) change += n.get();
-  /*
+  */
 long change = tbb::parallel_reduce(
     tbb::blocked_range<size_t>(0, pwind.size()), long(0),
     [&](const tbb::blocked_range<size_t> &r, long locChange) {
@@ -313,14 +312,13 @@ long change = tbb::parallel_reduce(
         size_t pos = _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w,
                                                      nG, fG, blockG);
 
-        locChange += _buffers[pwind[i]]->putWindowCPU(n_w, f_w, j_w, nG, fG,
+        locChange = _buffers[pwind[i]]->putWindowCPU(n_w, f_w, j_w, nG, fG,
                                                       blockG, buf, state);
       }
 
       return locChange;
     },
     [](long a, long b) { return a + b; });
-    */
   updateMemory(change);
 }
 // buffers(std::string diretory, std::shared_ptr<compress> comp = nullptr,

@@ -73,8 +73,8 @@ class buffer {
   std::shared_ptr<storeBase> getStorePtr() { return _buf; }
   virtual ~buffer() { ; }
 
- protected:
   std::vector<int> _f, _n, _block;
+ protected:
   std::shared_ptr<storeBase> _buf;
   std::shared_ptr<compress> _compress;
   std::string _name;

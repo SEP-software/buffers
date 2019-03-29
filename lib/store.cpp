@@ -35,6 +35,7 @@ void storeInt::getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &nbG, void *bufIn) {
   int *buf = (int *)bufIn;
 
+  
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
     size_t f6G = nbG[6] * (fwG[6] + i6L);

@@ -17,7 +17,7 @@ endif(BUILD_ZFP)
 project(buffer LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_POSITION_INDEPENDENT_CODE True)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -51,7 +51,7 @@ if(BUILD_TESTS)
   execute_process(COMMAND git submodule update --init --recursive --
                           external/googletest
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  add_subdirectory(external/googletest)
+	    add_subdirectory(external/googletest)
 else()
 endif(BUILD_TESTS)
 

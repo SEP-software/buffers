@@ -29,31 +29,18 @@ long long gcpBuffer::writeBuffer(bool keepState) {
 
   changeState(CPU_COMPRESSED);
     namespace gcs = google::cloud::storage;
-  google::cloud::v0::StatusOr<gcs::Client> client = gcs::Client::CreateDefaultClient();
-  if (!client)
-    throw(SEPException(std::string("Trouble creating default client")));
       gcs::ObjectWriteStream stream =
-          client.value().WriteObject(_bucketName, _name);
+          _client.value().WriteObject(_bucketName, _name);
       std::shared_ptr<storeByte> buf2= std::dynamic_pointer_cast<storeByte>(_buf);
       stream<<buf2->toString();
-//      std::string str = buf->toString();
- //     std::ostreambuf_iterator<char> out_it(stream);
-//      std::copy(str.begin(), str.end(), out_it);
- //   }(
-//		    std::move(
-//			    client.value()
-//			    )
-//		    , 
-//		    _bucketName, 
-//		    _name,
         stream.Close();
-
-//     std::dynamic_pointer_cast<storeByte>(_buf);
 	google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata=std::move(stream).metadata();
 		if(!metadata) {
+			std::cerr<<"FAILURE "<<_name<<std::endl;
 			std::cerr<<metadata.status().message()<<std::endl;
 			throw  SEPException(std::string("Trouble writing object"));
 			  }
+		else std::cerr<<"SUCESS "<<_name<<std::endl;
 
   if (keepState) {
     _buf = buf;
@@ -70,9 +57,6 @@ long long gcpBuffer::readBuffer() {
   /*Only need to do something if sitting on disk*/
       namespace gcs = google::cloud::storage;
   if (_bufferState == ON_DISK) {
-	  google::cloud::v0::StatusOr<gcs::Client> client = gcs::Client::CreateDefaultClient();
-    if (!client)
-      throw(SEPException(std::string("Trouble creating default client")));
 
     try {
 
@@ -83,7 +67,7 @@ long long gcpBuffer::readBuffer() {
 
         std::string data(std::istreambuf_iterator<char>(stream), {});
         buf->fromString(data);
-      }(std::move(client.value()), _bucketName, _name,
+      }(std::move(_client.value()), _bucketName, _name,
         std::dynamic_pointer_cast<storeByte>(_buf));
     } catch (std::exception const &ex) {
       std::cerr << "Trouble writing to bucket " << _name << std::endl;
@@ -96,18 +80,23 @@ long long gcpBuffer::readBuffer() {
 }
 
 gcpBuffer::gcpBuffer(const std::string &bucketName, const std::string name,
+		    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
                      const std::vector<int> &n, const std::vector<int> &f,
                      std::shared_ptr<compress> comp) {
+  setClient(client);
   setLoc(n, f);
   _bucketName = bucketName;
   setName(name);
   setCompress(comp);
   setBufferState(ON_DISK);
 }
-gcpBuffer::gcpBuffer(const std::string &bucketName, const std::vector<int> &n,
+gcpBuffer::gcpBuffer(const std::string &bucketName, 
+		    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
+		const std::vector<int> &n,
                      const std::vector<int> &f, std::shared_ptr<compress> comp,
                      const bufferState state) {
   _bucketName = bucketName;
+  setClient(client);
 
   setLoc(n, f);
   setCompress(comp);
