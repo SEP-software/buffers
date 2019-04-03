@@ -66,6 +66,9 @@ TEST(TESTBucketCreation, gcpBuffers) {
   ASSERT_NO_THROW(gcp.putWindow(ns, fs, js, vals.data()));
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
+     std::cerr<<"After PUT WINDOW "<<std::endl;
+  ASSERT_NO_THROW(gcp.changeState(CPU_COMPRESSED));
+     std::cerr<<"AFTER COMPRESSED "<<std::endl;
   ASSERT_NO_THROW(gcp.changeState(ON_DISK));
     high_resolution_clock::time_point t3 = high_resolution_clock::now();
 

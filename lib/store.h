@@ -6,6 +6,7 @@
 #include <memory>
 #include <sstream>
 #include <vector>
+#include <iostream>
 #include "ioTypes.h"
 namespace SEP {
 namespace IO {
@@ -59,7 +60,9 @@ class storeInt : public storeBase {
       const std::vector<int> &nwG, const std::vector<int> &fwG,
       const std::vector<int> &nbG, const void *bufIn) override;
   virtual size_t getElementSize() const override { return sizeof(int); }
-  virtual size_t getSize() const override { return _buf.size(); }
+  virtual size_t getSize() const override { 
+	  std::cerr<<"SIZE "<<_buf.size()<<std::endl;
+	  return _buf.size(); }
 
  private:
   std::vector<int> _buf;
@@ -70,7 +73,9 @@ class storeByte : public storeBase {
   storeByte(const int n) { _buf.resize(n); }
   storeByte(const int n, void *buf);
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { 
+	  std::cerr<<"SIZE "<<_buf.size()<<std::endl;
+	  return (char *)_buf.data(); }
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   virtual void zero() override { _buf.resize(0); }
   virtual std::shared_ptr<storeBase> clone() const override;
@@ -108,7 +113,9 @@ class storeFloat : public storeBase {
   storeFloat(const int n) { _buf.resize(n); }
   storeFloat(const int n, void *buf);
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { 
+	  std::cerr<<"SIZE "<<_buf.size()<<std::endl;
+	  return (char *)_buf.data(); }
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   virtual void zero() override { _buf.resize(0); }
   virtual std::shared_ptr<storeBase> clone() const override;

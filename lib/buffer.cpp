@@ -11,6 +11,25 @@
 #include <iostream>
 using namespace SEP::IO;
 
+
+std::string SEP::IO::bufferStateToString(const bufferState &state){
+	switch(state){
+	  case CPU_COMPRESSED:
+	   return std::string("CPU_COMPRESSED");
+	   break;
+	  case CPU_DECOMPRESSED:
+	   return std::string("CPU_DECOMPRESSED");
+	   break;
+	  case ON_DISK:
+	   return std::string("ON_DISK");
+	   break;
+
+         default:
+	     return std::string("UNDEFINED");
+	     break;
+	}
+
+}
 long long buffer::getBufferCPU(std::shared_ptr<storeBase> buf,
                                const bufferState state) {
   bufferState restore = _bufferState;
@@ -141,6 +160,8 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 }
 
 long buffer::changeState(const bufferState state) {
+	 std::cerr<<"in chnage stae TO "<<bufferStateToString(state)<<
+		  " FROM:"<<bufferStateToString(_bufferState)<<std::endl;
   long long oldSize = _buf->getSize();
   switch (state) {
     case CPU_DECOMPRESSED:
@@ -182,16 +203,22 @@ long buffer::changeState(const bufferState state) {
 
     case ON_DISK:
 
+	     std::cerr<<"1n on disk "<<std::endl;
       switch (_bufferState) {
         case ON_DISK:
           break;
         case CPU_DECOMPRESSED:
+	     std::cerr<<"2n on disk "<<std::endl;
           _buf = _compress->compressData(_n, _buf);
+	     std::cerr<<"3n on disk "<<std::endl;
           _bufferState = CPU_COMPRESSED;
         case CPU_COMPRESSED:
           if (_modified) {
+	     std::cerr<<"4n on disk "<<std::endl;
             writeBuffer();
           }
+	  else
+	     std::cerr<<"5n on disk "<<std::endl;
           break;
         default:
           std::cerr << "Unknown conversion" << std::endl;
@@ -206,6 +233,7 @@ long buffer::changeState(const bufferState state) {
       assert(1 == 2);
       break;
   }
+	 std::cerr<<"iyt chnage stae "<<std::endl;
   if (state == UNDEFINED) throw SEPException(std::string("state is undefined"));
   _bufferState = state;
 

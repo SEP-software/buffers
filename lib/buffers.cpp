@@ -257,16 +257,42 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   updateMemory(change);
 }
 void buffers::changeState(const bufferState state) {
+
+	std::cerr<<"IN buffers changestate"<<std::endl;
+
+
+
+ 
+if(state==ON_DISK) {
+	std::cerr<<"in if "<<std::endl;
+
   std::vector<std::future<long long>> changes;
 
-  for (auto i = 0; i < _buffers.size(); i++)
+  for (auto i = 0; i < _buffers.size(); i++){
+	  std::cerr<<"Launching "<<i<<" of "<<_buffers.size()<<std::endl;
     changes.push_back(std::async(
-        std::launch::async,
+//        std::launch::async,
         [&](int i) { return (long long)_buffers[i]->changeState(state); }, i));
+  }
   long long change = 0;
-  for (auto &n : changes) change += n.get();
+  std::cerr<<"all jobs started "<<std::endl;
+  long i=0;
+  for (auto &n : changes) {
+	  std::cerr<<"in loop to join "<<std::endl;
+	 try{ 
+	  change += n.get();
+	   std::cerr<<"suckessful join "<<i++<<std::endl;
+	  }
+	 catch (std::exception& e){
+throw(e);
+	 }
+  }
 
-  /*
+  updateMemory(change);
+}
+else{
+	std::cerr<<"in else "<<std::endl;
+	/*
     long change = tbb::parallel_reduce(
         tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
         [&](const tbb::blocked_range<size_t> &r, long locChange) {
@@ -276,8 +302,16 @@ void buffers::changeState(const bufferState state) {
           return locChange;
         },
         [](long a, long b) { return a + b; });
-        */
+	*/
+	long change=0;
+	for(size_t i=0; i< _buffers.size(); i++){
+		std::cerr<<i << " of "<<_buffers.size()<<std::endl;
+		change+=_buffers[i]->changeState(state);
+	}
+	std::cerr<<"2 buffers changestate"<<std::endl;
   updateMemory(change);
+	std::cerr<<"3 buffers changestate"<<std::endl;
+}
 }
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, const void *buf) {

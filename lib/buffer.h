@@ -11,6 +11,11 @@ namespace SEP {
 namespace IO {
 enum bufferState { UNDEFINED, CPU_COMPRESSED, CPU_DECOMPRESSED, ON_DISK };
 
+std::string bufferStateToString(const bufferState &state);
+
+
+
+
 class buffer {
  public:
   buffer() { ; }
