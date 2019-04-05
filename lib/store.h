@@ -3,19 +3,39 @@
 #include <cassert>
 #include <complex>
 #include <cstring>
+#include <iostream>
 #include <memory>
 #include <sstream>
 #include <vector>
-#include <iostream>
 #include "ioTypes.h"
 namespace SEP {
 namespace IO {
-
+/*!
+  Virtual storage object
+*/
 class storeBase {
  public:
   storeBase() { ; }
+  //! Get data from class to buf
+  /*!
+    \param buf  Base class
+  */
   virtual void getData(std::shared_ptr<storeBase> buf) const = 0;
+  //! Put data into class from buf
+  /*!
+    \param buf  Base class
+  */
   virtual void putData(const std::shared_ptr<storeBase> buf) = 0;
+  //! Get window from global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nwG Number of samples in Global
+    \param fwG First sample along each axis in Global
+    \param jwG Jump between samples along each axis in Global
+    \param bufIn Buffer
+  */
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
@@ -23,6 +43,16 @@ class storeBase {
                          const std::vector<int> &nwG,
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, void *bufIn) = 0;
+  //! Put window to global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nwG Number of samples in Global
+    \param fwG First sample along each axis in Global
+    \param jwG Jump between samples along each axis in Global
+    \param bufIn Buffer
+  */
   virtual void putWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
@@ -30,11 +60,17 @@ class storeBase {
                          const std::vector<int> &nwG,
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, const void *bufIn) = 0;
+  //! Clone a buffer
   virtual std::shared_ptr<storeBase> clone() const = 0;
+  //! Return info about buffer
   virtual void info(const std::string &b) const { ; }
+  //! Get size of a single element
   virtual size_t getElementSize() const = 0;
+  //! Get the size of the dataset
   virtual size_t getSize() const = 0;
+  //! Zero a buffer
   virtual void zero() = 0;
+  //! Return a pointer to buffer
   virtual char *getPtr() = 0;
 };
 
@@ -60,9 +96,7 @@ class storeInt : public storeBase {
       const std::vector<int> &nwG, const std::vector<int> &fwG,
       const std::vector<int> &nbG, const void *bufIn) override;
   virtual size_t getElementSize() const override { return sizeof(int); }
-  virtual size_t getSize() const override { 
-	  std::cerr<<"SIZE "<<_buf.size()<<std::endl;
-	  return _buf.size(); }
+  virtual size_t getSize() const override { return _buf.size(); }
 
  private:
   std::vector<int> _buf;
@@ -73,9 +107,7 @@ class storeByte : public storeBase {
   storeByte(const int n) { _buf.resize(n); }
   storeByte(const int n, void *buf);
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
-  char *getPtr() override { 
-	  std::cerr<<"SIZE "<<_buf.size()<<std::endl;
-	  return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   virtual void zero() override { _buf.resize(0); }
   virtual std::shared_ptr<storeBase> clone() const override;
@@ -113,9 +145,7 @@ class storeFloat : public storeBase {
   storeFloat(const int n) { _buf.resize(n); }
   storeFloat(const int n, void *buf);
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
-  char *getPtr() override { 
-	  std::cerr<<"SIZE "<<_buf.size()<<std::endl;
-	  return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   virtual void zero() override { _buf.resize(0); }
   virtual std::shared_ptr<storeBase> clone() const override;

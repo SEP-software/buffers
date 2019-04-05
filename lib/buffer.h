@@ -9,12 +9,21 @@
 #include "compress.h"
 namespace SEP {
 namespace IO {
-enum bufferState { UNDEFINED, CPU_COMPRESSED, CPU_DECOMPRESSED, ON_DISK };
+//! Different status for buffers
 
+enum bufferState {
+  UNDEFINED,         /// Undefined status
+  CPU_COMPRESSED,    /// Buffer is compressed
+  CPU_DECOMPRESSED,  /// Buffer is decompressed
+  ON_DISK            /// Buffer is on disk
+};
+
+//! Convert buffer stat to a readable string
 std::string bufferStateToString(const bufferState &state);
 
-
-
+/*!
+  Virtual buffer object
+*/
 
 class buffer {
  public:
@@ -47,8 +56,8 @@ class buffer {
     _block.push_back(1);
     for (size_t i = 0; i < _n.size(); i++) _block.push_back(_block[i] * _n[i]);
   }
-  virtual long long readBuffer() =0;
-  virtual long long writeBuffer(bool keepState = false) =0;
+  virtual long long readBuffer() = 0;
+  virtual long long writeBuffer(bool keepState = false) = 0;
   virtual long long getBufferCPU(std::shared_ptr<storeBase> buf,
                                  const bufferState finalState);
   virtual long long putBufferCPU(std::shared_ptr<storeBase> buf,
@@ -78,12 +87,16 @@ class buffer {
   std::shared_ptr<storeBase> getStorePtr() { return _buf; }
   virtual ~buffer() { ; }
 
-  std::vector<int> _f, _n, _block;
+  std::vector<int> _f;
+  std::vector<int> _n;
+  std::vector<int> _block;
+
  protected:
   std::shared_ptr<storeBase> _buf;
   std::shared_ptr<compress> _compress;
   std::string _name;
-  bool _nameSet, _modified = false;
+  bool _nameSet;
+  bool _modified = false;
   int _ibuf;
   long long _n123;
   bufferState _bufferState = UNDEFINED;
