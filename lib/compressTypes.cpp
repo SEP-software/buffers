@@ -12,7 +12,7 @@ compressTypes::compressTypes(const Json::Value &des) {
   if (des["dataType"].isNull())
     throw SEPException(std::string("dataType not in parameters"));
   if (des["compressType"].isNull())
-    throw SEPException(std::string("compressTypw not in parameters"));
+    throw SEPException(std::string("compressTyp not in parameters"));
   std::string typ = des["compressType"].asString();
   dataType ele = toElementType(des["dataType"].asString());
   if (typ == std::string("noCompression")) {

@@ -13,18 +13,19 @@ namespace IO {
 class blockParams {
  public:
   blockParams() { ; }
-  std::vector<std::vector<int>> _fs,  /// A vector of all blocks, describing the
-                                      /// begining position along each axis
-      std::vector<std::vector<int>>
-          _ns;  /// A vector of all blocks, describing the size along each axis
-  // std::vector<std::vector<int>> _blocks;
-  std::vector<int>
-      _nblocking;  /// 1,
-                   /// len(_axesBlock[0]),len(_axesBlock[1])*len(_axesBlock[0]),..
+  std::vector<std::vector<int>> _fs;  ///< A vector of all blocks, describing
+                                      ///< the begining position along each axis
   std::vector<std::vector<int>>
-      _axesBlock;  /// A vectror of how each axis is blocked
+      _ns;  ///< A vector of all blocks, describing the size along each axis
+  std::vector<int>
+      _nblocking;  ///< 1,
+                   ///< len(_axesBlock[0]),len(_axesBlock[1])*len(_axesBlock[0]),..
+  std::vector<std::vector<int>>
+      _axesBlock;  ///< A vectror of how each axis is blocked
 };
-
+/*!
+  Class describing how to break a hypercube into sub-cubes
+*/
 class blocking {
  public:
   //!  Create a blocking object

@@ -30,12 +30,10 @@ void storeInt::getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
                          const std::vector<int> &nbL,
-                         const std::vector<int> &nwG,
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, void *bufIn) {
   int *buf = (int *)bufIn;
 
-  
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
     size_t f6G = nbG[6] * (fwG[6] + i6L);
@@ -68,7 +66,6 @@ void storeInt::putWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
                          const std::vector<int> &nbL,
-                         const std::vector<int> &nwG,
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, const void *bufIn) {
   const int *buf = (int *)bufIn;
@@ -129,7 +126,6 @@ void storeByte::getWindow(const std::vector<int> &nwL,
                           const std::vector<int> &fwL,
                           const std::vector<int> &jwL,
                           const std::vector<int> &nbL,
-                          const std::vector<int> &nwG,
                           const std::vector<int> &fwG,
                           const std::vector<int> &nbG, void *bufIn) {
   unsigned char *buf = (unsigned char *)bufIn;
@@ -165,7 +161,6 @@ void storeByte::putWindow(const std::vector<int> &nwL,
                           const std::vector<int> &fwL,
                           const std::vector<int> &jwL,
                           const std::vector<int> &nbL,
-                          const std::vector<int> &nwG,
                           const std::vector<int> &fwG,
                           const std::vector<int> &nbG, const void *bufIn) {
   const unsigned char *buf = (unsigned char *)bufIn;
@@ -226,7 +221,6 @@ void storeFloat::getWindow(const std::vector<int> &nwL,
                            const std::vector<int> &fwL,
                            const std::vector<int> &jwL,
                            const std::vector<int> &nbL,
-                           const std::vector<int> &nwG,
                            const std::vector<int> &fwG,
 
                            const std::vector<int> &nbG, void *bufIn) {
@@ -274,7 +268,6 @@ void storeFloat::putWindow(const std::vector<int> &nwL,
                            const std::vector<int> &fwL,
                            const std::vector<int> &jwL,
                            const std::vector<int> &nbL,
-                           const std::vector<int> &nwG,
                            const std::vector<int> &fwG,
                            const std::vector<int> &nbG, const void *bufIn) {
   const float *buf = (float *)bufIn;
@@ -335,7 +328,6 @@ void storeDouble::getWindow(const std::vector<int> &nwL,
                             const std::vector<int> &fwL,
                             const std::vector<int> &jwL,
                             const std::vector<int> &nbL,
-                            const std::vector<int> &nwG,
                             const std::vector<int> &fwG,
                             const std::vector<int> &nbG, void *bufIn) {
   double *buf = (double *)bufIn;
@@ -372,7 +364,6 @@ void storeDouble::putWindow(const std::vector<int> &nwL,
                             const std::vector<int> &fwL,
                             const std::vector<int> &jwL,
                             const std::vector<int> &nbL,
-                            const std::vector<int> &nwG,
                             const std::vector<int> &fwG,
                             const std::vector<int> &nbG, const void *bufIn) {
   const double *buf = (double *)bufIn;
@@ -439,7 +430,6 @@ void storeComplex::getWindow(const std::vector<int> &nwL,
                              const std::vector<int> &fwL,
                              const std::vector<int> &jwL,
                              const std::vector<int> &nbL,
-                             const std::vector<int> &nwG,
                              const std::vector<int> &fwG,
                              const std::vector<int> &nbG, void *bufIn) {
   std::complex<float> *buf = (std::complex<float> *)bufIn;
@@ -476,7 +466,6 @@ void storeComplex::putWindow(const std::vector<int> &nwL,
                              const std::vector<int> &fwL,
                              const std::vector<int> &jwL,
                              const std::vector<int> &nbL,
-                             const std::vector<int> &nwG,
                              const std::vector<int> &fwG,
                              const std::vector<int> &nbG, const void *bufIn) {
   const std::complex<float> *buf = (std::complex<float> *)bufIn;
@@ -538,8 +527,7 @@ std::shared_ptr<storeBase> SEP::IO::returnStorage(const dataType state,
   }
 }
 
-std::string SEP::IO::returnStorageType(
-    const std::shared_ptr<SEP::IO::storeBase> bufIn) {
+std::string SEP::IO::returnStorageType(const std::shared_ptr<storeBase> bufIn) {
   {
     const std::shared_ptr<storeByte> by =
         std::dynamic_pointer_cast<storeByte>(bufIn);

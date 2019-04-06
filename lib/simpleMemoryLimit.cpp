@@ -21,7 +21,7 @@ std::shared_ptr<memoryReduce> simpleMemoryLimit::changeBufferState(
   std::vector<int> comp, disk;
   if (_curMem > _maxMem) {
     int iold = _compressed;
-    _compressed = std::min(_ibuf - 1, _compressed + 2);
+    _compressed = std::min(_ibuf - 1, (size_t)(_compressed + 2));
     for (auto i = _recent.begin(); i != _recent.end(); ++i) {
       if (i->second <= _compressed && (int)i->second > iold) {
         if (_status[i->first] == 0) {
@@ -33,7 +33,7 @@ std::shared_ptr<memoryReduce> simpleMemoryLimit::changeBufferState(
 
     if (comp.size() == 0) {
       int iold = _toDisk;
-      _toDisk = std::min(_ibuf - 1, _toDisk + 2);
+      _toDisk = std::min(_ibuf - 1, (size_t)_toDisk + 2);
       for (auto i = _recent.begin(); i != _recent.end(); ++i) {
         if (i->second <= _toDisk && (int)i->second > iold) {
           if (_status[i->first] != 2) {

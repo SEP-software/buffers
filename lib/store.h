@@ -31,16 +31,15 @@ class storeBase {
     \param nwL Number of samples in buf
     \param fwL First sample along each axis in buf
     \param jwL Jump between samples along each axis in buf
-    \param nwG Number of samples in Global
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
     \param fwG First sample along each axis in Global
-    \param jwG Jump between samples along each axis in Global
+    \param nbG Blocking of global buffer
     \param bufIn Buffer
   */
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
                          const std::vector<int> &nbL,
-                         const std::vector<int> &nwG,
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, void *bufIn) = 0;
   //! Put window to global
@@ -48,16 +47,15 @@ class storeBase {
     \param nwL Number of samples in buf
     \param fwL First sample along each axis in buf
     \param jwL Jump between samples along each axis in buf
-    \param nwG Number of samples in Global
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
     \param fwG First sample along each axis in Global
-    \param jwG Jump between samples along each axis in Global
+    \param nbG Blocking of global buffer
     \param bufIn Buffer
   */
   virtual void putWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
                          const std::vector<int> &nbL,
-                         const std::vector<int> &nwG,
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, const void *bufIn) = 0;
   //! Clone a buffer
@@ -73,63 +71,168 @@ class storeBase {
   //! Return a pointer to buffer
   virtual char *getPtr() = 0;
 };
+/*!
+ Storage object for integer data
+*/
 
 class storeInt : public storeBase {
  public:
+  //! Create an integer storage buffer
+  /*!
+    \param n Size of the buffer
+  */
   storeInt(const int n) { _buf.resize(n); }
+  //! Create an integer storage buffer
+  /*!
+    \param n Size of the buffer
+    \param buf Data to store in buffer
+  */
   storeInt(const int n, void *buf);
+  //! Copy the contents of buffer into buf
+  /*!
+    \param buf Data to store contents of  buffer into
+  */
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
+  //! Return a pointer to buffer
+
   char *getPtr() override { return (char *)_buf.data(); }
+  //! Put data into class from buf
+  /*!
+    \param buf  Base class
+  */
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
+  //! Zero a buffer
   virtual void zero() override { _buf.resize(0); }
+  //! Clone a buffer
+
   virtual std::shared_ptr<storeBase> clone() const override;
+  //! Get window from global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
+    \param fwG First sample along each axis in Global
+    \param nbG Blocking of global buffer
+    \param bufIn Buffer
+  */
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
                          const std::vector<int> &nbL,
-                         const std::vector<int> &nwG,
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, void *bufIn) override;
-  virtual void putWindow(
-      const std::vector<int> &nwL, const std::vector<int> &fwL,
-      const std::vector<int> &jwL, const std::vector<int> &nbL,
-      const std::vector<int> &nwG, const std::vector<int> &fwG,
-      const std::vector<int> &nbG, const void *bufIn) override;
+  //! Put window to global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
+    \param fwG First sample along each axis in Global
+    \param nbG Blocking of global buffer
+    \param bufIn Buffer
+  */
+  virtual void putWindow(const std::vector<int> &nwL,
+                         const std::vector<int> &fwL,
+                         const std::vector<int> &jwL,
+                         const std::vector<int> &nbL,
+                         const std::vector<int> &fwG,
+                         const std::vector<int> &nbG,
+                         const void *bufIn) override;
+  //! Get size of a single element
+
   virtual size_t getElementSize() const override { return sizeof(int); }
+  //! Get the size of the dataset
+
   virtual size_t getSize() const override { return _buf.size(); }
 
  private:
   std::vector<int> _buf;
 };
-
+/*!
+ Storage object for byte data
+*/
 class storeByte : public storeBase {
  public:
+  //! Create an byte storage buffer
+  /*!
+    \param n Size of the buffer
+  */
   storeByte(const int n) { _buf.resize(n); }
+  //! Create an byte storage buffer
+  /*!
+    \param n Size of the buffer
+    \param buf Data to store in buffer
+  */
   storeByte(const int n, void *buf);
+  //! Copy the contents of buffer into buf
+  /*!
+    \param buf Data to store contents of  buffer into
+  */
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
+  //! Return a pointer to buffer
+
   char *getPtr() override { return (char *)_buf.data(); }
+  //! Put data into class from buf
+  /*!
+    \param buf  Base class
+  */
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
+  //! Zero a buffer
+
   virtual void zero() override { _buf.resize(0); }
+  //! Clone a buffer
+
   virtual std::shared_ptr<storeBase> clone() const override;
+  //! Get window from global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
+    \param fwG First sample along each axis in Global
+    \param nbG Blocking of global buffer
+    \param bufIn Buffer
+  */
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
                          const std::vector<int> &nbL,
-                         const std::vector<int> &nwG,
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, void *bufIn) override;
-  virtual void putWindow(
-      const std::vector<int> &nwL, const std::vector<int> &fwL,
-      const std::vector<int> &jwL, const std::vector<int> &nbL,
-      const std::vector<int> &nwG, const std::vector<int> &fwG,
-      const std::vector<int> &nbG, const void *bufIn) override;
+  //! Put window to global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
+    \param fwG First sample along each axis in Global
+    \param nbG Blocking of global buffer
+    \param bufIn Buffer
+  */
+  virtual void putWindow(const std::vector<int> &nwL,
+                         const std::vector<int> &fwL,
+                         const std::vector<int> &jwL,
+                         const std::vector<int> &nbL,
+                         const std::vector<int> &fwG,
+                         const std::vector<int> &nbG,
+                         const void *bufIn) override;
+  //! Get size of a single element
+
   virtual size_t getElementSize() const override {
     return sizeof(unsigned char);
   }
+  //! Get the size of the dataset
+
   virtual size_t getSize() const override { return _buf.size(); }
+  //! Cast buffer to string
   std::string toString() {
     return std::string(reinterpret_cast<const char *>(&_buf[0]), _buf.size());
   }
+  //! Reinterpret string as a buffer
+  /*!
+    \param str Reintepret string as buffer
+    */
   void fromString(const std::string str) {
     const unsigned char *raw_memory =
         reinterpret_cast<const unsigned char *>(str.c_str());
@@ -139,96 +242,262 @@ class storeByte : public storeBase {
  private:
   std::vector<unsigned char> _buf;
 };
-
+/*!
+ Storage object for float data
+*/
 class storeFloat : public storeBase {
  public:
+  //! Create an float storage buffer
+  /*!
+    \param n Size of the buffer
+  */
   storeFloat(const int n) { _buf.resize(n); }
+  //! Create an float storage buffer
+  /*!
+    \param n Size of the buffer
+    \param buf Data to store in buffer
+  */
   storeFloat(const int n, void *buf);
+  //! Copy the contents of buffer into buf
+  /*!
+    \param buf Data to store contents of  buffer into
+  */
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
+  //! Return a pointer to buffer
+
   char *getPtr() override { return (char *)_buf.data(); }
+  //! Put data into class from buf
+  /*!
+    \param buf  Base class
+  */
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
+  //! Zero a buffer
+
   virtual void zero() override { _buf.resize(0); }
+  //! Clone a buffer
+
   virtual std::shared_ptr<storeBase> clone() const override;
+  //! Return info about buffer
+
   virtual void info(const std::string &v) const override;
+  //! Get window from global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
+    \param fwG First sample along each axis in Global
+    \param nbG Blocking of global buffer
+    \param bufIn Buffer
+  */
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
                          const std::vector<int> &nbL,
-                         const std::vector<int> &nwG,
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, void *bufIn) override;
-  virtual void putWindow(
-      const std::vector<int> &nwL, const std::vector<int> &fwL,
-      const std::vector<int> &jwL, const std::vector<int> &nbL,
-      const std::vector<int> &nwG, const std::vector<int> &fwG,
-      const std::vector<int> &nbG, const void *bufIn) override;
+  //! Put window to global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
+    \param fwG First sample along each axis in Global
+    \param nbG Blocking of global buffer
+    \param bufIn Buffer
+  */
+  virtual void putWindow(const std::vector<int> &nwL,
+                         const std::vector<int> &fwL,
+                         const std::vector<int> &jwL,
+                         const std::vector<int> &nbL,
+                         const std::vector<int> &fwG,
+                         const std::vector<int> &nbG,
+                         const void *bufIn) override;
+  //! Get size of a single element
+
   virtual size_t getElementSize() const override { return sizeof(float); }
+  //! Get the size of the dataset
+
   virtual size_t getSize() const override { return _buf.size(); }
 
  private:
   std::vector<float> _buf;
 };
-
+/*!
+ Storage object for double data
+*/
 class storeDouble : public storeBase {
  public:
+  //! Create an double storage buffer
+  /*!
+    \param n Size of the buffer
+  */
   storeDouble(const int n) { _buf.resize(n); }
+  //! Create an double storage buffer
+  /*!
+    \param n Size of the buffer
+    \param buf Data to store in buffer
+  */
   storeDouble(const int n, void *buf);
+  //! Copy the contents of buffer into buf
+  /*!
+    \param buf Data to store contents of  buffer into
+  */
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
+  //! Return a pointer to buffer
+
   char *getPtr() override { return (char *)_buf.data(); }
+  //! Put data into class from buf
+  /*!
+    \param buf  Base class
+  */
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
+  //! Zero a buffer
+
   virtual void zero() override { _buf.resize(0); }
+  //! Clone a buffer
+
   virtual std::shared_ptr<storeBase> clone() const override;
+  //! Get window from global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
+    \param fwG First sample along each axis in Global
+    \param nbG Blocking of global buffer
+    \param bufIn Buffer
+  */
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
                          const std::vector<int> &nbL,
-                         const std::vector<int> &nwG,
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, void *bufIn) override;
-  virtual void putWindow(
-      const std::vector<int> &nwL, const std::vector<int> &fwL,
-      const std::vector<int> &jwL, const std::vector<int> &nbL,
-      const std::vector<int> &nwG, const std::vector<int> &fwG,
-      const std::vector<int> &nbG, const void *bufIn) override;
+  //! Put window to global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
+    \param fwG First sample along each axis in Global
+    \param nbG Blocking of global buffer
+    \param bufIn Buffer
+  */
+  virtual void putWindow(const std::vector<int> &nwL,
+                         const std::vector<int> &fwL,
+                         const std::vector<int> &jwL,
+                         const std::vector<int> &nbL,
+                         const std::vector<int> &fwG,
+                         const std::vector<int> &nbG,
+                         const void *bufIn) override;
+  //! Get size of a single element
+
   virtual size_t getElementSize() const override { return sizeof(double); }
+  //! Get the size of the dataset
+
   virtual size_t getSize() const override { return _buf.size(); }
 
  private:
   std::vector<double> _buf;
 };
-
+/*!
+ Storage object for complex float data
+*/
 class storeComplex : public storeBase {
  public:
+  //! Create an complex float storage buffer
+  /*!
+    \param n Size of the buffer
+  */
   storeComplex(const int n) { _buf.resize(n); }
+  //! Create an complex storage buffer
+  /*!
+    \param n Size of the buffer
+    \param buf Data to store in buffer
+  */
   storeComplex(const int n, void *buf);
+  //! Copy the contents of buffer into buf
+  /*!
+    \param buf Data to store contents of  buffer into
+  */
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
+  //! Return a pointer to buffer
+
   char *getPtr() override { return (char *)_buf.data(); }
+  //! Put data into class from buf
+  /*!
+    \param buf  Base class
+  */
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
+  //! Zero a buffer
+
   virtual void zero() override { _buf.resize(0); }
+  //! Clone a buffer
+
   virtual std::shared_ptr<storeBase> clone() const override;
+  //! Get window from global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
+    \param fwG First sample along each axis in Global
+    \param nbG Blocking of global buffer
+    \param bufIn Buffer
+  */
   virtual void getWindow(const std::vector<int> &nwL,
                          const std::vector<int> &fwL,
                          const std::vector<int> &jwL,
                          const std::vector<int> &nbL,
-                         const std::vector<int> &nwG,
                          const std::vector<int> &fwG,
                          const std::vector<int> &nbG, void *bufIn) override;
-  virtual void putWindow(
-      const std::vector<int> &nwL, const std::vector<int> &fwL,
-      const std::vector<int> &jwL, const std::vector<int> &nbL,
-      const std::vector<int> &nwG, const std::vector<int> &fwG,
-      const std::vector<int> &nbG, const void *bufIn) override;
+  //! Put window to global
+  /*!
+    \param nwL Number of samples in buf
+    \param fwL First sample along each axis in buf
+    \param jwL Jump between samples along each axis in buf
+    \param nbL Blocking (1,n[0],n[1]*n[0],etc
+    \param fwG First sample along each axis in Global
+    \param nbG Blocking of global buffer
+    \param bufIn Buffer
+  */
+  virtual void putWindow(const std::vector<int> &nwL,
+                         const std::vector<int> &fwL,
+                         const std::vector<int> &jwL,
+                         const std::vector<int> &nbL,
+                         const std::vector<int> &fwG,
+                         const std::vector<int> &nbG,
+                         const void *bufIn) override;
+  //! Get size of a single element
+
   virtual size_t getElementSize() const override {
     return sizeof(std::complex<float>);
   }
+  //! Get the size of the dataset
+
   virtual size_t getSize() const override { return _buf.size(); }
 
  private:
   std::vector<std::complex<float>> _buf;
 };
-
+//!  Return the storage type of a buffer
+/*!
+  \param bufIn Input buffer
+*/
 std::string returnStorageType(const std::shared_ptr<storeBase> bufIn);
-std::shared_ptr<storeBase> returnStorage(const dataType state, const size_t n);
+//!  Return a storage of given buffer type
+/*!
+  \param typ  Type of storage
+  \param n Number of elements
+
+*/
+std::shared_ptr<storeBase> returnStorage(const dataType typ, const size_t n);
+//! Throw an error due to data type mismach
+/*!
+  \param myType Type of buffer
+  \param typeSent Type of buffer passed
+*/
 void throwError(const std::string myType, const std::string typeSent);
 
 }  // namespace IO
