@@ -5,8 +5,11 @@ option(BUILD_GCP "Build with GCP support" OFF)
 if(NOT SUBPACKAGE)
   option(BUILD_TESTS "Build with test support" ON)
   option(INSTALL_CMAKE_ENV "Install cmake build environment" ON)
+  option(BUILD_DOC "Build documentation" OFF)
+
 else(NOT SUBPACKAGE)
   option(BUILD_TEST "Build with test support" OFF)
+  option(BUILD_DOC "Build documentation" ON)
 endif(NOT SUBPACKAGE)
 set(SUBPACKAGE true)
 
@@ -126,7 +129,6 @@ endif(NOT SUPPORT_LIBRARIES_BUILD)
 add_subdirectory(lib)
 
 # first we can indicate the documentation build as an option and set it to ON by default
-option(BUILD_DOC "Build documentation" ON)
 
 # check if Doxygen is installed
 find_package(Doxygen)
