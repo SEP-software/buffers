@@ -57,7 +57,7 @@ class gcpBuffer : public buffer {
     \param name Name of object
 
   */
-  void setBucketName(const std::string name) { _bucketName = nm; }
+  void setBucketName(const std::string name) { _bucketName = name; }
   //! Read the buffer into memory
 
   virtual long long readBuffer() override;

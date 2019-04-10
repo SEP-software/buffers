@@ -58,6 +58,7 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
     exit(1);
   }
 }
+
 gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
                        const dataType dataType, std::shared_ptr<blocking> block,
                        std::shared_ptr<compress> comp,
@@ -105,13 +106,13 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
 
   if (create) {
     namespace gcs = google::cloud::storage;
+    bool found=false;
 
     // Create a client to communicate with Google Cloud Storage. This client
     // uses the default configuration for authentication and project id.
 
 
     gcs::ListBucketsReader bucket_list = _client->ListBucketsForProject(_projectID);
-    bool found=false;
       for (auto&& bucket_metadata : bucket_list) {
           if (!bucket_metadata) {
 	        throw std::runtime_error(bucket_metadata.status().message());
