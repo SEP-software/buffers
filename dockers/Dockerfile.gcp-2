@@ -1,0 +1,84 @@
+From debian:latest
+MAINTAINER Bob Clapp <bob@sep.stanford.edu>
+RUN apt-get -y update &&\
+    apt-get -y  install g++ python3-numpy git make gcc libboost-all-dev  libboost-dev &&\
+    apt-get -y install  cmake python3-dev python3-pytest python3-numpy-dbg libtbb-dev  build-essential cmake git gcc g++ cmake libcurl4-openssl-dev libssl-dev make zlib1g-dev && \
+     apt-get -y install build-essential cmake git gcc g++ cmake  \
+        libc-ares-dev libc-ares2 libcurl4-openssl-dev libssl1.0-dev make \
+        pkg-config tar wget zlib1g-dev vim golang autoconf clang-tidy  ninja-build doxygen golang &&\
+        apt-get -y clean
+
+
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.5 2
+RUN git clone https://github.com/protocolbuffers/protobuf.git /opt/google/protobuf
+RUN cd /opt/google/protobuf && \
+    git submodule update --init --recursive &&\
+    sh ./autogen.sh &&\
+    cd cmake && \
+    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google . 
+RUN  cd /opt/google/protobuf/cmake && \
+     ninja install
+RUN git clone https://github.com/grpc/grpc.git  /opt/google/grpc/src &&\
+    mkdir /opt/google/grpc/build 
+#RUN git clone https://github.com/madler/zlib.git /opt/google/zlib/src &&\
+#    mkdir /opt/google/zlib/build 
+RUN git clone https://github.com/c-ares/c-ares.git /opt/google/c-ares/src &&\
+   mkdir /opt/google/c-ares/build
+#RUN git clone https://github.com/google/boringssl.git /opt/google/boringssl/src &&\
+#   mkdir /opt/google/boringssl/build 
+RUN git clone https://github.com/gflags/gflags /opt/google/gflags/src &&\
+   mkdir /opt/google/gflags/build
+RUN git clone https://github.com/google/benchmark.git /opt/google/benchmark/src &&\
+   mkdir /opt/google/benchmark/build
+RUN git clone https://github.com/google/googletest.git /opt/google/gtest/src &&\
+  mkdir /opt/google/gtest/build
+RUN  cd /opt/google/gtest/build &&\
+    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+    ninja install
+#RUN  cd /opt/google/zlib/build &&\
+#    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+#    ninja install
+RUN cd /opt/google/c-ares/build &&\
+    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+    ninja install
+#RUN cd /opt/google/boringssl/build &&\
+#    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+#    ninja 
+RUN cd /opt/google/benchmark/build &&\
+    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+    ninja install
+RUN cd /opt/google/gflags/build &&\
+    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+    ninja install
+RUN  cd /opt/google/grpc/build &&\
+    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google -DCMAKE_MODULE_PATH=/opt/google/lib/cmake -DZLIB_ROOT_DIR=/opt/google/zlib/src -DgRPC_ZLIB_PROVIDER=package  -DgRPC_CARES_PROVIDER=package -DgRPC_SSL_PROVIDER=package -DgRPC_PROTOBUF_PROVIDER=package  -DgRPC_BENCHMARK_PROVIDER=package -DgRPC_GFLAGS_PROVIDER=package  ../src &&\
+    ninja install
+RUN git clone  https://github.com/google/crc32c.git /opt/google/crc32/src &&\
+    mkdir /opt/google/crc32/build  &&\
+    cd /opt/google/crc32/build &&\
+    cmake -GNinja  -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=yes   -Dprotobuf_BUILD_TESTS=OFF  -DCRC32C_USE_GLOG=no -DCRC32C_BUILD_TESTS=0 -DCRC32C_BUILD_BENCHMARKS=0 ../src &&\
+    ninja   install
+
+RUN mkdir /opt/cmake &&\
+   cd /opt/cmake &&  \
+   wget https://github.com/Kitware/CMake/releases/download/v3.14.0-rc2/cmake-3.14.0-rc2.tar.gz  
+RUN cd /opt/cmake && \
+  tar xf /opt/cmake/cmake-3.14.0-rc2.tar.gz &&\
+  cd  /opt/cmake/cmake-3.14.0-rc2 && \
+ ./bootstrap &&\
+ make -j 8 &&\
+ make install
+
+RUN git clone https://github.com/googleapis/google-cloud-cpp.git /opt/google/cloud/src &&\
+  mkdir /opt/google/cloud/build &&\
+  cd /opt/google/cloud/build &&\
+  cmake -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google \
+    -DGOOGLE_CLOUD_CPP_DEPENDENCY_PROVIDER=package \
+    -DGOOGLE_CLOUD_CPP_GMOCK_PROVIDER=external ../src 
+RUN cd /opt/google/cloud/build && \
+    ninja install
+
+
+    
+

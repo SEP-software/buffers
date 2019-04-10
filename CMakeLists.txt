@@ -59,22 +59,7 @@ else()
 endif(BUILD_TESTS)
 
 if(BUILD_GCP)
-  set(BUILD_TESTING FALSE)
-
-  execute_process(COMMAND git submodule update --init --recursive --
-                          external/cloud
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-  include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googletest/include)
-
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/cloud)
-  include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googlemock/include)
-  include_directories(${CMAKE_CURRENT_BINARY_DIR}/external/cloud)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/cloud)
-  include_directories(${PROTOBUF_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
-
+  find_package(storage_client REQUIRED)
 endif(BUILD_GCP)
 
 if(NOT TARGET jsonCpp)
@@ -163,10 +148,10 @@ configure_package_config_file(buffersConfig.cmake.in
                               INSTALL_DESTINATION
                               cmake/SEP/IO)
 
-install(EXPORT buffersTargets
-        FILE buffersTargets.cmake
-        NAMESPACE SEP::IO
-        DESTINATION cmake/sep/io)
+#install(EXPORT buffersTargets
+#        FILE buffersTargets.cmake
+ #       NAMESPACE SEP::IO
+ #       DESTINATION cmake/sep/io)
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")

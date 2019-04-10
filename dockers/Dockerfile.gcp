@@ -1,0 +1,109 @@
+From debian:latest
+MAINTAINER Bob Clapp <bob@sep.stanford.edu>
+RUN apt-get -y update &&\
+    apt-get -y  install g++ python3-numpy git make gcc libboost-all-dev  libboost-dev &&\
+    apt-get -y install  cmake python3-dev python3-pytest python3-numpy-dbg libtbb-dev  build-essential cmake git gcc g++ cmake libcurl4-openssl-dev libssl-dev make zlib1g-dev && \
+     apt-get -y install build-essential cmake git gcc g++ cmake  \
+        libc-ares-dev libc-ares2 libcurl4-openssl-dev libssl1.0-dev make \
+        pkg-config tar wget zlib1g-dev vim golang autoconf clang-tidy  ninja-build doxygen golang &&\
+        apt-get -y clean
+
+RUN mkdir /opt/cmake &&\
+   cd /opt/cmake &&  \
+   wget https://github.com/Kitware/CMake/releases/download/v3.14.0-rc2/cmake-3.14.0-rc2.tar.gz  
+RUN cd /opt/cmake && \
+  tar xf /opt/cmake/cmake-3.14.0-rc2.tar.gz &&\
+  cd  /opt/cmake/cmake-3.14.0-rc2 && \
+ ./bootstrap &&\
+ make -j 8 &&\
+ make install
+
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.5 2
+RUN  mkdir -p /opt/google/protobuf &&\
+  cd /opt/google/protobuf &&\
+  wget -q https://github.com/google/protobuf/archive/v3.6.1.tar.gz &&\
+  tar -xf v3.6.1.tar.gz && \
+  cd /opt/google/protobuf/protobuf-3.6.1/cmake &&\
+  cmake -GNinja -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_SHARED_LIBS=yes \
+        -Dprotobuf_BUILD_TESTS=OFF  \
+        -H. -Bcmake-out &&\ 
+  cmake --build cmake-out --target install
+#RUN git clone https://github.com/grpc/grpc.git  /opt/google/grpc/src &&\
+#    mkdir /opt/google/grpc/build 
+#RUN git clone https://github.com/madler/zlib.git /opt/google/zlib/src &&\
+#    mkdir /opt/google/zlib/build 
+#RUN git clone https://github.com/c-ares/c-ares.git /opt/google/c-ares/src &&\
+#   mkdir /opt/google/c-ares/build
+#RUN git clone https://github.com/google/boringssl.git /opt/google/boringssl/src &&\
+#   mkdir /opt/google/boringssl/build 
+#RUN git clone https://github.com/gflags/gflags /opt/google/gflags/src &&\
+#   mkdir /opt/google/gflags/build
+#RUN git clone https://github.com/google/benchmark.git /opt/google/benchmark/src &&\
+#   mkdir /opt/google/benchmark/build
+#RUN git clone https://github.com/google/googletest.git /opt/google/gtest/src &&\
+#  mkdir /opt/google/gtest/build
+#RUN  cd /opt/google/gtest/build &&\
+#    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+#    ninja install
+#RUN  cd /opt/google/zlib/build &&\
+#    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+#    ninja install
+#RUN cd /opt/google/c-ares/build &&\
+#    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+#    ninja install
+#RUN cd /opt/google/boringssl/build &&\
+#    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+#    ninja 
+#RUN cd /opt/google/benchmark/build &&\
+#    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+#    ninja install
+#RUN cd /opt/google/gflags/build &&\
+#    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google ../src&&\
+#    ninja install
+RUN ldconfig  
+RUN mkdir /opt/google/grpc && \
+    cd /opt/google/grpc && \
+    wget -q https://github.com/grpc/grpc/archive/v1.19.1.tar.gz &&\
+    tar -xf /opt/google/grpc/v1.19.1.tar.gz &&\
+    cd /opt/google/grpc/grpc-1.19.1 && \
+   make -j 8 &&\
+   make install  &&\
+   ldconfig
+     
+#RUN  cd /opt/google/grpc/build &&\
+#    cmake  -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google -DCMAKE_MODULE_PATH=/opt/google/lib/cmake -DZLIB_ROOT_DIR=/opt/google/zlib/src -DgRPC_ZLIB_PROVIDER=package  -DgRPC_CARES_PROVIDER=package -DgRPC_SSL_PROVIDER=package -DgRPC_PROTOBUF_PROVIDER=package  -DgRPC_BENCHMARK_PROVIDER=package -DgRPC_GFLAGS_PROVIDER=package  ../src &&\
+#    ninja install
+#RUN git clone  https://github.com/google/crc32c.git /opt/google/crc32/src &&\
+#    mkdir /opt/google/crc32/build  &&\
+#    cd /opt/google/crc32/build &&\
+#    cmake -GNinja -DCMAKE_INSTALL_PREFIX=/opt/google -DCRC32C_USE_GLOG=no -DCRC32C_BUILD_TESTS=0 -DCRC32C_BUILD_BENCHMARKS=0 ../src &&\
+#    ninja   install
+
+RUN mkdir /opt/google/crc32c && \
+   cd /opt/google/crc32c  &&\
+   wget -q https://github.com/google/crc32c/archive/1.0.6.tar.gz &&\
+   tar -xf 1.0.6.tar.gz&&\
+  cd crc32c-1.0.6 &&\
+cmake -gNinja\
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=yes \
+      -DCRC32C_BUILD_TESTS=OFF \
+      -DCRC32C_BUILD_BENCHMARKS=OFF \
+      -DCRC32C_USE_GLOG=OFF \
+      -H. -Bcmake-out/crc32c &&\
+cmake --build cmake-out/crc32c --target install  &&\
+ldconfig
+RUN mkdir /opt/google/cloud && \
+  git clone https://github.com/googleapis/google-cloud-cpp.git src &&\
+  cd src &&\
+  cmake -H. -Bcmake-out -GNinja \
+    -DGOOGLE_CLOUD_CPP_DEPENDENCY_PROVIDER=package \
+    -DGOOGLE_CLOUD_CPP_GMOCK_PROVIDER=external 
+
+
+
+
+    
+
