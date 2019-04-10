@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.7)
 project(buffers-lib)
 include_directories(${ZFP_INCLUDE_DIR})
 include_directories(${TBB_INCLUDE_DIRS})
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 set(DEP_LIBS )
 set(SOURCES
     store.cpp
@@ -21,7 +23,10 @@ if(USE_ZFP)
 endif(USE_ZFP)
 
 if(USE_GCP)
-  set(SOURCES ${SOURCES} gcpBuffer.cpp gcpBuffers.cpp)
+  set(SOURCES ${SOURCES} 
+	  gcpBuffer.cpp 
+	  gcpBuffers.cpp
+	  )
   set(DEP_LIBS  ${DEP_LIBS} storage_client)
 endif(USE_GCP)
 
