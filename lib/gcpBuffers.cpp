@@ -3,6 +3,7 @@
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 #include <tbb/parallel_reduce.h>
+#include "SEPException.h"
 
 #include <tbb/tbb.h>
 #include "compressTypes.h"
@@ -92,7 +93,7 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
   if (_projectID == std::string("NONE")) {
-    throw SEPEXception(std::string("Must set environmental variable:") +
+    throw SEPException(std::string("Must set environmental variable:") +
                        _projectID);
     exit(1);
   }

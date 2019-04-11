@@ -1,4 +1,5 @@
 #include <assert.h>
+#include "SEPException.h"
 #include <store.h>
 #include <iostream>
 using namespace SEP::IO;
