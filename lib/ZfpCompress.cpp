@@ -154,8 +154,6 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
 
   std::shared_ptr<storeByte> x(new storeByte(zfpsize, buffer));
 
-  std::cerr << "COMPRESSED IT " << zfpsize << " " << n123 << std::endl;
-
   /* free allocated storage */
   zfp_field_free(field);
 
