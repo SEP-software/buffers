@@ -89,12 +89,15 @@ std::shared_ptr<storeBase> ZfpCompression::decompressData(
 }
 
 std::shared_ptr<storeBase> ZfpCompression::compressData(
+
     const std::vector<int> ns, const std::shared_ptr<storeBase> buf) {
   if (_typ == DATA_BYTE) return buf;
 
   int ndim = 0;
+  long long n123;
   for (int i = 0; i < ns.size(); i++) {
     if (ns[i] > 1) ndim = i + 1;
+    n123 = n123 * i;
   }
   if (ndim > 4)
     throw(SEPException(std::string("Only support up to 4-D compression")));
@@ -115,7 +118,8 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
       break;
     case 3:
       zfp_field_set_size_3d(field, ns[0], ns[1], ns[2]);
-
+    case 4:
+      zfp_field_set_size_3d(field, ns[0], ns[1], ns[2], ns[4]);
       break;
   }
 
@@ -149,6 +153,8 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
   size_t zfpsize = zfp_compress(zfp, field);
 
   std::shared_ptr<storeByte> x(new storeByte(zfpsize, buffer));
+
+  std::cerr << "COMPRESSED IT " << zfpsize << " " << n123 << std::endl;
 
   /* free allocated storage */
   zfp_field_free(field);
