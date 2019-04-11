@@ -11,7 +11,6 @@
 #include "google/cloud/status_or.h"
 #include "google/cloud/storage/client.h"
 #include "google/cloud/storage/oauth2/google_credentials.h"
-#include "google/cloud/status_or.h"
 //#include "statusor.h"
 using namespace SEP::IO;
 
@@ -28,19 +27,20 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   }
 
   changeState(CPU_COMPRESSED);
-    namespace gcs = google::cloud::storage;
-      gcs::ObjectWriteStream stream =
-          _client.value().WriteObject(_bucketName, _name);
-      std::shared_ptr<storeByte> buf2= std::dynamic_pointer_cast<storeByte>(_buf);
-      stream<<buf2->toString();
-        stream.Close();
-	google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata=std::move(stream).metadata();
-		if(!metadata) {
-			std::cerr<<"FAILURE "<<_name<<std::endl;
-			std::cerr<<metadata.status().message()<<std::endl;
-			throw  SEPException(std::string("Trouble writing object"));
-			  }
-		else std::cerr<<"SUCESS "<<_name<<std::endl;
+  namespace gcs = google::cloud::storage;
+  gcs::ObjectWriteStream stream =
+      _client.value().WriteObject(_bucketName, _name);
+  std::shared_ptr<storeByte> buf2 = std::dynamic_pointer_cast<storeByte>(_buf);
+  stream << buf2->toString();
+  stream.Close();
+  google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata =
+      std::move(stream).metadata();
+  if (!metadata) {
+    std::cerr << "FAILURE " << _name << std::endl;
+    std::cerr << metadata.status().message() << std::endl;
+    throw SEPException(std::string("Trouble writing object"));
+  } else
+    std::cerr << "SUCESS " << _name << std::endl;
 
   if (keepState) {
     _buf = buf;
@@ -55,11 +55,9 @@ long long gcpBuffer::readBuffer() {
   long long oldSize = _buf->getSize();
   _modified = false;
   /*Only need to do something if sitting on disk*/
-      namespace gcs = google::cloud::storage;
+  namespace gcs = google::cloud::storage;
   if (_bufferState == ON_DISK) {
-
     try {
-
       [](gcs::Client client, std::string bucket_name, std::string object_name,
          std::shared_ptr<storeByte> buf) {
         gcs::ObjectReadStream stream =
@@ -70,7 +68,7 @@ long long gcpBuffer::readBuffer() {
       }(std::move(_client.value()), _bucketName, _name,
         std::dynamic_pointer_cast<storeByte>(_buf));
     } catch (std::exception const &ex) {
-      std::cerr << "Trouble writing to bucket " << _name << std::endl;
+      std::cerr << "Trouble reading from bucket " << _name << std::endl;
       exit(1);
     }
     _bufferState = CPU_COMPRESSED;
@@ -79,10 +77,11 @@ long long gcpBuffer::readBuffer() {
   return _buf->getSize() - oldSize;
 }
 
-gcpBuffer::gcpBuffer(const std::string &bucketName, const std::string name,
-		    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
-                     const std::vector<int> &n, const std::vector<int> &f,
-                     std::shared_ptr<compress> comp) {
+gcpBuffer::gcpBuffer(
+    const std::string &bucketName, const std::string name,
+    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
+    const std::vector<int> &n, const std::vector<int> &f,
+    std::shared_ptr<compress> comp) {
   setClient(client);
   setLoc(n, f);
   _bucketName = bucketName;
@@ -90,11 +89,11 @@ gcpBuffer::gcpBuffer(const std::string &bucketName, const std::string name,
   setCompress(comp);
   setBufferState(ON_DISK);
 }
-gcpBuffer::gcpBuffer(const std::string &bucketName, 
-		    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
-		const std::vector<int> &n,
-                     const std::vector<int> &f, std::shared_ptr<compress> comp,
-                     const bufferState state) {
+gcpBuffer::gcpBuffer(
+    const std::string &bucketName,
+    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
+    const std::vector<int> &n, const std::vector<int> &f,
+    std::shared_ptr<compress> comp, const bufferState state) {
   _bucketName = bucketName;
   setClient(client);
 
