@@ -66,7 +66,7 @@ void buffers::updateMemory(const long change2) {
           throw e;
         }
       }
-      /*
+      /* TBB implementation for debugging
     }
   long change = tbb::parallel_reduce(
       tbb::blocked_range<size_t>(0, a->_toDisk.size()), long(0),
@@ -240,7 +240,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                    i));
   long long change = 0;
   for (auto &n : changes) change += n.get();
-  /*
+  /* TBB implementation
     long change = tbb::parallel_reduce(
         tbb::blocked_range<size_t>(0, pwind.size()), long(0),
         [&](const tbb::blocked_range<size_t> &r, long locChange) {
@@ -260,32 +260,27 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   updateMemory(change);
 }
 void buffers::changeState(const bufferState state) {
+  // /*
+  std::vector<std::future<long long>> changes;
 
-// /*
-std::vector<std::future<long long>> changes;
-
-for (auto i = 0; i < _buffers.size(); i++){
-changes.push_back(std::async(
+  for (auto i = 0; i < _buffers.size(); i++) {
+    changes.push_back(std::async(
         std::launch::async,
-  [&](int i) { return (long long)_buffers[i]->changeState(state); }, i));
-}
-long long change = 0;
-long i=0;
-for (auto &n : changes) {
-   try{
-    change += n.get();
+        [&](int i) { return (long long)_buffers[i]->changeState(state); }, i));
+  }
+  long long change = 0;
+  long i = 0;
+  for (auto &n : changes) {
+    try {
+      change += n.get();
+    } catch (std::exception &e) {
+      throw(e);
     }
-   catch (std::exception& e){
-throw(e);
-   }
-}
-// */
-/*
-updateMemory(change);
-}
-else{
-  */
-  //	std::cerr<<"in else "<<std::endl;
+  }
+
+  updateMemory(change);
+
+  //	TBB implementation
   //
   /*
   long change = tbb::parallel_reduce(
@@ -298,14 +293,14 @@ else{
       },
       [](long a, long b) { return a + b; });
       */
-/*
-      long change=0;
-      for(size_t i=0; i< _buffers.size(); i++){
-              std::cerr<<i << " of "<<_buffers.size()<<std::endl;
-              change+=_buffers[i]->changeState(state);
-      }
-  updateMemory(change);
-  */
+  /* Serial implementation
+        long change=0;
+        for(size_t i=0; i< _buffers.size(); i++){
+                std::cerr<<i << " of "<<_buffers.size()<<std::endl;
+                change+=_buffers[i]->changeState(state);
+        }
+    updateMemory(change);
+    */
   //}
 }
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
@@ -320,7 +315,6 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
   // int locChange = 0;
 
-  /*
   std::vector<std::future<long long>> changes;
 
   for (auto i = 0; i < _buffers.size(); i++)
@@ -337,7 +331,8 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         i));
   long long change = 0;
   for (auto &n : changes) change += n.get();
-  */
+
+  /*
   long change = tbb::parallel_reduce(
       tbb::blocked_range<size_t>(0, pwind.size()), long(0),
       [&](const tbb::blocked_range<size_t> &r, long locChange) {
@@ -354,12 +349,6 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         return locChange;
       },
       [](long a, long b) { return a + b; });
+    */
   updateMemory(change);
 }
-// buffers(std::string diretory, std::shared_ptr<compress> comp = nullptr,
-//      std::shared_ptr<blocking> block = nullptr);
-
-// void readDescription();
-// void writeDescription();
-// void readBlocking();
-// void writeBlocking();

@@ -40,8 +40,8 @@ long long gcpBuffer::writeBuffer(bool keepState) {
     std::cerr << metadata.status().message() << std::endl;
     throw SEPException(std::string("Trouble writing object"));
   }
-  if(stream.received_hash()!=stream.computed_hash())
-	       throw SEPException(std::string("Hashes do not match"));
+  if (stream.received_hash() != stream.computed_hash())
+    throw SEPException(std::string("Hashes do not match"));
 
   if (keepState) {
     _buf = buf;
@@ -61,35 +61,26 @@ long long gcpBuffer::readBuffer() {
     try {
       [](gcs::Client client, std::string bucket_name, std::string object_name,
          std::shared_ptr<storeByte> buf) {
+        google::cloud::v0::StatusOr<gcs::ObjectMetadata> object_metadata =
+            client.GetObjectMetadata(bucket_name, object_name);
 
-	      google::cloud::v0::StatusOr<gcs::ObjectMetadata> object_metadata =
-	        client.GetObjectMetadata(bucket_name, object_name);
+        if (!object_metadata) {
+          throw std::runtime_error(object_metadata.status().message());
+        }
 
-
-    if (!object_metadata) {
-	        throw std::runtime_error(object_metadata.status().message());
-		  }
-
-      auto sz=object_metadata->size();
-      
-
+        auto sz = object_metadata->size();
 
         gcs::ObjectReadStream stream =
             client.ReadObject(bucket_name, object_name);
 
-	if(!stream.IsOpen())
-		throw SEPException(std::string("stream is not open correctly"));
+        if (!stream.IsOpen())
+          throw SEPException(std::string("stream is not open correctly"));
 
-	/*
-       buf->resize(sz);
-        stream.read(buf->getPtr(), sz); 
-	       */
+        buf->resize(sz);
+        stream.read(buf->getPtr(), sz);
 
-       std::string data(std::istreambuf_iterator<char>(stream), {});
-        buf->fromString(data);
-
-       if(stream.received_hash()!=stream.computed_hash())
-	       throw SEPException(std::string("Hashes do not match"));
+        if (stream.received_hash() != stream.computed_hash())
+          throw SEPException(std::string("Hashes do not match"));
       }(std::move(_client.value()), _bucketName, _name,
         std::dynamic_pointer_cast<storeByte>(_buf));
     } catch (std::exception const &ex) {
