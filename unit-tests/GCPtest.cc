@@ -50,7 +50,7 @@ TEST(TESTBucketCreation, gcpBuffers) {
 //  std::shared_ptr<SEP::IO::blocking> block =
 //      SEP::IO::blocking::createDefaultBlocking(hyper);
 
-   std::vector<int> big(4,10),bs(4,2) ;
+   std::vector<int> big(4,40),bs(4,2) ;
 	   big[0]=100;
    
   std::shared_ptr<SEP::IO::blocking> block( new SEP::IO::blocking(bs,big));
@@ -66,9 +66,6 @@ TEST(TESTBucketCreation, gcpBuffers) {
   ASSERT_NO_THROW(gcp.putWindow(ns, fs, js, vals.data()));
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
-     std::cerr<<"After PUT WINDOW "<<std::endl;
-  ASSERT_NO_THROW(gcp.changeState(CPU_COMPRESSED));
-     std::cerr<<"AFTER COMPRESSED "<<std::endl;
   ASSERT_NO_THROW(gcp.changeState(ON_DISK));
     high_resolution_clock::time_point t3 = high_resolution_clock::now();
 

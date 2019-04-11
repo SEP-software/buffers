@@ -17,6 +17,7 @@ using namespace SEP::IO;
 gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
                        const std::string dir, const Json::Value &des,
                        std::shared_ptr<memoryUsage> mem) {
+
   _hyper = hyper->clone();
   if (des["blocking"].isNull()) {
     throw SEPException(
@@ -44,6 +45,8 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
       throw(SEPException(std::string("Trouble creating default client")));
 
     _client=client;
+    if (!_client)
+      throw(SEPException(std::string("Trouble setting default client")));
   _compress = ct.getCompressionObj();
 
   _defaultStateSet = false;
@@ -71,6 +74,17 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   if (_compress == nullptr) _compress = createDefaultCompress();
   if (_blocking == nullptr) _blocking = blocking::createDefaultBlocking(_hyper);
   if (_memory == nullptr) _memory = createDefaultMemory();
+    namespace gcs = google::cloud::storage;
+    google::cloud::v0::StatusOr<gcs::Client> client =
+        gcs::Client::CreateDefaultClient();
+    if (!client)
+      throw(SEPException(std::string("Trouble creating default client")));
+
+    _client=client;
+    
+    if(!_client)
+	     throw SEPException("_client is undefined");
+    else 
 
   blockParams v = _blocking->makeBlocks(_hyper->getNs());
   createBuffers(UNDEFINED);
@@ -82,13 +96,6 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
     std::cerr << "Must set environmental variable " << _projectID << std::endl;
     exit(1);
   }
-    namespace gcs = google::cloud::storage;
-    google::cloud::v0::StatusOr<gcs::Client> client =
-        gcs::Client::CreateDefaultClient();
-    if (!client)
-      throw(SEPException(std::string("Trouble creating default client")));
-
-    _client=client;
 }
 
 void gcpBuffers::setName(const std::string &dir, const bool create) {
@@ -145,13 +152,13 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
 void gcpBuffers::createBuffers(const bufferState state) {
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
+ if(!_client) 
+	  throw SEPException("client is dead on createBuffers");;
   for (int i = 0; i < b._ns.size(); i++) {
     _buffers.push_back(std::make_shared<gcpBuffer>(_name,_client, b._ns[i], b._fs[i],
                                                    _compress, state));
-
   }
 
-  std::cerr<<_buffers[0]->_n[0]<<" "<<_buffers[0]->_n[1]<<" "<<_buffers[0]->_n[2]<<" "<<_buffers[0]->_n[3]<<std::endl;
 
   _n123blocking = b._nblocking;
   _axisBlocking = b._axesBlock;

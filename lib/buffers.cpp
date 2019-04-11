@@ -12,6 +12,7 @@
 #include "memoryAll.h"
 #include "nocompress.h"
 #include "simpleMemoryLimit.h"
+#include "memoryAll.h"
 using namespace SEP::IO;
 
 std::shared_ptr<compress> buffers::createDefaultCompress() {
@@ -21,8 +22,11 @@ std::shared_ptr<compress> buffers::createDefaultCompress() {
 std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
   std::shared_ptr<memoryUsage>
 
+	  /*
       c(new simpleMemoryLimit((long long)(1024 * 1024) *
                               (long long)(4 * 1024)));
+			      */
+      c(new  memoryAll());
 
   return c;
 }
@@ -42,11 +46,15 @@ void buffers::updateMemory(const long change2) {
   bool done = false;
   long change = change2;
   while (!done) {
+	  std::cerr<<"before1problem 1 "<<std::endl;
+	 
     std::shared_ptr<memoryReduce> a = _memory->changeBufferState(change);
+    std::cerr<<a->_toDisk.size()<<" and b "<<a->_compress.size()<<std::endl;
     if (a->_toDisk.size() == 0 && a->_compress.size() == 0) {
       done = true;
     } else {
       std::vector<std::future<long long>> changes;
+	  std::cerr<<"before2problem 1 "<<std::endl;
 
       for (auto i = 0; i < a->_toDisk.size(); i++)
         changes.push_back(std::async(
@@ -56,6 +64,7 @@ void buffers::updateMemory(const long change2) {
             },
             i));
       change = 0;
+	  std::cerr<<"before3problem 1 "<<std::endl;
       for (auto &n : changes) {
         try {
           change += n.get();
@@ -63,6 +72,7 @@ void buffers::updateMemory(const long change2) {
           throw e;
         }
       }
+	  std::cerr<<"before4problem 1 "<<std::endl;
       /*
     }
   long change = tbb::parallel_reduce(
@@ -92,6 +102,7 @@ void buffers::updateMemory(const long change2) {
         }
         */
       std::vector<std::future<long long>> changes2;
+      std::cerr<<"1HAFSDS "<<std::endl;
 
       for (auto i = 0; i < a->_compress.size(); i++)
         changes2.push_back(std::async(
@@ -100,8 +111,11 @@ void buffers::updateMemory(const long change2) {
               return (long long)_buffers[a->_compress[i]]->changeState(ON_DISK);
             },
             i));
+      std::cerr<<"2HAFSDS "<<std::endl;
       change = 0;
+      std::cerr<<"3HAFSDS "<<std::endl;
       for (auto &n : changes2) change += n.get();
+      std::cerr<<"4HAFSDS "<<change<<std::endl;
     }
   }
 }
@@ -258,30 +272,31 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
 }
 void buffers::changeState(const bufferState state) {
 
-	std::cerr<<"IN buffers changestate"<<std::endl;
+//	std::cerr<<"IN buffers changestate"<<std::endl;
 
 
 
+	/*
  
 if(state==ON_DISK) {
-	std::cerr<<"in if "<<std::endl;
+//	std::cerr<<"in if "<<std::endl;
 
   std::vector<std::future<long long>> changes;
 
   for (auto i = 0; i < _buffers.size(); i++){
-	  std::cerr<<"Launching "<<i<<" of "<<_buffers.size()<<std::endl;
+//	  std::cerr<<"Launching "<<i<<" of "<<_buffers.size()<<std::endl;
     changes.push_back(std::async(
-//        std::launch::async,
+/        std::launch::async,
         [&](int i) { return (long long)_buffers[i]->changeState(state); }, i));
   }
   long long change = 0;
-  std::cerr<<"all jobs started "<<std::endl;
+//  std::cerr<<"all jobs started "<<std::endl;
   long i=0;
   for (auto &n : changes) {
-	  std::cerr<<"in loop to join "<<std::endl;
+//	  std::cerr<<"in loop to join "<<std::endl;
 	 try{ 
 	  change += n.get();
-	   std::cerr<<"suckessful join "<<i++<<std::endl;
+//	   std::cerr<<"suckessful join "<<i++<<std::endl;
 	  }
 	 catch (std::exception& e){
 throw(e);
@@ -291,8 +306,9 @@ throw(e);
   updateMemory(change);
 }
 else{
-	std::cerr<<"in else "<<std::endl;
-	/*
+	*/
+//	std::cerr<<"in else "<<std::endl;
+//
     long change = tbb::parallel_reduce(
         tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
         [&](const tbb::blocked_range<size_t> &r, long locChange) {
@@ -302,16 +318,17 @@ else{
           return locChange;
         },
         [](long a, long b) { return a + b; });
-	*/
+    /*
 	long change=0;
 	for(size_t i=0; i< _buffers.size(); i++){
 		std::cerr<<i << " of "<<_buffers.size()<<std::endl;
 		change+=_buffers[i]->changeState(state);
 	}
-	std::cerr<<"2 buffers changestate"<<std::endl;
+	*/
+	std::cerr<<"2 buffers changestate  "<<change<<std::endl;
   updateMemory(change);
 	std::cerr<<"3 buffers changestate"<<std::endl;
-}
+//}
 }
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, const void *buf) {
