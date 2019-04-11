@@ -331,9 +331,9 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         i));
   long long change = 0;
   for (auto &n : changes) change += n.get();
+  * /
 
-  /*
-  long change = tbb::parallel_reduce(
+      long change = tbb::parallel_reduce(
       tbb::blocked_range<size_t>(0, pwind.size()), long(0),
       [&](const tbb::blocked_range<size_t> &r, long locChange) {
         for (size_t i = r.begin(); i != r.end(); ++i) {
@@ -349,6 +349,5 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         return locChange;
       },
       [](long a, long b) { return a + b; });
-    */
-  updateMemory(change);
+  * / updateMemory(change);
 }
