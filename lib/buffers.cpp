@@ -213,7 +213,10 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, void *buf) {
   bufferState state = CPU_DECOMPRESSED;
   if (_defaultStateSet) state = _defState;
+  std::cerr << "IN GET WINDOW " << std::endl;
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
+  std::cerr << "IN 2GET WINDOW " << std::endl;
+
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
   for (auto i = 0; i < std::min(7, (int)nw.size()); i++) n[i] = nw[i];
   for (auto i = 0; i < std::min(7, (int)fw.size()); i++) f[i] = fw[i];
@@ -257,7 +260,10 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         },
         [](long a, long b) { return a + b; });
         */
+  std::cerr << "IN3 GET WINDOW " << std::endl;
+
   updateMemory(change);
+  std::cerr << "IN4 GET WINDOW " << std::endl;
 }
 void buffers::changeState(const bufferState state) {
   // /*
