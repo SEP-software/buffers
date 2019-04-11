@@ -94,12 +94,12 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
   if (_typ == DATA_BYTE) return buf;
 
   int ndim = 0;
-  long long n123;
+  long long n123 = 1;
   for (int i = 0; i < ns.size(); i++) {
     if (ns[i] > 1) ndim = i + 1;
     n123 = n123 * i;
   }
-  if (n / 3dim > 4)
+  if (ndim > 4)
     throw(SEPException(std::string("Only support up to 4-D compression")));
 
   zfp_field* field = zfp_field_alloc();
