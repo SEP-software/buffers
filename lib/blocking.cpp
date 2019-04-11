@@ -134,8 +134,7 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     }
 
     if (nleft > 0) axisBlock.push_back(nleft);
-    std::cerr << " axis block " << i << " " << axisBlock[0]
-              << " nsz=" << axisBlock.size() << std::endl;
+
     blocks.push_back(axisBlock);
   }
 

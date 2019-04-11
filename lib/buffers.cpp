@@ -337,6 +337,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         i));
   long long change = 0;
   for (auto &n : changes) change += n.get();
+  std::cerr << "RESULT OF CHANGE " << std::endl;
   /*
 
     long change = tbb::parallel_reduce(
