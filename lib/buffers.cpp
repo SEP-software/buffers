@@ -260,7 +260,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         },
         [](long a, long b) { return a + b; });
         */
-  std::cerr << "IN3 GET WINDOW " << std::endl;
+  std::cerr << "IN3 GET WINDOW " << changes.size() << std::endl;
 
   updateMemory(change);
   std::cerr << "IN4 GET WINDOW " << std::endl;
