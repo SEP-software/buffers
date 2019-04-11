@@ -1,4 +1,5 @@
 #include "memoryAll.h"
+#include <iostream>
 using namespace SEP::IO;
 void memoryAll::updateRecentBuffers(const std::vector<int> &bufs) {
   if (bufs.size() == 0)
@@ -7,6 +8,7 @@ void memoryAll::updateRecentBuffers(const std::vector<int> &bufs) {
 }
 std::shared_ptr<memoryReduce> memoryAll::changeBufferState(
     const long memChange) {
+	std::cerr<<"in change beuffer state"<<std::endl;
   if (memChange == 0)
     ;
   std::vector<int> a, b;

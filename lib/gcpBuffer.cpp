@@ -40,7 +40,7 @@ long long gcpBuffer::writeBuffer(bool keepState) {
 			std::cerr<<metadata.status().message()<<std::endl;
 			throw  SEPException(std::string("Trouble writing object"));
 			  }
-		else std::cerr<<"SUCESS "<<_name<<std::endl;
+//		else std::cerr<<"SUCESS "<<_name<<std::endl;
 
   if (keepState) {
     _buf = buf;
@@ -83,6 +83,9 @@ gcpBuffer::gcpBuffer(const std::string &bucketName, const std::string name,
 		    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
                      const std::vector<int> &n, const std::vector<int> &f,
                      std::shared_ptr<compress> comp) {
+
+	if(!client)
+		   throw SEPException(std::string("client is null"));
   setClient(client);
   setLoc(n, f);
   _bucketName = bucketName;
@@ -96,6 +99,8 @@ gcpBuffer::gcpBuffer(const std::string &bucketName,
                      const std::vector<int> &f, std::shared_ptr<compress> comp,
                      const bufferState state) {
   _bucketName = bucketName;
+	if(!client)
+		   throw SEPException(std::string("client2is null"));
   setClient(client);
 
   setLoc(n, f);

@@ -158,8 +158,9 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 }
 
 long buffer::changeState(const bufferState state) {
-  std::cerr << "in chnage stae TO " << bufferStateToString(state)
-            << " FROM:" << bufferStateToString(_bufferState) << std::endl;
+if(state==_bufferState) return 0;
+//  std::cerr << "in chnage stae TO " << bufferStateToString(state)
+ //           << " FROM:" << bufferStateToString(_bufferState) << std::endl;
   long long oldSize = _buf->getSize();
   switch (state) {
     case CPU_DECOMPRESSED:
@@ -193,7 +194,7 @@ long buffer::changeState(const bufferState state) {
         case CPU_COMPRESSED:
           break;
         default:
-          std::cerr << "Unknown conversion" << std::endl;
+          std::cerr << "Unknown1 conversion" << std::endl;
           assert(1 == 2);
       }
       _bufferState = CPU_COMPRESSED;
@@ -201,24 +202,22 @@ long buffer::changeState(const bufferState state) {
 
     case ON_DISK:
 
-      std::cerr << "1n on disk " << std::endl;
+//      std::cerr << "1n on disk " << std::endl;
       switch (_bufferState) {
         case ON_DISK:
           break;
         case CPU_DECOMPRESSED:
-          std::cerr << "2n on disk " << std::endl;
+//          std::cerr << "2n on disk " << std::endl;
           _buf = _compress->compressData(_n, _buf);
-          std::cerr << "3n on disk " << std::endl;
-          _bufferState = CPU_COMPRESSED;
+         _bufferState = CPU_COMPRESSED;
         case CPU_COMPRESSED:
           if (_modified) {
-            std::cerr << "4n on disk " << std::endl;
             writeBuffer();
-          } else
-            std::cerr << "5n on disk " << std::endl;
+          } 
+ //           std::cerr << "5n on disk " << std::endl;
           break;
         default:
-          std::cerr << "Unknown conversion" << std::endl;
+          std::cerr << "Unknown 2onversion" << std::endl;
           assert(1 == 2);
       }
       _bufferState = ON_DISK;
@@ -230,7 +229,7 @@ long buffer::changeState(const bufferState state) {
       assert(1 == 2);
       break;
   }
-  std::cerr << "iyt chnage stae " << std::endl;
+//  std::cerr << "iyt chnage stae " << std::endl;
   if (state == UNDEFINED) throw SEPException(std::string("state is undefined"));
   _bufferState = state;
 
