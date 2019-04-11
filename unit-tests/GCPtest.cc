@@ -30,7 +30,7 @@ std::shared_ptr<storeFloat> array() {
 
 TEST(TESTBucketCreation, gcpBuffers) {
   std::vector<SEP::axis> axes;
-  long long n = 200;
+  long long n = 100;
   long long n123 = 1;
   int ndim = 4;
   std::vector<int> ns(ndim, n), fs(ndim, 0), js(ndim, 1);
@@ -79,12 +79,14 @@ TEST(TESTBucketCreation, gcpBuffers) {
 
 
   // Create a second directory in same bucket
+  /*
   SEP::IO::gcpBuffers gcp2(hyper, SEP::DATA_FLOAT, block);
   ASSERT_NO_THROW(gcp2.setName(bucket2, true));
 
   ASSERT_NO_THROW(gcp2.putWindow(ns, fs, js, vals.data()));
   ASSERT_NO_THROW(gcp2.changeState(ON_DISK));
 
+  */
   // Now read the bucket from disk
   Json::Value val;
   val["blocking"] = block->getJsonDescription();
@@ -92,8 +94,13 @@ TEST(TESTBucketCreation, gcpBuffers) {
   std::vector<float> vals2(n123);
   SEP::IO::gcpBuffers gcp3(hyper, bucket1, val);
     t2 = high_resolution_clock::now();
+    std::cerr<<"Time to read "<<std::endl;
 
-  ASSERT_NO_THROW(gcp3.getWindow(ns, fs, js, vals2.data()));
+
+//  ASSERT_NO_THROW(gcp3.getWindow(ns, fs, js, vals2.data()));
+  ASSERT_NO_THROW(gcp3.changeState(CPU_COMPRESSED));
+//  ASSERT_NO_THROW(gcp3.getWindow(ns, fs, js, vals2.data()));
+
 
     t3 = high_resolution_clock::now();
       d2 = duration_cast<microseconds>(t3 - t2).count();

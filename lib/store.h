@@ -222,8 +222,16 @@ class storeByte : public storeBase {
   virtual size_t getElementSize() const override {
     return sizeof(unsigned char);
   }
-  //! Get the size of the dataset
+  /*!
+     Resize buffer
 
+     \param New size
+  */
+  void resize(size_t nsz){
+	  _buf.resize(nsz);
+  }
+  
+  //! Get the size of the dataset
   virtual size_t getSize() const override { return _buf.size(); }
   //! Cast buffer to string
   std::string toString() {
