@@ -1,5 +1,6 @@
 
 #include "compressTypes.h"
+#include "buffersConfig.h"
 #include <iostream>
 #ifdef USE_ZFP
 #include "ZfpCompress.h"
