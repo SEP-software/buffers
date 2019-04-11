@@ -27,19 +27,19 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   }
 
   changeState(CPU_COMPRESSED);
-    namespace gcs = google::cloud::storage;
-      gcs::ObjectWriteStream stream =
-          _client.value().WriteObject(_bucketName, _name);
-      std::shared_ptr<storeByte> buf2= std::dynamic_pointer_cast<storeByte>(_buf);
-      stream<<buf2->toString();
-        stream.Close();
-	google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata=std::move(stream).metadata();
-		if(!metadata) {
-			std::cerr<<"FAILURE "<<_name<<std::endl;
-			std::cerr<<metadata.status().message()<<std::endl;
-			throw  SEPException(std::string("Trouble writing object"));
-			  }
-//		else std::cerr<<"SUCESS "<<_name<<std::endl;
+  namespace gcs = google::cloud::storage;
+  gcs::ObjectWriteStream stream =
+      _client.value().WriteObject(_bucketName, _name);
+  std::shared_ptr<storeByte> buf2 = std::dynamic_pointer_cast<storeByte>(_buf);
+  stream << buf2->toString();
+  stream.Close();
+  google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata =
+      std::move(stream).metadata();
+  if (!metadata) {
+    std::cerr << "FAILURE " << _name << std::endl;
+    std::cerr << metadata.status().message() << std::endl;
+    throw SEPException(std::string("Trouble writing object"));
+  }
 
   if (keepState) {
     _buf = buf;
@@ -76,13 +76,12 @@ long long gcpBuffer::readBuffer() {
   return _buf->getSize() - oldSize;
 }
 
-gcpBuffer::gcpBuffer(const std::string &bucketName, const std::string name,
-		    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
-                     const std::vector<int> &n, const std::vector<int> &f,
-                     std::shared_ptr<compress> comp) {
-
-	if(!client)
-		   throw SEPException(std::string("client is null"));
+gcpBuffer::gcpBuffer(
+    const std::string &bucketName, const std::string name,
+    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
+    const std::vector<int> &n, const std::vector<int> &f,
+    std::shared_ptr<compress> comp) {
+  if (!client) throw SEPException(std::string("client is null"));
   setClient(client);
   setLoc(n, f);
   _bucketName = bucketName;
@@ -96,8 +95,7 @@ gcpBuffer::gcpBuffer(
     const std::vector<int> &n, const std::vector<int> &f,
     std::shared_ptr<compress> comp, const bufferState state) {
   _bucketName = bucketName;
-	if(!client)
-		   throw SEPException(std::string("client2is null"));
+  if (!client) throw SEPException(std::string("client2is null"));
   setClient(client);
 
   setLoc(n, f);

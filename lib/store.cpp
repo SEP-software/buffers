@@ -522,8 +522,7 @@ std::shared_ptr<storeBase> SEP::IO::returnStorage(const dataType state,
       return b;
     } break;
     default:
-      std::cerr << "in default " << std::endl;
-      assert(1 == 2);
+      throw SEPException("Unknown data type");
   }
 }
 
@@ -559,7 +558,6 @@ std::string SEP::IO::returnStorageType(const std::shared_ptr<storeBase> bufIn) {
 }
 
 void SEP::IO::throwError(const std::string myType, const std::string typeSent) {
-  std::cerr << "Wrong type passed Expected:" << myType << " got " << typeSent
-            << std::endl;
-  assert(1 == 2);
+  throw SEPException(std::string("Wrong type passed Expected:") + myType +
+                     std::string(" got ") + std::string(typeSent));
 }

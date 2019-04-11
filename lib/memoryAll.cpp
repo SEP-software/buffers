@@ -8,7 +8,6 @@ void memoryAll::updateRecentBuffers(const std::vector<int> &bufs) {
 }
 std::shared_ptr<memoryReduce> memoryAll::changeBufferState(
     const long memChange) {
-	std::cerr<<"in change beuffer state"<<std::endl;
   if (memChange == 0)
     ;
   std::vector<int> a, b;

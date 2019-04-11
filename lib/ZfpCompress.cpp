@@ -130,7 +130,7 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
       zfp_stream_set_rate(zfp, _rate, _ztype, ndim, 0);
       break;
     default:
-      std::cerr << "Unknown compression method" << std::endl;
+      throw SEPException("Unknown compression method");
       break;
   }
 

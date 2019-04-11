@@ -17,7 +17,6 @@ using namespace SEP::IO;
 gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
                        const std::string dir, const Json::Value &des,
                        std::shared_ptr<memoryUsage> mem) {
-
   _hyper = hyper->clone();
   if (des["blocking"].isNull()) {
     throw SEPException(
@@ -38,15 +37,15 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
 
   SEP::IO::compressTypes ct = compressTypes(des["compression"]);
 
-    namespace gcs = google::cloud::storage;
-    google::cloud::v0::StatusOr<gcs::Client> client =
-        gcs::Client::CreateDefaultClient();
-    if (!client)
-      throw(SEPException(std::string("Trouble creating default client")));
+  namespace gcs = google::cloud::storage;
+  google::cloud::v0::StatusOr<gcs::Client> client =
+      gcs::Client::CreateDefaultClient();
+  if (!client)
+    throw(SEPException(std::string("Trouble creating default client")));
 
-    _client=client;
-    if (!_client)
-      throw(SEPException(std::string("Trouble setting default client")));
+  _client = client;
+  if (!_client)
+    throw(SEPException(std::string("Trouble setting default client")));
   _compress = ct.getCompressionObj();
 
   _defaultStateSet = false;
@@ -57,8 +56,8 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
   if (_projectID == std::string("NONE")) {
-    std::cerr << "Must set environmental variable projectID" << _projectID << std::endl;
-    exit(1);
+    throw SEPException("Must set environmental variable projectID:" +
+                       _projectID);
   }
 }
 
@@ -74,60 +73,57 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   if (_compress == nullptr) _compress = createDefaultCompress();
   if (_blocking == nullptr) _blocking = blocking::createDefaultBlocking(_hyper);
   if (_memory == nullptr) _memory = createDefaultMemory();
-    namespace gcs = google::cloud::storage;
-    google::cloud::v0::StatusOr<gcs::Client> client =
-        gcs::Client::CreateDefaultClient();
-    if (!client)
-      throw(SEPException(std::string("Trouble creating default client")));
+  namespace gcs = google::cloud::storage;
+  google::cloud::v0::StatusOr<gcs::Client> client =
+      gcs::Client::CreateDefaultClient();
+  if (!client)
+    throw(SEPException(std::string("Trouble creating default client")));
 
-    _client=client;
-    
-    if(!_client)
-	     throw SEPException("_client is undefined");
-    else 
+  _client = client;
 
-  blockParams v = _blocking->makeBlocks(_hyper->getNs());
+  if (!_client)
+    throw SEPException("_client is undefined");
+  else
+
+    blockParams v = _blocking->makeBlocks(_hyper->getNs());
   createBuffers(UNDEFINED);
   _defaultStateSet = false;
 
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
   if (_projectID == std::string("NONE")) {
-    std::cerr << "Must set environmental variable " << _projectID << std::endl;
+    throw SEPEXception(std::string("Must set environmental variable:") +
+                       _projectID);
     exit(1);
   }
 }
 
 void gcpBuffers::setName(const std::string &dir, const bool create) {
-
-
-	int pos;
+  int pos;
   if ((pos = dir.find("/")) == std::string::npos) {  // No subdirectory
     _bucket = dir;
     _baseName = "";
   } else {
-    _baseName=dir;
+    _baseName = dir;
     _bucket = _baseName.substr(0, _baseName.find("/"));
     _baseName.erase(0, _baseName.find("/") + 1);
   }
 
   if (create) {
     namespace gcs = google::cloud::storage;
-    bool found=false;
+    bool found = false;
 
     // Create a client to communicate with Google Cloud Storage. This client
     // uses the default configuration for authentication and project id.
 
-
-    gcs::ListBucketsReader bucket_list = _client->ListBucketsForProject(_projectID);
-      for (auto&& bucket_metadata : bucket_list) {
-          if (!bucket_metadata) {
-	        throw std::runtime_error(bucket_metadata.status().message());
-	    }
-          if(bucket_metadata->name()==_bucket) found=true;
+    gcs::ListBucketsReader bucket_list =
+        _client->ListBucketsForProject(_projectID);
+    for (auto &&bucket_metadata : bucket_list) {
+      if (!bucket_metadata) {
+        throw std::runtime_error(bucket_metadata.status().message());
       }
-
-
+      if (bucket_metadata->name() == _bucket) found = true;
+    }
 
     google::cloud::StatusOr<gcs::BucketMetadata> metadata =
         _client->CreateBucketForProject(
@@ -135,15 +131,15 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
             gcs::BucketMetadata().set_location(_region).set_storage_class(
                 gcs::storage_class::Regional()));
 
-     if(!found){
-    if (!metadata) {
+    if (!found) {
+      if (!metadata) {
         std::cerr << metadata.status().message() << std::endl;
         throw SEPException(std::string("Trouble creating bucket "));
       }
-     }
+    }
   }
-  for (auto i = 0; i < _buffers.size(); i++) { 
-    _buffers[i]->setName(_baseName+ std::string("/buf") + std::to_string(i));
+  for (auto i = 0; i < _buffers.size(); i++) {
+    _buffers[i]->setName(_baseName + std::string("/buf") + std::to_string(i));
     std::shared_ptr<gcpBuffer> b =
         std::dynamic_pointer_cast<gcpBuffer>(_buffers[i]);
     b->setBucketName(_bucket);
@@ -152,13 +148,12 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
 void gcpBuffers::createBuffers(const bufferState state) {
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
- if(!_client) 
-	  throw SEPException("client is dead on createBuffers");;
+  if (!_client) throw SEPException("client is dead on createBuffers");
+  ;
   for (int i = 0; i < b._ns.size(); i++) {
-    _buffers.push_back(std::make_shared<gcpBuffer>(_name,_client, b._ns[i], b._fs[i],
-                                                   _compress, state));
+    _buffers.push_back(std::make_shared<gcpBuffer>(_name, _client, b._ns[i],
+                                                   b._fs[i], _compress, state));
   }
-
 
   _n123blocking = b._nblocking;
   _axisBlocking = b._axesBlock;
