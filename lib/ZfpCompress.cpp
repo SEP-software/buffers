@@ -97,7 +97,7 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
   long long n123 = 1;
   for (int i = 0; i < ns.size(); i++) {
     if (ns[i] > 1) ndim = i + 1;
-    n123 = n123 * i;
+    n123 = n123 * ns[i];
   }
   if (ndim > 4)
     throw(SEPException(std::string("Only support up to 4-D compression")));

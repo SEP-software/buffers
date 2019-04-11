@@ -8,6 +8,7 @@
 #include "nocompress.h"
 using namespace SEP::IO;
 
+std::string zfp="ZfpCompression";
 compressTypes::compressTypes(const Json::Value &des) {
   if (des["dataType"].isNull())
     throw SEPException(std::string("dataType not in parameters"));
@@ -18,10 +19,10 @@ compressTypes::compressTypes(const Json::Value &des) {
   if (typ == std::string("noCompression")) {
     _compress.reset(new noCompression(ele));
 #ifdef USE_ZFP
-  } else if (typ == std::string("ZfpCompression")) {
+  } else if (typ == zfp) {
     _compress.reset(new ZfpCompression(des));
 #endif
   } else {
-    throw SEPException(std::string("Unknown compression type " + typ));
+    throw SEPException(std::string("Unknown compression type " + typ+" "+zfp));
   }
 }
