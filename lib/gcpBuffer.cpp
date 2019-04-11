@@ -84,7 +84,8 @@ long long gcpBuffer::readBuffer() {
       }(std::move(_client.value()), _bucketName, _name,
         std::dynamic_pointer_cast<storeByte>(_buf));
     } catch (std::exception const &ex) {
-      std::cerr << "Trouble reading from bucket " << _name << std::endl;
+      std::cerr << "Trouble reading from bucket " << _name << " " << ex.what()
+                << std::endl;
       exit(1);
     }
     _bufferState = CPU_COMPRESSED;
