@@ -73,8 +73,8 @@ long long gcpBuffer::readBuffer() {
         gcs::ObjectReadStream stream =
             client.ReadObject(bucket_name, object_name);
 
-        if (!stream.IsOpen())
-          throw SEPException(std::string("stream is not open correctly"));
+        // if (!stream.IsOpen())
+        // throw SEPException(std::string("stream is not open correctly"));
 
         buf->resize(sz);
         stream.read(buf->getPtr(), sz);
