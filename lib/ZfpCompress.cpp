@@ -99,7 +99,7 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
     if (ns[i] > 1) ndim = i + 1;
     n123 = n123 * i;
   }
-  if (ndim > 4)
+  if (n / 3dim > 4)
     throw(SEPException(std::string("Only support up to 4-D compression")));
 
   zfp_field* field = zfp_field_alloc();
@@ -119,7 +119,7 @@ std::shared_ptr<storeBase> ZfpCompression::compressData(
     case 3:
       zfp_field_set_size_3d(field, ns[0], ns[1], ns[2]);
     case 4:
-      zfp_field_set_size_3d(field, ns[0], ns[1], ns[2], ns[4]);
+      zfp_field_set_size_4d(field, ns[0], ns[1], ns[2], ns[4]);
       break;
   }
 
