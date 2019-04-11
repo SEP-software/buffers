@@ -93,7 +93,7 @@ std::shared_ptr<blocking> blocking::createDefaultBlocking(
     block[0] = 512;
     block[1] = 32;
     block[2] = 32;
-    block[3] =32;
+    block[3] = 32;
   }
   std::shared_ptr<blocking> b(new blocking(bs, block));
   return b;
@@ -134,9 +134,11 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     }
 
     if (nleft > 0) axisBlock.push_back(nleft);
-
+    std::cerr << " axis block " << i << " " << axisBlock[0]
+              << " nsz=" << axisBlock.size() << std::endl;
     blocks.push_back(axisBlock);
   }
+
   for (size_t i = n.size(); i < 7; i++) {
     std::vector<int> axisBlock(1, 1);
     blocks.push_back(axisBlock);
