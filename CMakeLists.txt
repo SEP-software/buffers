@@ -116,6 +116,7 @@ add_subdirectory(lib)
 # first we can indicate the documentation build as an option and set it to ON by default
 
 # check if Doxygen is installed
+if(BUILD_DOC)
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
     # set input and output files
@@ -135,6 +136,7 @@ if (DOXYGEN_FOUND)
 else (DOXYGEN_FOUND)
   message("Doxygen need to be installed to generate the doxygen documentation")
 endif (DOXYGEN_FOUND)
+endif (BUILD_DOC)
 
 
 
