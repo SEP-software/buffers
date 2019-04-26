@@ -265,11 +265,13 @@ void buffers::changeState(const bufferState state) {
   // /*
   std::vector<std::future<long long>> changes;
 
+  std::cerr<<"INxhere "<<_buffers.size()<<std::endl;
   for (auto i = 0; i < _buffers.size(); i++) {
     changes.push_back(std::async(
         std::launch::async,
         [&](int i) { return (long long)_buffers[i]->changeState(state); }, i));
   }
+  std::cerr<<"IN2here "<<_buffers.size()<<std::endl;
   long long change = 0;
   long i = 0;
   for (auto &n : changes) {
@@ -280,7 +282,9 @@ void buffers::changeState(const bufferState state) {
     }
   }
 
+  std::cerr<<"before uodate"<<std::endl;
   updateMemory(change);
+  std::cerr<<"2efore uodate"<<std::endl;
 
   //	TBB implementation
   //

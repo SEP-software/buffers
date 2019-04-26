@@ -81,13 +81,13 @@ class storeInt : public storeBase {
   /*!
     \param n Size of the buffer
   */
-  storeInt(const int n) { _buf.resize(n); }
+  storeInt(const size_t n) { _buf.resize(n); }
   //! Create an integer storage buffer
   /*!
     \param n Size of the buffer
     \param buf Data to store in buffer
   */
-  storeInt(const int n, void *buf);
+  storeInt(const size_t n, void *buf);
   //! Copy the contents of buffer into buf
   /*!
     \param buf Data to store contents of  buffer into
@@ -95,7 +95,8 @@ class storeInt : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { 
+	  return (char *)_buf.data(); }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -158,13 +159,13 @@ class storeByte : public storeBase {
   /*!
     \param n Size of the buffer
   */
-  storeByte(const int n) { _buf.resize(n); }
+  storeByte(const size_t n) { _buf.resize(n); }
   //! Create an byte storage buffer
   /*!
     \param n Size of the buffer
     \param buf Data to store in buffer
   */
-  storeByte(const int n, void *buf);
+  storeByte(const size_t n, void *buf);
   //! Copy the contents of buffer into buf
   /*!
     \param buf Data to store contents of  buffer into
@@ -172,7 +173,8 @@ class storeByte : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { 
+	  return (char *)_buf.data(); }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -259,13 +261,13 @@ class storeFloat : public storeBase {
   /*!
     \param n Size of the buffer
   */
-  storeFloat(const int n) { _buf.resize(n); }
+  storeFloat(const size_t n) { _buf.resize(n); }
   //! Create an float storage buffer
   /*!
     \param n Size of the buffer
     \param buf Data to store in buffer
   */
-  storeFloat(const int n, void *buf);
+  storeFloat(const size_t n, void *buf);
   //! Copy the contents of buffer into buf
   /*!
     \param buf Data to store contents of  buffer into
@@ -273,7 +275,9 @@ class storeFloat : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { 
+
+	  return (char *)_buf.data(); }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -340,13 +344,13 @@ class storeDouble : public storeBase {
   /*!
     \param n Size of the buffer
   */
-  storeDouble(const int n) { _buf.resize(n); }
+  storeDouble(const size_t n) { _buf.resize(n); }
   //! Create an double storage buffer
   /*!
     \param n Size of the buffer
     \param buf Data to store in buffer
   */
-  storeDouble(const int n, void *buf);
+  storeDouble(const size_t n, void *buf);
   //! Copy the contents of buffer into buf
   /*!
     \param buf Data to store contents of  buffer into
@@ -354,7 +358,8 @@ class storeDouble : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { 
+	  return (char *)_buf.data(); }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -418,13 +423,13 @@ class storeComplex : public storeBase {
   /*!
     \param n Size of the buffer
   */
-  storeComplex(const int n) { _buf.resize(n); }
+  storeComplex(const size_t n) { _buf.resize(n); }
   //! Create an complex storage buffer
   /*!
     \param n Size of the buffer
     \param buf Data to store in buffer
   */
-  storeComplex(const int n, void *buf);
+  storeComplex(const size_t n, void *buf);
   //! Copy the contents of buffer into buf
   /*!
     \param buf Data to store contents of  buffer into
@@ -432,7 +437,8 @@ class storeComplex : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { 
+	  return (char *)_buf.data(); }
   //! Put data into class from buf
   /*!
     \param buf  Base class

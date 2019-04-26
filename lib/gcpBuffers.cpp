@@ -140,7 +140,10 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     }
   }
   for (auto i = 0; i < _buffers.size(); i++) {
-    _buffers[i]->setName(_baseName + std::string("/buf") + std::to_string(i));
+    std::string hsh=std::to_string(std::hash<std::string> {}(std::string("/buf")+std::to_string(i)));
+    _buffers[i]->setName(hsh.substr(0,5)+ std::string("buf") + std::to_string(i));
+    //_buffers[i]->setName(hsh.substr(0,5)+_baseName +std::string("/")+ std::string("buf") + std::to_string(i));
+    //_buffers[i]->setName(_baseName +std::string("/")+ std::string("buf") + std::to_string(i));
     std::shared_ptr<gcpBuffer> b =
         std::dynamic_pointer_cast<gcpBuffer>(_buffers[i]);
     b->setBucketName(_bucket);

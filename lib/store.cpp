@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace SEP::IO;
 
-storeInt::storeInt(const int n, void *buf) {
+storeInt::storeInt(const size_t n, void *buf) {
   _buf.resize(n);
   memcpy(_buf.data(), buf, n * sizeof(int));
 }
@@ -99,7 +99,7 @@ void storeInt::putWindow(const std::vector<int> &nwL,
   }
 }
 
-storeByte::storeByte(const int n, void *buf) {
+storeByte::storeByte(const size_t n, void *buf) {
   _buf.resize(n);
   memcpy(_buf.data(), buf, n * sizeof(unsigned char));
 }
@@ -194,7 +194,7 @@ void storeByte::putWindow(const std::vector<int> &nwL,
   }
 }
 
-storeFloat::storeFloat(const int n, void *buf) {
+storeFloat::storeFloat(const size_t n, void *buf) {
   _buf.resize(n);
   memcpy(_buf.data(), buf, n * sizeof(float));
 }
@@ -301,7 +301,7 @@ void storeFloat::putWindow(const std::vector<int> &nwL,
   }
 }
 
-storeDouble::storeDouble(const int n, void *buf) {
+storeDouble::storeDouble(const size_t n, void *buf) {
   _buf.resize(n);
   memcpy(_buf.data(), buf, n * sizeof(float));
 }
@@ -397,7 +397,7 @@ void storeDouble::putWindow(const std::vector<int> &nwL,
   }
 }
 
-storeComplex::storeComplex(const int n, void *buf) {
+storeComplex::storeComplex(const size_t n, void *buf) {
   _buf.resize(n);
   memcpy(_buf.data(), buf, n * sizeof(float));
 }

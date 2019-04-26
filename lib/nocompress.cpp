@@ -20,11 +20,14 @@ std::shared_ptr<storeBase> noCompression::compressData(
 
   size_t n123 = getDataTypeSize(_typ);
   for (auto n : ns) n123 *= n;
+  std::cerr<<"where i ie "<<n123<<std::endl;
   std::shared_ptr<storeByte> x(new storeByte(n123));
+  std::cerr<<"where i ie "<<n123<<std::endl;
 
   if (0 == memcpy((void*)x->getPtr(), (const void*)buf->getPtr(), n123)) {
     throw SEPException(std::string("Trouble with memcpy of size ") +
                        std::to_string(n123));
+  std::cerr<<"where i ie "<<n123<<std::endl;
   }
   return x;
 }
