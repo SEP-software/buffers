@@ -17,7 +17,6 @@ using namespace SEP::IO;
 long long gcpBuffer::writeBuffer(bool keepState) {
   long long oldSize = _buf->getSize();
 
-  std::cerr << "where 1 " << std::endl;
   std::shared_ptr<storeBase> buf;
   bufferState restore;
   if (_bufferState == UNDEFINED) throw SEPException("Bufferstate is undefined");
@@ -26,7 +25,6 @@ long long gcpBuffer::writeBuffer(bool keepState) {
     restore = _bufferState;
     buf = _buf->clone();
   }
-  std::cerr << "where 2 " << std::endl;
 
   changeState(CPU_COMPRESSED);
   namespace gcs = google::cloud::storage;
@@ -36,16 +34,12 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   gcs::ObjectWriteStream stream =
       client.value().WriteObject(_bucketName, _name);
   std::shared_ptr<storeByte> buf2 = std::dynamic_pointer_cast<storeByte>(_buf);
-  std::cerr << "whereb2 " << std::endl;
   stream.write(buf2->getPtr(), buf2->getSize());
   //  stream << buf2->toString();
-  std::cerr << "before close " << buf2->getSize() << std::endl;
 
   stream.Close();
-  std::cerr << "after close " << std::endl;
   google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata =
       std::move(stream).metadata();
-  std::cerr << "where 3 " << std::endl;
   if (!metadata) {
     std::cerr << "FAILURE " << _name << std::endl;
     std::cerr << metadata.status().message() << std::endl;
@@ -54,7 +48,6 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   if (stream.received_hash() != stream.computed_hash())
     throw SEPException(std::string("Hashes do not match"));
 
-  std::cerr << "where 5 " << std::endl;
   if (keepState) {
     _buf = buf;
     _bufferState = restore;
@@ -67,6 +60,7 @@ long long gcpBuffer::writeBuffer(bool keepState) {
 long long gcpBuffer::readBuffer() {
   long long oldSize = _buf->getSize();
   _modified = false;
+  namespace gcs = google::cloud::storage;
   google::cloud::v0::StatusOr<gcs::Client> client =
       gcs::Client::CreateDefaultClient();
   /*Only need to do something if sitting on disk*/
