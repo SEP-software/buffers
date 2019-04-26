@@ -152,8 +152,8 @@ void gcpBuffers::createBuffers(const bufferState state) {
   if (!_client) throw SEPException("client is dead on createBuffers");
   ;
   for (int i = 0; i < b._ns.size(); i++) {
-    _buffers.push_back(std::make_shared<gcpBuffer>(_name, _client, b._ns[i],
-                                                   b._fs[i], _compress, state));
+    _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
+                                                   _compress, state));
   }
 
   _n123blocking = b._nblocking;

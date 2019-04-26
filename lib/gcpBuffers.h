@@ -66,12 +66,10 @@ class gcpBuffers : public buffers {
   }
 
  private:
-  std::string _projectID;   ///< GCP project ID
-      std::string _region;  ///<  Region where the data is stored
-  std::string _bucket;      ///< Name of the GCP bucket
-  std::string _baseName;    ///< Base name (directory) for dataset
-  google::cloud::v0::StatusOr<google::cloud::storage::Client>
-      _client;  ///< GCP communicator
+  std::string _projectID;  ///< GCP project ID
+  std::string _region;     ///<  Region where the data is stored
+  std::string _bucket;     ///< Name of the GCP bucket
+  std::string _baseName;   ///< Base name (directory) for dataset
 };
 }  // namespace IO
 }  // namespace SEP

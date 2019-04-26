@@ -28,8 +28,10 @@ long long gcpBuffer::writeBuffer(bool keepState) {
 
   changeState(CPU_COMPRESSED);
   namespace gcs = google::cloud::storage;
+  google::cloud::v0::StatusOr<gcs::Client> client =
+      gcs::Client::CreateDefaultClient();
   gcs::ObjectWriteStream stream =
-      _client.value().WriteObject(_bucketName, _name);
+      client.value().WriteObject(_bucketName, _name);
   std::shared_ptr<storeByte> buf2 = std::dynamic_pointer_cast<storeByte>(_buf);
   stream << buf2->toString();
   stream.Close();
@@ -55,6 +57,8 @@ long long gcpBuffer::writeBuffer(bool keepState) {
 long long gcpBuffer::readBuffer() {
   long long oldSize = _buf->getSize();
   _modified = false;
+  google::cloud::v0::StatusOr<gcs::Client> client =
+      gcs::Client::CreateDefaultClient();
   /*Only need to do something if sitting on disk*/
   namespace gcs = google::cloud::storage;
   if (_bufferState == ON_DISK) {
@@ -81,7 +85,7 @@ long long gcpBuffer::readBuffer() {
 
         if (stream.received_hash() != stream.computed_hash())
           throw SEPException(std::string("Hashes do not match"));
-      }(std::move(_client.value()), _bucketName, _name,
+      }(std::move(client.value()), _bucketName, _name,
         std::dynamic_pointer_cast<storeByte>(_buf));
     } catch (std::exception const &ex) {
       std::cerr << "Trouble reading from bucket " << _name << " " << ex.what()
@@ -94,27 +98,19 @@ long long gcpBuffer::readBuffer() {
   return _buf->getSize() - oldSize;
 }
 
-gcpBuffer::gcpBuffer(
-    const std::string &bucketName, const std::string name,
-    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
-    const std::vector<int> &n, const std::vector<int> &f,
-    std::shared_ptr<compress> comp) {
-  if (!client) throw SEPException(std::string("client is null"));
-  setClient(client);
+gcpBuffer::gcpBuffer(const std::string &bucketName, const std::string name,
+                     const std::vector<int> &n, const std::vector<int> &f,
+                     std::shared_ptr<compress> comp) {
   setLoc(n, f);
   _bucketName = bucketName;
   setName(name);
   setCompress(comp);
   setBufferState(ON_DISK);
 }
-gcpBuffer::gcpBuffer(
-    const std::string &bucketName,
-    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
-    const std::vector<int> &n, const std::vector<int> &f,
-    std::shared_ptr<compress> comp, const bufferState state) {
+gcpBuffer::gcpBuffer(const std::string &bucketName, const std::vector<int> &n,
+                     const std::vector<int> &f, std::shared_ptr<compress> comp,
+                     const bufferState state) {
   _bucketName = bucketName;
-  if (!client) throw SEPException(std::string("client2is null"));
-  setClient(client);
 
   setLoc(n, f);
   setCompress(comp);
