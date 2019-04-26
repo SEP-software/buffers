@@ -30,7 +30,7 @@ std::shared_ptr<storeFloat> array() {
 
 TEST(TESTBucketCreation, gcpBuffers) {
   std::vector<SEP::axis> axes;
-  long long n = 100;
+  long long n = 150;
   long long n123 = 1;
   int ndim = 4;
   std::vector<int> ns(ndim, n), fs(ndim, 0), js(ndim, 1);
@@ -50,14 +50,16 @@ TEST(TESTBucketCreation, gcpBuffers) {
 //  std::shared_ptr<SEP::IO::blocking> block =
 //      SEP::IO::blocking::createDefaultBlocking(hyper);
 
-   std::vector<int> big(4,40),bs(4,2) ;
-	   big[0]=100;
+   std::vector<int> big(4,200),bs(4,2) ;
+	   big[0]=200;
+	   big[3]=80;
    
   std::shared_ptr<SEP::IO::blocking> block( new SEP::IO::blocking(bs,big));
 
   // Create simple file and write to disk
   SEP::IO::gcpBuffers gcp(hyper, SEP::DATA_FLOAT, block);
   ASSERT_NO_THROW(gcp.setName(bucket1, true));
+   std::cerr<<"whre i die "<<std::endl;
 
   std::vector<float> vals(n123);
 
@@ -66,7 +68,10 @@ TEST(TESTBucketCreation, gcpBuffers) {
   ASSERT_NO_THROW(gcp.putWindow(ns, fs, js, vals.data()));
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
+
+   std::cerr<<"whre1i die  bwefore "<<std::endl;
   ASSERT_NO_THROW(gcp.changeState(ON_DISK));
+   std::cerr<<"whre i die "<<std::endl;
     high_resolution_clock::time_point t3 = high_resolution_clock::now();
 
       auto d1 = duration_cast<microseconds>(t2 - t1).count();
