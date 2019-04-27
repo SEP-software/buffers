@@ -36,8 +36,16 @@ add_test(NAME zfp COMMAND ZfpCompressTest)
 ENDIF(BUILD_ZFP)
 
 if(BUILD_GCP)
+
+
+	get_cmake_property(_variableNames VARIABLES)
+	list (SORT _variableNames)
+	foreach (_variableName ${_variableNames})
+		    message(STATUS "${_variableName}=${${_variableName}}")
+
+	    endforeach()
 add_executable( GCPtest GCPtest.cc)
-target_link_libraries(GCPtest    buffers gtest gtest_main gtest jsonCpp storage_client tbb)
+target_link_libraries(GCPtest    buffers gtest gtest_main gtest jsonCpp storage_client tbb )
 add_test(NAME gcp COMMAND   GCPtest)
 else(BUILD_GCP)
 endif(BUILD_GCP)

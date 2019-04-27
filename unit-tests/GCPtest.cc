@@ -30,7 +30,7 @@ std::shared_ptr<storeFloat> array() {
 
 TEST(TESTBucketCreation, gcpBuffers) {
   std::vector<SEP::axis> axes;
-  long long n = 150;
+  long long n = 200;
   long long n123 = 1;
   int ndim = 4;
   std::vector<int> ns(ndim, n), fs(ndim, 0), js(ndim, 1);
@@ -52,7 +52,7 @@ TEST(TESTBucketCreation, gcpBuffers) {
 
    std::vector<int> big(4,200),bs(4,2) ;
 	   big[0]=200;
-	   big[3]=80;
+	   big[3]=4;
    
   std::shared_ptr<SEP::IO::blocking> block( new SEP::IO::blocking(bs,big));
 
