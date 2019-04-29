@@ -51,7 +51,8 @@ TEST(TESTBucketCreation, gcpBuffers) {
 //      SEP::IO::blocking::createDefaultBlocking(hyper);
 
    std::vector<int> big(4,40),bs(4,2) ;
-	   big[0]=200;
+	   big[0]=100;
+	   
    
   std::shared_ptr<SEP::IO::blocking> block( new SEP::IO::blocking(bs,big));
 

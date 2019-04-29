@@ -16,8 +16,9 @@ using namespace SEP::IO;
 
 buffers::buffers() {
   char *val = getenv("ioThreads");
-  std::string valS == NULL ? "60" : std::string(val);
-  _ioThreads = stoi(valS);
+  _ioThreads=60;
+  if(val!=NULL) 
+    _ioThreads = atoi(val);
 }
 
 std::shared_ptr<compress> buffers::createDefaultCompress() {
@@ -274,18 +275,17 @@ void buffers::changeState(const bufferState state) {
 
   std::vector<std::thread> ioT(_ioThreads);
 
-  for (auto i = 0; i < _buffers.size(); i++) {
-    ioT[i] = std::thread(
-        [&]() {
+        auto func=[&]() {
           bool done = false;
           while (!done) {
+	    long long iuser;
             {
               std::lock_guard<std::mutex> lock(mtx);
               ibuf++;
-              long long iuser = ibuf;
+              iuser = ibuf;
             }
-            if (user < _buffers.size()) {
-              long long ch = _buffers[iuse]->changeState(state);
+            if (iuser < _buffers.size()) {
+              long long ch = _buffers[iuser]->changeState(state);
               {
                 std::lock_guard<std::mutex> lock(mtx);
                 sz += ch;
@@ -293,10 +293,11 @@ void buffers::changeState(const bufferState state) {
             } else
               done = true;
           }
-        },
-        i);
+        };
+  for (auto i = 0; i < ioT.size(); i++) {
+    ioT[i] = std::thread(func);
   }
-  for (auto i = 0; i < _ioT.size(); i++) ioT.join();
+  for (auto i = 0; i < ioT.size(); i++) ioT[i].join();
   /*
  std::cerr<<"IN2here "<<_buffers.size()<<std::endl;
  long long change = 0;
@@ -329,15 +330,15 @@ tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
 },
 [](long a, long b) { return a + b; });
 */
-  * /
       /* Serial implementation */
+  /*
       long change = 0;
   for (size_t i = 0; i < _buffers.size(); i++) {
     std::cerr << i << " of " << _buffers.size() << std::endl;
     change += _buffers[i]->changeState(state);
   }
   updateMemory(change);
-  * /
+  */
   //}
 }
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
