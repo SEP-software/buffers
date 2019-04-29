@@ -91,6 +91,36 @@ endif(BUILD_ZFP)
 # set( GCP_LIBRARIES ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}z
 # fp${CMAKE_SHARED_LIBRARY_SUFFIX} ) endif(BUILD_GCP)
 
+
+  # TODO: Add find_package() call so we don't build this if we don't have to!  
+  find_library(THIRD_PARTY_GPERFTOOLS "profiler" "${THIRD_PARTY_ROOT}/lib")
+  if( NOT THIRD_PARTY_GPERFTOOLS )
+  set(EXTERN_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/build")
+set(EXTERN_STAMP_DIR "${EXTERN_BUILD_DIR}/stamps")
+
+        set(URL "http://gperftools.googlecode.com/files/gperftools-2.7.tar.gz")
+    message("     gperftools: <building>")
+    ExternalProject_Add( third-party-gperftools
+      URL                ${URL}
+      ##URL_HASH           SHA1=b799b99d9f021988bbc931db1c21b2f94826d4f0   # ignored to support older cmake
+      SOURCE_DIR         ${EXTERN_BUILD_DIR}/src/gperftools-2.7
+      PREFIX             ${EXTERN_BUILD_DIR}/gperftools
+      STAMP_DIR          ${EXTERN_STAMP_DIR}/gperftools
+      BINARY_DIR         ${EXTERN_BUILD_DIR}/gperftools
+      INSTALL_DIR        ${CMAKE_CURRENT_BINARY_DIR}
+      CONFIGURE_COMMAND  
+        CC=${BASE_C_COMPILER} CXX=${BASE_CXX_COMPILER} CFLAGS=-g <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> --enable-frame-pointers
+      BUILD_COMMAND      make -j 4
+      INSTALL_COMMAND    make install
+    )
+  else()
+    message("     gperftools: ${THIRD_PARTY_GPERFTOOLS}")
+  endif()
+  find_library(TCMALLOC_LIB tcmalloc PATHS  ${CMAKE_CURRENT_BINARY_DIR}/lib)
+  find_library(PROFILER_LIB profiler PATHS ${CMAKE_CURRENT_BINARY_DIR}/lib)
+  if(NOT TCMALLOC_LIB)
+    ERROR("TCMALLOC required")
+  endif(NOT TCMALLOC_LIB)
 if(BUILD_GCP)
   set(USE_GCP true)
   include_directories(
