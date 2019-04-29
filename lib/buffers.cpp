@@ -70,7 +70,7 @@ void buffers::updateMemory(const long change2) {
             ibuf++;
             iuser = ibuf;
           }
-          if (iuser < a->_toDisk.size();) {
+          if (iuser < a->_toDisk.size()) {
             long long ch = _buffers[a->_toDisk[iuser]]->changeState(ON_DISK);
 
             {
@@ -91,7 +91,7 @@ void buffers::updateMemory(const long change2) {
             ibuf++;
             iuser = ibuf;
           }
-          if (iuser < a->_compress.size();) {
+          if (iuser < a->_compress.size()) {
             long long ch =
                 _buffers[a->_compress[iuser]]->changeState(CPU_COMPRESSED);
 
@@ -178,6 +178,7 @@ void buffers::updateMemory(const long change2) {
     */
     }
   }
+}
   std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
                                           const std ::vector<int> &fw,
                                           const std::vector<int> &jw) {
@@ -294,7 +295,7 @@ void buffers::updateMemory(const long change2) {
     if (!_memory) throw SEPException(std::string("Memory has not been set"));
 
     _memory->updateRecentBuffers(pwind);
-    long long sz = 0;
+    long long change = 0;
     long long ibuf = 0;
     std::mutex mtx;
 
@@ -481,7 +482,6 @@ void buffers::updateMemory(const long change2) {
 
           long long ch = _buffers[pwind[iuser]]->putWindowCPU(
               n_w, f_w, j_w, nG, fG, blockG, buf, state);
-          long long ch = _buffers[iuser]->changeState(state);
           {
             std::lock_guard<std::mutex> lock(mtx);
             change += ch;
