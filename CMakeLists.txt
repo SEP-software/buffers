@@ -69,6 +69,8 @@ if(NOT TARGET jsonCpp)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 endif(NOT TARGET jsonCpp)
 
+FIND_PACKAGE(OpenMP REQUIRED)
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS})
 if(BUILD_ZFP)
   execute_process(COMMAND git submodule update --init --recursive --
                           external/zfp

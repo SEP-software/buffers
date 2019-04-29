@@ -34,7 +34,9 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   gcs::ObjectWriteStream stream =
       client.value().WriteObject(_bucketName, _name);
   std::shared_ptr<storeByte> buf2 = std::dynamic_pointer_cast<storeByte>(_buf);
-  stream.write(buf2->getPtr(), buf2->getSize());
+  std::string x=buf2->toString();
+  stream<<x;
+//  stream.write(buf2->getPtr(), buf2->getSize());
   //  stream << buf2->toString();
 
   stream.Close();

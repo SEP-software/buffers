@@ -262,15 +262,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   updateMemory(change);
 }
 void buffers::changeState(const bufferState state) {
-  // /*
-  std::vector<std::future<long long>> changes;
-
-  std::cerr<<"INxhere "<<_buffers.size()<<std::endl;
-  for (auto i = 0; i < _buffers.size(); i++) {
-    changes.push_back(std::async(
-        std::launch::async,
-        [&](int i) { return (long long)_buffers[i]->changeState(state); }, i));
-  }
+   /*
   std::cerr<<"IN2here "<<_buffers.size()<<std::endl;
   long long change = 0;
   long i = 0;
@@ -286,9 +278,12 @@ void buffers::changeState(const bufferState state) {
   updateMemory(change);
   std::cerr<<"2efore uodate"<<std::endl;
 
+  */
   //	TBB implementation
-  //
-  /*
+  // /*
+  
+	/*
+
   long change = tbb::parallel_reduce(
       tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
       [&](const tbb::blocked_range<size_t> &r, long locChange) {
@@ -299,6 +294,7 @@ void buffers::changeState(const bufferState state) {
       },
       [](long a, long b) { return a + b; });
       */
+    //  */
   /* Serial implementation
         long change=0;
         for(size_t i=0; i< _buffers.size(); i++){

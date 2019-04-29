@@ -50,9 +50,8 @@ TEST(TESTBucketCreation, gcpBuffers) {
 //  std::shared_ptr<SEP::IO::blocking> block =
 //      SEP::IO::blocking::createDefaultBlocking(hyper);
 
-   std::vector<int> big(4,200),bs(4,2) ;
+   std::vector<int> big(4,40),bs(4,2) ;
 	   big[0]=200;
-	   big[3]=4;
    
   std::shared_ptr<SEP::IO::blocking> block( new SEP::IO::blocking(bs,big));
 
@@ -93,6 +92,9 @@ TEST(TESTBucketCreation, gcpBuffers) {
 
   */
   // Now read the bucket from disk
+  
+	      float tot=0;
+	    for(int i=0; i < 10; i++){
   Json::Value val;
   val["blocking"] = block->getJsonDescription();
   val["compression"] = gcp.getCompressObj()->getJsonDescription();
@@ -112,7 +114,10 @@ TEST(TESTBucketCreation, gcpBuffers) {
       std::cerr << "From cloud " << (double) n123 * 4 /d2 << " MB/s "
 	                  << std::endl;
         ;
+	tot+=d2;
+	    }
 
+	    std::cerr<<n123*40/tot<<" average speed"<<std::endl;
 
 
   namespace gcs = google::cloud::storage;

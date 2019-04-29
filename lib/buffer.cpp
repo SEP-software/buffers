@@ -207,15 +207,12 @@ long buffer::changeState(const bufferState state) {
         case ON_DISK:
           break;
         case CPU_DECOMPRESSED:
-	  std::cerr<<"edie 1 "<<std::endl;
           _buf = _compress->compressData(_n, _buf);
           _bufferState = CPU_COMPRESSED;
         case CPU_COMPRESSED:
           if (_modified) {
 		 
-	  std::cerr<<"fdie 1 "<<std::endl;
             writeBuffer();
-	  std::cerr<<"gdie 1 "<<std::endl;
           }
           break;
         default:
@@ -234,6 +231,5 @@ long buffer::changeState(const bufferState state) {
   if (state == UNDEFINED) throw SEPException(std::string("state is undefined"));
   _bufferState = state;
 
-   std::cerr<<"OUT "<<std::endl;
   return _buf->getSize() - oldSize;
 }
