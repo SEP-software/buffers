@@ -10,6 +10,7 @@
 #include "compress.h"
 #include "hypercube.h"
 #include "memoryUsage.h"
+
 namespace SEP {
 namespace IO {
 
@@ -18,7 +19,8 @@ namespace IO {
 */
 class buffers {
  public:
-  buffers() { ; }
+  //! Create default buffers object
+  buffers();
   //! Get window of hypercube and store it in buf
   /*!
     \param nw,fw,jw Sampling of window to grab
@@ -113,6 +115,7 @@ class buffers {
   std::vector<std::vector<int>> _axisBlocking;    ///< How to axes are blocked
   std::vector<int> _n123blocking;                 ///< Number of blocks
   std::string _name;                              ///< Directory
+  int _ioThreads;  ///< Number of threads to use for IO
 };
 }  // namespace IO
 }  // namespace SEP

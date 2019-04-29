@@ -14,6 +14,12 @@
 #include "simpleMemoryLimit.h"
 using namespace SEP::IO;
 
+buffers::buffers() {
+  char *val = getenv("ioThreads");
+  std::string valS == NULL ? "60" : std::string(val);
+  _ioThreads = stoi(valS);
+}
+
 std::shared_ptr<compress> buffers::createDefaultCompress() {
   std::shared_ptr<compress> c(new noCompression(_typ));
   return c;
@@ -262,47 +268,76 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   updateMemory(change);
 }
 void buffers::changeState(const bufferState state) {
-   /*
-  std::cerr<<"IN2here "<<_buffers.size()<<std::endl;
-  long long change = 0;
-  long i = 0;
-  for (auto &n : changes) {
-    try {
-      change += n.get();
-    } catch (std::exception &e) {
-      throw(e);
-    }
+  long long sz = 0;
+  long long ibuf = 0;
+  std::mutex mtx;
+
+  std::vector<std::thread> ioT(_ioThreads);
+
+  for (auto i = 0; i < _buffers.size(); i++) {
+    ioT[i] = std::thread(
+        [&]() {
+          bool done = false;
+          while (!done) {
+            {
+              std::lock_guard<std::mutex> lock(mtx);
+              ibuf++;
+              long long iuser = ibuf;
+            }
+            if (user < _buffers.size()) {
+              long long ch = _buffers[iuse]->changeState(state);
+              {
+                std::lock_guard<std::mutex> lock(mtx);
+                sz += ch;
+              }
+            } else
+              done = true;
+          }
+        },
+        i);
   }
+  for (auto i = 0; i < _ioT.size(); i++) ioT.join();
+  /*
+ std::cerr<<"IN2here "<<_buffers.size()<<std::endl;
+ long long change = 0;
+ long i = 0;
+ for (auto &n : changes) {
+   try {
+     change += n.get();
+   } catch (std::exception &e) {
+     throw(e);
+   }
+ }
 
-  std::cerr<<"before uodate"<<std::endl;
-  updateMemory(change);
-  std::cerr<<"2efore uodate"<<std::endl;
+ std::cerr<<"before uodate"<<std::endl;
+ updateMemory(change);
+ std::cerr<<"2efore uodate"<<std::endl;
 
-  */
+ */
   //	TBB implementation
   // /*
-  
-	/*
 
-  long change = tbb::parallel_reduce(
-      tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
-      [&](const tbb::blocked_range<size_t> &r, long locChange) {
-        for (size_t i = r.begin(); i != r.end(); ++i) {
-          locChange += _buffers[i]->changeState(state);
-        }
-        return locChange;
-      },
-      [](long a, long b) { return a + b; });
-      */
-    //  */
-  /* Serial implementation
-        long change=0;
-        for(size_t i=0; i< _buffers.size(); i++){
-                std::cerr<<i << " of "<<_buffers.size()<<std::endl;
-                change+=_buffers[i]->changeState(state);
-        }
-    updateMemory(change);
-    */
+  /*
+
+long change = tbb::parallel_reduce(
+tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
+[&](const tbb::blocked_range<size_t> &r, long locChange) {
+  for (size_t i = r.begin(); i != r.end(); ++i) {
+    locChange += _buffers[i]->changeState(state);
+  }
+  return locChange;
+},
+[](long a, long b) { return a + b; });
+*/
+  * /
+      /* Serial implementation */
+      long change = 0;
+  for (size_t i = 0; i < _buffers.size(); i++) {
+    std::cerr << i << " of " << _buffers.size() << std::endl;
+    change += _buffers[i]->changeState(state);
+  }
+  updateMemory(change);
+  * /
   //}
 }
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
@@ -341,12 +376,12 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         [&](const tbb::blocked_range<size_t> &r, long locChange) {
           for (size_t i = r.begin(); i != r.end(); ++i) {
             // for (size_t i = 0; i < pwind.size(); i++) {
-            std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
-            size_t pos = _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w,
-                                                         nG, fG, blockG);
+            std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7),
+    blockG(7); size_t pos = _buffers[pwind[i]]->localWindow(n, f, j, n_w,
+    f_w, j_w, nG, fG, blockG);
 
-            locChange = _buffers[pwind[i]]->putWindowCPU(n_w, f_w, j_w, nG, fG,
-                                                         blockG, buf, state);
+            locChange = _buffers[pwind[i]]->putWindowCPU(n_w, f_w, j_w, nG,
+    fG, blockG, buf, state);
           }
 
           return locChange;
