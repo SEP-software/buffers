@@ -36,7 +36,7 @@ add_test(NAME zfp COMMAND ZfpCompressTest)
 ENDIF(BUILD_ZFP)
 
 if(BUILD_GCP)
-
+	find_package(Tcmalloc REQUIRED)
 
 	get_cmake_property(_variableNames VARIABLES)
 	list (SORT _variableNames)
@@ -45,7 +45,7 @@ if(BUILD_GCP)
 
 	    endforeach()
 add_executable( GCPtest GCPtest.cc)
-target_link_libraries(GCPtest    buffers gtest gtest_main gtest jsonCpp storage_client tbb )
+target_link_libraries(GCPtest    buffers gtest gtest_main gtest jsonCpp storage_client tbb  ${Tcmalloc_LIBRARY)
 add_test(NAME gcp COMMAND   GCPtest)
 else(BUILD_GCP)
 endif(BUILD_GCP)
