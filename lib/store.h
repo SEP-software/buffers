@@ -70,7 +70,7 @@ class storeBase {
   //! Return a pointer to buffer
   virtual char *getPtr() = 0;
   //! Get the size of the dataset
-  virtual size_t getSize() const override { return _n; }
+  size_t getSize() const { return _n; }
 
  protected:
   size_t _n = 0;
@@ -103,7 +103,7 @@ class storeInt : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf; }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -192,7 +192,7 @@ class storeByte : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf; }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -306,7 +306,7 @@ class storeFloat : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf; }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -399,7 +399,7 @@ class storeDouble : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf; }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -485,7 +485,7 @@ class storeComplex : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf; }
   //! Put data into class from buf
   /*!
     \param buf  Base class

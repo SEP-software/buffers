@@ -7,24 +7,24 @@ using namespace SEP::IO;
 storeInt::storeInt(const size_t n, void *buf) {
   _buf = new int[n];
   _n = n;
-  memcpy(_buf.data(), buf, n * sizeof(int));
+  memcpy(_buf, buf, n * sizeof(int));
 }
 void storeInt::getData(std::shared_ptr<storeBase> buf) const {
   std::shared_ptr<storeInt> b = std::dynamic_pointer_cast<storeInt>(buf);
   if (!b) throwError("storeInt", returnStorageType(buf));
-  assert(b->_buf.size() <= _buf.size());
-  memcpy(b->_buf.data(), _buf.data(), _buf.size() * sizeof(int));
+  assert(b->getSize() <= getSize());
+  memcpy(b->getPtr(), _buf, getSize() * sizeof(int));
 }
 
 void storeInt::putData(const std::shared_ptr<storeBase> buf) {
   const std::shared_ptr<storeInt> b = std::dynamic_pointer_cast<storeInt>(buf);
   if (!b) throwError("storeInt", returnStorageType(buf));
-  assert(b->_buf.size() == _buf.size());
-  memcpy(_buf.data(), b->_buf.data(), _buf.size() * sizeof(int));
+  assert(b->getSize() <= getSize());
+  memcpy(_buf, b->getPtr(), getSize() * sizeof(int));
 }
 std::shared_ptr<storeBase> storeInt::clone() const {
-  std::shared_ptr<storeInt> m(new storeInt((int)_buf.size()));
-  memcpy(m->_buf.data(), _buf.data(), _buf.size() * sizeof(int));
+  std::shared_ptr<storeInt> m(new storeInt((int)getSize()));
+  memcpy(m->_buf(), _buf(), getSize() * sizeof(int));
 
   return m;
 }
@@ -104,25 +104,25 @@ storeByte::storeByte(const size_t n, void *buf) {
   _buf = new unsigned char[n];
   _n = n;
 
-  memcpy(_buf.data(), buf, n * sizeof(unsigned char));
+  memcpy(_buf, buf, n * sizeof(unsigned char));
 }
 void storeByte::getData(std::shared_ptr<storeBase> buf) const {
   std::shared_ptr<storeByte> b = std::dynamic_pointer_cast<storeByte>(buf);
   if (!b) throwError("storeByte", returnStorageType(buf));
-  assert(b->_buf.size() <= _buf.size());
-  memcpy(b->_buf.data(), _buf.data(), _buf.size() * sizeof(unsigned char));
+  assert(b->getSize() <= getSize());
+  memcpy(b->_buf, _buf, getSize() * sizeof(unsigned char));
 }
 
 void storeByte::putData(const std::shared_ptr<storeBase> buf) {
   const std::shared_ptr<storeByte> b =
       std::dynamic_pointer_cast<storeByte>(buf);
   if (!b) throwError("storeByte", returnStorageType(buf));
-  assert(b->_buf.size() == _buf.size());
-  memcpy(_buf.data(), b->_buf.data(), _buf.size() * sizeof(unsigned char));
+  assert(b->getSize() == getSize());
+  memcpy(_buf, b->_buf, getSize() * sizeof(unsigned char));
 }
 std::shared_ptr<storeBase> storeByte::clone() const {
-  std::shared_ptr<storeByte> m(new storeByte((int)_buf.size()));
-  memcpy(m->_buf.data(), _buf.data(), _buf.size() * sizeof(unsigned char));
+  std::shared_ptr<storeByte> m(new storeByte((int)getSize()));
+  memcpy(m->_buf, _buf, getSize() * sizeof(unsigned char));
 
   return m;
 }
@@ -201,25 +201,25 @@ storeFloat::storeFloat(const size_t n, void *buf) {
   _buf = new float[n];
   _n = n;
 
-  memcpy(_buf.data(), buf, n * sizeof(float));
+  memcpy(_buf(), buf, n * sizeof(float));
 }
 void storeFloat::getData(std::shared_ptr<storeBase> buf) const {
   std::shared_ptr<storeFloat> b = std::dynamic_pointer_cast<storeFloat>(buf);
   if (!b) throwError("storeFloat", returnStorageType(buf));
-  assert(b->_buf.size() <= _buf.size());
-  memcpy(b->_buf.data(), _buf.data(), _buf.size() * sizeof(float));
+  assert(b->getSize() <= getSize());
+  memcpy(b->_buf(), _buf(), getSize() * sizeof(float));
 }
 
 void storeFloat::putData(const std::shared_ptr<storeBase> buf) {
   const std::shared_ptr<storeFloat> b =
       std::dynamic_pointer_cast<storeFloat>(buf);
   if (!b) throwError("storeFloat", returnStorageType(buf));
-  assert(b->_buf.size() == _buf.size());
-  memcpy(_buf.data(), b->_buf.data(), _buf.size() * sizeof(float));
+  assert(b->getSize() == getSize());
+  memcpy(_buf, b->_buf, getSize() * sizeof(float));
 }
 std::shared_ptr<storeBase> storeFloat::clone() const {
-  std::shared_ptr<storeFloat> m(new storeFloat((int)_buf.size()));
-  memcpy(m->_buf.data(), _buf.data(), _buf.size() * sizeof(float));
+  std::shared_ptr<storeFloat> m(new storeFloat((int)getSize()));
+  memcpy(m->_buf, _buf, getSize() * sizeof(float));
 
   return m;
 }
@@ -262,12 +262,12 @@ void storeFloat::getWindow(const std::vector<int> &nwL,
 }
 void storeFloat::info(const std::string &v) const {
   double mn = 1e31, mx = -1e31, sm = 0;
-  for (auto i = 0; i < _buf.size(); i++) {
+  for (auto i = 0; i < getSize(); i++) {
     mn = std::min((float)mn, _buf[i]);
     mx = std::max((float)mx, _buf[i]);
     sm += fabs(_buf[i]);
   }
-  std::cerr << v << " size=" << _buf.size() << " min=" << mn << " max=" << mx
+  std::cerr << v << " size=" << getSize() << " min=" << mn << " max=" << mx
             << " sm=" << sm << std::endl;
 }
 void storeFloat::putWindow(const std::vector<int> &nwL,
@@ -310,25 +310,25 @@ storeDouble::storeDouble(const size_t n, void *buf) {
   _buf = new double[n];
   _n = n;
 
-  memcpy(_buf.data(), buf, n * sizeof(float));
+  memcpy(_buf, buf, n * sizeof(float));
 }
 void storeDouble::getData(std::shared_ptr<storeBase> buf) const {
   std::shared_ptr<storeDouble> b = std::dynamic_pointer_cast<storeDouble>(buf);
   if (!b) throwError("storeDouble", returnStorageType(buf));
-  assert(b->_buf.size() <= _buf.size());
-  memcpy(b->_buf.data(), _buf.data(), _buf.size() * sizeof(double));
+  assert(b->getSize() <= getSize());
+  memcpy(b->_buf, _buf, getSize() * sizeof(double));
 }
 
 void storeDouble::putData(const std::shared_ptr<storeBase> buf) {
   const std::shared_ptr<storeDouble> b =
       std::dynamic_pointer_cast<storeDouble>(buf);
   if (!b) throwError("storeDouble", returnStorageType(buf));
-  assert(b->_buf.size() == _buf.size());
-  memcpy(_buf.data(), b->_buf.data(), _buf.size() * sizeof(double));
+  assert(b->getSize() == getSize());
+  memcpy(_buf, b->_buf, getSize() * sizeof(double));
 }
 std::shared_ptr<storeBase> storeDouble::clone() const {
-  std::shared_ptr<storeDouble> m(new storeDouble((int)_buf.size()));
-  memcpy(m->_buf.data(), _buf.data(), _buf.size() * sizeof(double));
+  std::shared_ptr<storeDouble> m(new storeDouble((int)getSize()));
+  memcpy(m->_buf, _buf, getSize() * sizeof(double));
 
   return m;
 }
@@ -408,7 +408,7 @@ storeComplex::storeComplex(const size_t n, void *buf) {
   _buf = new std::complex<float>[n];
   _n = n;
 
-  memcpy(_buf.data(), buf, n * 2 * sizeof(float));
+  memcpy(_buf, buf, n * 2 * sizeof(float));
 }
 void storeComplex::getData(std::shared_ptr<storeBase> buf) const {
   std::shared_ptr<storeComplex> b =
@@ -416,23 +416,20 @@ void storeComplex::getData(std::shared_ptr<storeBase> buf) const {
   if (!b) throwError("storeComplex", returnStorageType(buf));
 
   assert(b);
-  assert(b->_buf.size() <= _buf.size());
-  memcpy(b->_buf.data(), _buf.data(),
-         _buf.size() * sizeof(std::complex<float>));
+  assert(b->getSize() <= getSize());
+  memcpy(b->_buf, _buf, getSize() * sizeof(std::complex<float>));
 }
 
 void storeComplex::putData(const std::shared_ptr<storeBase> buf) {
   const std::shared_ptr<storeComplex> b =
       std::dynamic_pointer_cast<storeComplex>(buf);
   if (!b) throwError("storeComplex", returnStorageType(buf));
-  assert(b->_buf.size() == _buf.size());
-  memcpy(_buf.data(), b->_buf.data(),
-         _buf.size() * sizeof(std::complex<float>));
+  assert(b->getSize() == getSize());
+  memcpy(_buf, b->_buf, getSize() * sizeof(std::complex<float>));
 }
 std::shared_ptr<storeBase> storeComplex::clone() const {
-  std::shared_ptr<storeComplex> m(new storeComplex((int)_buf.size()));
-  memcpy(m->_buf.data(), _buf.data(),
-         _buf.size() * sizeof(std::complex<float>));
+  std::shared_ptr<storeComplex> m(new storeComplex((int)getSize()));
+  memcpy(m->_buf, _buf, getSize() * sizeof(std::complex<float>));
 
   return m;
 }
