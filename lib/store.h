@@ -64,12 +64,16 @@ class storeBase {
   virtual void info(const std::string &b) const { ; }
   //! Get size of a single element
   virtual size_t getElementSize() const = 0;
-  //! Get the size of the dataset
-  virtual size_t getSize() const = 0;
+
   //! Zero a buffer
   virtual void zero() = 0;
   //! Return a pointer to buffer
   virtual char *getPtr() = 0;
+  //! Get the size of the dataset
+  virtual size_t getSize() const override { return _n; }
+
+ protected:
+  size_t _n = 0;
 };
 /*!
  Storage object for integer data
@@ -84,6 +88,7 @@ class storeInt : public storeBase {
   storeInt(const size_t n) {
     cleanMemory();
     _buf = new int[n];
+    _n = n;
   }
   //! Create an integer storage buffer
   /*!
@@ -147,8 +152,6 @@ class storeInt : public storeBase {
   virtual size_t getElementSize() const override { return sizeof(int); }
   //! Get the size of the dataset
 
-  virtual size_t getSize() const override { return _buf.size(); }
-
   //! Clean memory
   inline void cleanMemory() {
     if (_buf) {
@@ -173,8 +176,8 @@ class storeByte : public storeBase {
     \param n Size of the buffer
   */
   storeByte(const size_t n) {
-    cleanMemory();
     _buf = new unsigned char[n];
+    _n = n;
   }
   //! Create an byte storage buffer
   /*!
@@ -244,10 +247,12 @@ class storeByte : public storeBase {
 
      \param New size
   */
-  void resize(size_t nsz) { cleanMemory(); }
+  void resize(size_t nsz) {
+    cleanMemory();
+    _n = nsz;
+    _buf = new unsigned char[_n];
+  }
 
-  //! Get the size of the dataset
-  virtual size_t getSize() const override { return _buf.size(); }
   //! Cast buffer to string
   std::string toString() {
     return std::string(reinterpret_cast<const char *>(&_buf[0]), _buf.size());
@@ -354,8 +359,6 @@ class storeFloat : public storeBase {
   virtual size_t getElementSize() const override { return sizeof(float); }
   //! Get the size of the dataset
 
-  virtual size_t getSize() const override { return _buf.size(); }
-
   //! Clean memory
   inline void cleanMemory() {
     if (_buf) {
@@ -446,8 +449,6 @@ class storeDouble : public storeBase {
   virtual size_t getElementSize() const override { return sizeof(double); }
   //! Get the size of the dataset
 
-  virtual size_t getSize() const override { return _buf.size(); }
-
   inline void cleanMemory() {
     if (_buf) {
       delete[] _buf;
@@ -535,8 +536,6 @@ class storeComplex : public storeBase {
     return sizeof(std::complex<float>);
   }
   //! Get the size of the dataset
-
-  virtual size_t getSize() const override { return _buf.size(); }
 
   inline void cleanMemory() {
     if (_buf) {
