@@ -141,7 +141,8 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     std::string hsh = std::to_string(
         std::hash<std::string>{}(std::string("/buf") + std::to_string(i)));
     _buffers[i]->setName(hsh.substr(0, 5) + std::string("buf") +
-                         std::to_string(i));
+//    _buffers[i]->setName(std::string("buf") +
+                        std::to_string(i));
     //_buffers[i]->setName(hsh.substr(0,5)+_baseName +std::string("/")+
     // std::string("buf") + std::to_string(i)); _buffers[i]->setName(_baseName
     //+std::string("/")+ std::string("buf") + std::to_string(i));

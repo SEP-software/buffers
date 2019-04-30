@@ -88,8 +88,8 @@ void buffers::updateMemory(const long change2) {
           long long iuser;
           {
             std::lock_guard<std::mutex> lock(mtx);
-            ibuf++;
             iuser = ibuf;
+            ibuf++;
           }
           if (iuser < a->_compress.size()) {
             long long ch =
@@ -307,10 +307,10 @@ void buffers::updateMemory(const long change2) {
         long long iuser;
         {
           std::lock_guard<std::mutex> lock(mtx);
-          ibuf++;
           iuser = ibuf;
+          ibuf++;
         }
-        if (iuser < _buffers.size()) {
+        if (iuser < pwind.size()) {
           std::vector<int> fG(7, 0), nG(7, 1), f_w(7, 0), n_w(7, 1), j_w(7, 1),
               blockG(7, 1);
           size_t pos = _buffers[pwind[iuser]]->localWindow(n, f, j, n_w, f_w,
@@ -373,6 +373,7 @@ void buffers::updateMemory(const long change2) {
   void buffers::changeState(const bufferState state) {
     /* Thread version */
 
+//	  /*
     long long change = 0;
     long long ibuf = 0;
     std::mutex mtx;
@@ -385,8 +386,8 @@ void buffers::updateMemory(const long change2) {
         long long iuser;
         {
           std::lock_guard<std::mutex> lock(mtx);
-          ibuf++;
           iuser = ibuf;
+          ibuf++;
         }
         if (iuser < _buffers.size()) {
           long long ch = _buffers[iuser]->changeState(state);
@@ -402,6 +403,7 @@ void buffers::updateMemory(const long change2) {
       ioT[i] = std::thread(func);
     }
     for (auto i = 0; i < ioT.size(); i++) ioT[i].join();
+ //   */
     /*
    std::cerr<<"IN2here "<<_buffers.size()<<std::endl;
    long long change = 0;
@@ -441,7 +443,6 @@ void buffers::updateMemory(const long change2) {
       std::cerr << i << " of " << _buffers.size() << std::endl;
       change += _buffers[i]->changeState(state);
     }
-    updateMemory(change);
     */
     //}
     updateMemory(change);
@@ -466,22 +467,25 @@ void buffers::updateMemory(const long change2) {
 
     std::vector<std::thread> ioT(_ioThreads);
 
+    std::cerr<<"nynber vbyufs "<<pwind.size()<<std::endl;
     auto func = [&]() {
       bool done = false;
       while (!done) {
         long long iuser;
         {
           std::lock_guard<std::mutex> lock(mtx);
-          ibuf++;
           iuser = ibuf;
+          ibuf++;
         }
-        if (iuser < _buffers.size()) {
+        if (iuser < pwind.size()) {
           std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
           size_t pos = _buffers[pwind[iuser]]->localWindow(n, f, j, n_w, f_w,
                                                            j_w, nG, fG, blockG);
 
           long long ch = _buffers[pwind[iuser]]->putWindowCPU(
               n_w, f_w, j_w, nG, fG, blockG, buf, state);
+
+
           {
             std::lock_guard<std::mutex> lock(mtx);
             change += ch;

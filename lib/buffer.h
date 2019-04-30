@@ -166,6 +166,7 @@ class buffer {
   std::vector<int> _block;  ///< Block for buffer (1,n[0],n[0]*1)
 
  protected:
+  bufferState _bufferState = UNDEFINED;  ///< Current buffer state
   std::shared_ptr<storeBase> _buf;      ///< Storage for vuffer
   std::shared_ptr<compress> _compress;  ///< Compression object
   std::string _name;                    ///< Name for buffer
@@ -173,7 +174,6 @@ class buffer {
   bool _modified = false;  ///< Wheter buffer has been modified
   int _ibuf;               ///< Buffer number
   long long _n123;         ///< Number of element in buffer
-  bufferState _bufferState = UNDEFINED;  ///< Current buffer state
 };
 }  // namespace IO
 }  // namespace SEP

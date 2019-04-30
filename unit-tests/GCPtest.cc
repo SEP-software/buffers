@@ -41,7 +41,7 @@ TEST(TESTBucketCreation, gcpBuffers) {
 
   std::shared_ptr<SEP::hypercube> hyper(new SEP::hypercube(axes));
 
-  std::string bucket = std::string("testbucket993");
+  std::string bucket = std::string("testbucket996");
   std::string bucket1 = bucket + std::string("/dataset1");
   std::string bucket2 = bucket + std::string("/dataset2");
 
@@ -61,11 +61,12 @@ TEST(TESTBucketCreation, gcpBuffers) {
   ASSERT_NO_THROW(gcp.setName(bucket1, true));
    std::cerr<<"whre i die "<<std::endl;
 
-  std::vector<float> vals(n123);
+//  std::vector<float> vals(n123);
+  float *vals=new float[n123];
 
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
-  ASSERT_NO_THROW(gcp.putWindow(ns, fs, js, vals.data()));
+  ASSERT_NO_THROW(gcp.putWindow(ns, fs, js, vals));
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 
@@ -95,11 +96,11 @@ TEST(TESTBucketCreation, gcpBuffers) {
   // Now read the bucket from disk
   
 	      float tot=0;
-	    for(int i=0; i < 10; i++){
+	    for(int i=0; i < 7; i++){
   Json::Value val;
   val["blocking"] = block->getJsonDescription();
   val["compression"] = gcp.getCompressObj()->getJsonDescription();
-  std::vector<float> vals2(n123);
+//  std::vector<float> vals2(n123);
   SEP::IO::gcpBuffers gcp3(hyper, bucket1, val);
     t2 = high_resolution_clock::now();
     std::cerr<<"Time to read "<<std::endl;

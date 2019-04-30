@@ -161,7 +161,7 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 long buffer::changeState(const bufferState state) {
   if (state == _bufferState) return 0;
   //  std::cerr << "in chnage stae TO " << bufferStateToString(state)
-  //           << " FROM:" << bufferStateToString(_bufferState) << std::endl;
+  //           << " FROM:" < << std::endl;
   long long oldSize = _buf->getSize();
   switch (state) {
     case CPU_DECOMPRESSED:
@@ -216,8 +216,8 @@ long buffer::changeState(const bufferState state) {
           }
           break;
         default:
-          std::cerr << "Unknown conversion" << std::endl;
-          assert(1 == 2);
+	  std::cerr<<std::string("Unknown conversion ")+bufferStateToString(_bufferState)<<std::endl;
+	  throw SEPException(std::string("Unknown conversion ")+bufferStateToString(_bufferState));
       }
       _bufferState = ON_DISK;
       _buf->zero();
