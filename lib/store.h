@@ -81,7 +81,10 @@ class storeInt : public storeBase {
   /*!
     \param n Size of the buffer
   */
-  storeInt(const size_t n) { _buf.resize(n); }
+  storeInt(const size_t n) {
+    cleanMemory();
+    _buf = new int[n];
+  }
   //! Create an integer storage buffer
   /*!
     \param n Size of the buffer
@@ -95,15 +98,14 @@ class storeInt : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { 
-	  return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   //! Put data into class from buf
   /*!
     \param buf  Base class
   */
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   //! Zero a buffer
-  virtual void zero() override { _buf.resize(0); }
+  virtual void zero() override { cleanMemory(); }
   //! Clone a buffer
 
   virtual std::shared_ptr<storeBase> clone() const override;
@@ -147,8 +149,19 @@ class storeInt : public storeBase {
 
   virtual size_t getSize() const override { return _buf.size(); }
 
+  //! Clean memory
+  inline void cleanMemory() {
+    if (_buf) {
+      delete[] _buf;
+      _buf = NULL;
+    }
+  }
+
+  //! Destructor
+  virtual ~storeInt() { cleanMemory(); }
+
  private:
-  std::vector<int> _buf;
+  int *_buf = NULL;
 };
 /*!
  Storage object for byte data
@@ -159,7 +172,10 @@ class storeByte : public storeBase {
   /*!
     \param n Size of the buffer
   */
-  storeByte(const size_t n) { _buf.resize(n); }
+  storeByte(const size_t n) {
+    cleanMemory();
+    _buf = new unsigned char[n];
+  }
   //! Create an byte storage buffer
   /*!
     \param n Size of the buffer
@@ -173,8 +189,7 @@ class storeByte : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { 
-	  return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -182,7 +197,7 @@ class storeByte : public storeBase {
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   //! Zero a buffer
 
-  virtual void zero() override { _buf.resize(0); }
+  virtual void zero() override { cleanMemory(); }
   //! Clone a buffer
 
   virtual std::shared_ptr<storeBase> clone() const override;
@@ -229,10 +244,8 @@ class storeByte : public storeBase {
 
      \param New size
   */
-  void resize(size_t nsz){
-	  _buf.resize(nsz);
-  }
-  
+  void resize(size_t nsz) { cleanMemory(); }
+
   //! Get the size of the dataset
   virtual size_t getSize() const override { return _buf.size(); }
   //! Cast buffer to string
@@ -248,9 +261,19 @@ class storeByte : public storeBase {
         reinterpret_cast<const unsigned char *>(str.c_str());
     _buf = std::vector<unsigned char>(raw_memory, raw_memory + str.size());
   }
+  //! Clean memory
+  inline void cleanMemory() {
+    if (_buf) {
+      delete[] _buf;
+      _buf = NULL;
+    }
+  }
+
+  //! Destructor
+  virtual ~storeByte() { cleanMemory(); }
 
  private:
-  std::vector<unsigned char> _buf;
+  unsigned char *_buf;
 };
 /*!
  Storage object for float data
@@ -261,7 +284,10 @@ class storeFloat : public storeBase {
   /*!
     \param n Size of the buffer
   */
-  storeFloat(const size_t n) { _buf.resize(n); }
+  storeFloat(const size_t n) {
+    cleanMemory();
+    _buf = new float[n];
+  }
   //! Create an float storage buffer
   /*!
     \param n Size of the buffer
@@ -275,9 +301,7 @@ class storeFloat : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { 
-
-	  return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -285,7 +309,7 @@ class storeFloat : public storeBase {
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   //! Zero a buffer
 
-  virtual void zero() override { _buf.resize(0); }
+  virtual void zero() override { cleanMemory(); }
   //! Clone a buffer
 
   virtual std::shared_ptr<storeBase> clone() const override;
@@ -332,8 +356,19 @@ class storeFloat : public storeBase {
 
   virtual size_t getSize() const override { return _buf.size(); }
 
+  //! Clean memory
+  inline void cleanMemory() {
+    if (_buf) {
+      delete[] _buf;
+      _buf = NULL;
+    }
+  }
+
+  //! Destructor
+  virtual ~storeFloat() { cleanMemory(); }
+
  private:
-  std::vector<float> _buf;
+  float *_buf;
 };
 /*!
  Storage object for double data
@@ -344,7 +379,10 @@ class storeDouble : public storeBase {
   /*!
     \param n Size of the buffer
   */
-  storeDouble(const size_t n) { _buf.resize(n); }
+  storeDouble(const size_t n) {
+    cleanMemory();
+    _buf = new double[n];
+  }
   //! Create an double storage buffer
   /*!
     \param n Size of the buffer
@@ -358,8 +396,7 @@ class storeDouble : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { 
-	  return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -367,7 +404,7 @@ class storeDouble : public storeBase {
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   //! Zero a buffer
 
-  virtual void zero() override { _buf.resize(0); }
+  virtual void zero() override { cleanMemory(); }
   //! Clone a buffer
 
   virtual std::shared_ptr<storeBase> clone() const override;
@@ -411,8 +448,18 @@ class storeDouble : public storeBase {
 
   virtual size_t getSize() const override { return _buf.size(); }
 
+  inline void cleanMemory() {
+    if (_buf) {
+      delete[] _buf;
+      _buf = NULL;
+    }
+  }
+
+  //! Destructor
+  virtual ~storeDouble() { cleanMemory(); }
+
  private:
-  std::vector<double> _buf;
+  double *_buf;
 };
 /*!
  Storage object for complex float data
@@ -423,7 +470,7 @@ class storeComplex : public storeBase {
   /*!
     \param n Size of the buffer
   */
-  storeComplex(const size_t n) { _buf.resize(n); }
+  storeComplex(const size_t n) { _buf = new std::complex<float>[n]; }
   //! Create an complex storage buffer
   /*!
     \param n Size of the buffer
@@ -437,8 +484,7 @@ class storeComplex : public storeBase {
   virtual void getData(std::shared_ptr<storeBase> buf) const override;
   //! Return a pointer to buffer
 
-  char *getPtr() override { 
-	  return (char *)_buf.data(); }
+  char *getPtr() override { return (char *)_buf.data(); }
   //! Put data into class from buf
   /*!
     \param buf  Base class
@@ -446,7 +492,7 @@ class storeComplex : public storeBase {
   virtual void putData(const std::shared_ptr<storeBase> buf) override;
   //! Zero a buffer
 
-  virtual void zero() override { _buf.resize(0); }
+  virtual void zero() override { cleanMemory(); }
   //! Clone a buffer
 
   virtual std::shared_ptr<storeBase> clone() const override;
@@ -492,8 +538,18 @@ class storeComplex : public storeBase {
 
   virtual size_t getSize() const override { return _buf.size(); }
 
+  inline void cleanMemory() {
+    if (_buf) {
+      delete[] _buf;
+      _buf = NULL;
+    }
+  }
+
+  //! Destructor
+  virtual ~storeComplex() { cleanMemory(); }
+
  private:
-  std::vector<std::complex<float>> _buf;
+  std::complex<float> *_buf;
 };
 //!  Return the storage type of a buffer
 /*!

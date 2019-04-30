@@ -1,11 +1,11 @@
 #include <assert.h>
-#include "SEPException.h"
 #include <store.h>
 #include <iostream>
+#include "SEPException.h"
 using namespace SEP::IO;
 
 storeInt::storeInt(const size_t n, void *buf) {
-  _buf.resize(n);
+  _buf = new int[n];
   memcpy(_buf.data(), buf, n * sizeof(int));
 }
 void storeInt::getData(std::shared_ptr<storeBase> buf) const {
@@ -100,7 +100,7 @@ void storeInt::putWindow(const std::vector<int> &nwL,
 }
 
 storeByte::storeByte(const size_t n, void *buf) {
-  _buf.resize(n);
+  _buf = new unsigned char[n];
   memcpy(_buf.data(), buf, n * sizeof(unsigned char));
 }
 void storeByte::getData(std::shared_ptr<storeBase> buf) const {
@@ -195,7 +195,7 @@ void storeByte::putWindow(const std::vector<int> &nwL,
 }
 
 storeFloat::storeFloat(const size_t n, void *buf) {
-  _buf.resize(n);
+  _buf = new float[n];
   memcpy(_buf.data(), buf, n * sizeof(float));
 }
 void storeFloat::getData(std::shared_ptr<storeBase> buf) const {
@@ -302,7 +302,7 @@ void storeFloat::putWindow(const std::vector<int> &nwL,
 }
 
 storeDouble::storeDouble(const size_t n, void *buf) {
-  _buf.resize(n);
+  _buf = new double[n];
   memcpy(_buf.data(), buf, n * sizeof(float));
 }
 void storeDouble::getData(std::shared_ptr<storeBase> buf) const {
@@ -398,8 +398,8 @@ void storeDouble::putWindow(const std::vector<int> &nwL,
 }
 
 storeComplex::storeComplex(const size_t n, void *buf) {
-  _buf.resize(n);
-  memcpy(_buf.data(), buf, n * sizeof(float));
+  _buf = new std::complex<float>[n];
+  memcpy(_buf.data(), buf, n * 2 * sizeof(float));
 }
 void storeComplex::getData(std::shared_ptr<storeBase> buf) const {
   std::shared_ptr<storeComplex> b =
