@@ -52,27 +52,29 @@ TEST(TESTBucketCreation, gcpBuffers) {
 
    std::vector<int> big(4,40),bs(4,2) ;
 	   big[0]=100;
+  std::shared_ptr<SEP::IO::blocking> block( new SEP::IO::blocking(bs,big));
 	   
    
-  std::shared_ptr<SEP::IO::blocking> block( new SEP::IO::blocking(bs,big));
+  float *vals=new float[n123];
+
+  Json::Value val;
+    high_resolution_clock::time_point t2,t3,t1;
+  for(int i=0;i < 8; i++){
 
   // Create simple file and write to disk
   SEP::IO::gcpBuffers gcp(hyper, SEP::DATA_FLOAT, block);
-  ASSERT_NO_THROW(gcp.setName(bucket1, true));
-   std::cerr<<"whre i die "<<std::endl;
+  ASSERT_NO_THROW(gcp.setName(bucket1+std::to_string(i), true));
+
 
 //  std::vector<float> vals(n123);
-  float *vals=new float[n123];
 
-    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+    t1 = high_resolution_clock::now();
 
   ASSERT_NO_THROW(gcp.putWindow(ns, fs, js, vals));
-    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+   t2 = high_resolution_clock::now();
 
 
-   std::cerr<<"whre1i die  bwefore "<<std::endl;
   ASSERT_NO_THROW(gcp.changeState(ON_DISK));
-   std::cerr<<"whre i die "<<std::endl;
     high_resolution_clock::time_point t3 = high_resolution_clock::now();
 
       auto d1 = duration_cast<microseconds>(t2 - t1).count();
@@ -82,7 +84,10 @@ TEST(TESTBucketCreation, gcpBuffers) {
 
 	  std::cerr <<"To buffer " << s1 << " MB/s " << std::endl; ;
 	      std::cerr << "To cloud " <<s2 << " MB/s " << std::endl;
+  val["blocking"] = block->getJsonDescription();
+  val["compression"] = gcp.getCompressObj()->getJsonDescription();
 
+  }
 
   // Create a second directory in same bucket
   /*
@@ -97,29 +102,25 @@ TEST(TESTBucketCreation, gcpBuffers) {
   
 	      float tot=0;
 	    for(int i=0; i < 7; i++){
-  Json::Value val;
-  val["blocking"] = block->getJsonDescription();
-  val["compression"] = gcp.getCompressObj()->getJsonDescription();
-//  std::vector<float> vals2(n123);
-  SEP::IO::gcpBuffers gcp3(hyper, bucket1, val);
+		   float *vals2=new float [n123];
+  SEP::IO::gcpBuffers gcp3(hyper, bucket1+std::to_string(i), val);
     t2 = high_resolution_clock::now();
-    std::cerr<<"Time to read "<<std::endl;
 
 
 //  ASSERT_NO_THROW(gcp3.getWindow(ns, fs, js, vals2.data()));
-  ASSERT_NO_THROW(gcp3.changeState(CPU_COMPRESSED));
-//  ASSERT_NO_THROW(gcp3.getWindow(ns, fs, js, vals2.data()));
+//  ASSERT_NO_THROW(gcp3.changeState(CPU_COMPRESSED));
+  ASSERT_NO_THROW(gcp3.getWindow(ns, fs, js, vals2));
 
 
     t3 = high_resolution_clock::now();
-      d2 = duration_cast<microseconds>(t3 - t2).count();
+     auto  d2 = duration_cast<microseconds>(t3 - t2).count();
       std::cerr << "From cloud " << (double) n123 * 4 /d2 << " MB/s "
 	                  << std::endl;
         ;
 	tot+=d2;
 	    }
 
-	    std::cerr<<n123*40/tot<<" average speed"<<std::endl;
+	    std::cerr<<n123*28/tot<<" average speed"<<std::endl;
 
 
   namespace gcs = google::cloud::storage;

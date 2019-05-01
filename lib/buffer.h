@@ -2,6 +2,7 @@
 #define buffer_h 1
 #include <store.h>
 #include <cstring>
+#include <iostream>
 #include <memory>
 #include <sstream>
 #include <vector>

@@ -86,7 +86,6 @@ class storeInt : public storeBase {
     \param n Size of the buffer
   */
   storeInt(const size_t n) {
-    cleanMemory();
     _buf = new int[n];
     _n = n;
   }
@@ -255,7 +254,7 @@ class storeByte : public storeBase {
 
   //! Cast buffer to string
   std::string toString() {
-    return std::string(reinterpret_cast<const char *>(&_buf[0]), _buf.size());
+    return std::string(reinterpret_cast<const char *>(&_buf[0]), getSize());
   }
   //! Reinterpret string as a buffer
   /*!
@@ -264,7 +263,9 @@ class storeByte : public storeBase {
   void fromString(const std::string str) {
     const unsigned char *raw_memory =
         reinterpret_cast<const unsigned char *>(str.c_str());
-    _buf = std::vector<unsigned char>(raw_memory, raw_memory + str.size());
+    cleanMemory();
+    _buf=new unsigned char[str.size()];
+    memcpy(_buf,raw_memory,str.size());
   }
   //! Clean memory
   inline void cleanMemory() {
@@ -290,7 +291,7 @@ class storeFloat : public storeBase {
     \param n Size of the buffer
   */
   storeFloat(const size_t n) {
-    cleanMemory();
+	  _n=n;
     _buf = new float[n];
   }
   //! Create an float storage buffer
@@ -383,7 +384,7 @@ class storeDouble : public storeBase {
     \param n Size of the buffer
   */
   storeDouble(const size_t n) {
-    cleanMemory();
+    _n=n;
     _buf = new double[n];
   }
   //! Create an double storage buffer
@@ -471,7 +472,7 @@ class storeComplex : public storeBase {
   /*!
     \param n Size of the buffer
   */
-  storeComplex(const size_t n) { _buf = new std::complex<float>[n]; }
+  storeComplex(const size_t n) { _n=n;_buf = new std::complex<float>[n]; }
   //! Create an complex storage buffer
   /*!
     \param n Size of the buffer

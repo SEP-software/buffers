@@ -160,8 +160,8 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 
 long buffer::changeState(const bufferState state) {
   if (state == _bufferState) return 0;
-  //  std::cerr << "in chnage stae TO " << bufferStateToString(state)
-  //           << " FROM:" < << std::endl;
+//    std::cerr << "in chnage stae TO " << bufferStateToString(state)
+ //            << " FROM:" <<bufferStateToString(_bufferState) << std::endl;
   long long oldSize = _buf->getSize();
   switch (state) {
     case CPU_DECOMPRESSED:

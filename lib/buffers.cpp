@@ -405,7 +405,6 @@ void buffers::updateMemory(const long change2) {
     for (auto i = 0; i < ioT.size(); i++) ioT[i].join();
  //   */
     /*
-   std::cerr<<"IN2here "<<_buffers.size()<<std::endl;
    long long change = 0;
    long i = 0;
    for (auto &n : changes) {
@@ -416,9 +415,7 @@ void buffers::updateMemory(const long change2) {
      }
    }
 
-   std::cerr<<"before uodate"<<std::endl;
    updateMemory(change);
-   std::cerr<<"2efore uodate"<<std::endl;
 
    */
     //	TBB implementation
@@ -440,7 +437,6 @@ void buffers::updateMemory(const long change2) {
     /*
         long change = 0;
     for (size_t i = 0; i < _buffers.size(); i++) {
-      std::cerr << i << " of " << _buffers.size() << std::endl;
       change += _buffers[i]->changeState(state);
     }
     */
@@ -467,7 +463,6 @@ void buffers::updateMemory(const long change2) {
 
     std::vector<std::thread> ioT(_ioThreads);
 
-    std::cerr<<"nynber vbyufs "<<pwind.size()<<std::endl;
     auto func = [&]() {
       bool done = false;
       while (!done) {

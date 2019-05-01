@@ -24,7 +24,7 @@ void storeInt::putData(const std::shared_ptr<storeBase> buf) {
 }
 std::shared_ptr<storeBase> storeInt::clone() const {
   std::shared_ptr<storeInt> m(new storeInt((int)getSize()));
-  memcpy(m->_buf(), _buf(), getSize() * sizeof(int));
+  memcpy(m->_buf, _buf, getSize() * sizeof(int));
 
   return m;
 }
@@ -201,13 +201,13 @@ storeFloat::storeFloat(const size_t n, void *buf) {
   _buf = new float[n];
   _n = n;
 
-  memcpy(_buf(), buf, n * sizeof(float));
+  memcpy(_buf, buf, n * sizeof(float));
 }
 void storeFloat::getData(std::shared_ptr<storeBase> buf) const {
   std::shared_ptr<storeFloat> b = std::dynamic_pointer_cast<storeFloat>(buf);
   if (!b) throwError("storeFloat", returnStorageType(buf));
   assert(b->getSize() <= getSize());
-  memcpy(b->_buf(), _buf(), getSize() * sizeof(float));
+  memcpy(b->_buf, _buf, getSize() * sizeof(float));
 }
 
 void storeFloat::putData(const std::shared_ptr<storeBase> buf) {
@@ -250,9 +250,14 @@ void storeFloat::getWindow(const std::vector<int> &nwL,
             for (int i1L = 0; i1L < nwL[1]; i1L++) {
               size_t f1L = f2L + nbL[1] * (fwL[1] + jwL[1] * i1L) + fwL[0];
               size_t f1G = nbG[1] * (fwG[1] + i1L) + f2G + fwG[0];
+	      if(jwL[0]==1){
+		       memcpy(&buf[f1G],&buf[f1L],nwL[0]*sizeof(float));
+	      }
+	      else{
               for (size_t i0L = 0; i0L < nwL[0]; i0L++) {
                 buf[i0L + f1G] = _buf[f1L + i0L * jwL[0]];
               }
+	      }
             }
           }
         }
@@ -276,6 +281,7 @@ void storeFloat::putWindow(const std::vector<int> &nwL,
                            const std::vector<int> &nbL,
                            const std::vector<int> &fwG,
                            const std::vector<int> &nbG, const void *bufIn) {
+
   const float *buf = (float *)bufIn;
   for (int i6L = 0; i6L < nwL[6]; i6L++) {
     size_t f6L = nbL[6] * (fwL[6] + i6L * jwL[6]);
@@ -295,9 +301,14 @@ void storeFloat::putWindow(const std::vector<int> &nwL,
             for (int i1L = 0; i1L < nwL[1]; i1L++) {
               size_t f1L = f2L + nbL[1] * (fwL[1] + jwL[1] * i1L) + fwL[0];
               size_t f1G = nbG[1] * (fwG[1] + i1L) + f2G + fwG[0];
+	      if(jwL[0]==1){
+		       memcpy(&_buf[f1L],&buf[f1G],nwL[0]*sizeof(float));
+	      }
+	      else{
               for (size_t i0L = 0; i0L < nwL[0]; i0L++) {
                 _buf[f1L + i0L * jwL[0]] = buf[i0L + f1G];
               }
+	      }
             }
           }
         }
