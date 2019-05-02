@@ -51,6 +51,8 @@ long long buffer::putBufferCPU(std::shared_ptr<storeBase> buf,
   bufferState restore = _bufferState;
   long long oldSize = _buf->getSize();
   _buf = _compress->getUncompressedStore(_n);
+   _modified=true;
+
 
   _bufferState = CPU_DECOMPRESSED;
   _buf->putData(buf);
@@ -161,8 +163,10 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 long buffer::changeState(const bufferState state) {
   if (state == _bufferState) return 0;
 //    std::cerr << "in chnage stae TO " << bufferStateToString(state)
- //            << " FROM:" <<bufferStateToString(_bufferState) << std::endl;
-  long long oldSize = _buf->getSize();
+ //           << " FROM:" <<bufferStateToString(_bufferState) << std::endl;
+        long long oldSize=0;
+ if(_buf)  oldSize= _buf->getSize();
+
   switch (state) {
     case CPU_DECOMPRESSED:
       switch (_bufferState) {

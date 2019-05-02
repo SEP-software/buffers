@@ -35,7 +35,8 @@ long long gcpBuffer::writeBuffer(bool keepState) {
       client.value().WriteObject(_bucketName, _name);
  // std::shared_ptr<storeByte> buf2 = std::dynamic_pointer_cast<storeByte>(_buf);
   //std::string x=buf2->toString();
-//  stream<<x;
+//  stream<<x; 
+//
   stream.write(_buf->getPtr(), _buf->getSize()*_buf->getElementSize());
 
   //  stream << buf2->toString();
@@ -88,6 +89,7 @@ long long gcpBuffer::readBuffer() {
         // throw SEPException(std::string("stream is not open correctly"));
 
         buf->resize(sz);
+
         stream.read(buf->getPtr(), sz);
 
         if (stream.received_hash() != stream.computed_hash())

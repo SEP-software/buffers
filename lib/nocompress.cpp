@@ -16,7 +16,6 @@ std::shared_ptr<storeBase> noCompression::decompressData(
 
 std::shared_ptr<storeBase> noCompression::compressData(
     const std::vector<int> ns, const std::shared_ptr<storeBase> buf) {
-return buf;
 
   size_t n123 = getDataTypeSize(_typ);
   for (auto n : ns) n123 *= n;

@@ -168,7 +168,7 @@ class buffer {
 
  protected:
   bufferState _bufferState = UNDEFINED;  ///< Current buffer state
-  std::shared_ptr<storeBase> _buf;      ///< Storage for vuffer
+  std::shared_ptr<storeBase> _buf=NULL;      ///< Storage for buffer
   std::shared_ptr<compress> _compress;  ///< Compression object
   std::string _name;                    ///< Name for buffer
   bool _nameSet;           ///< Whether or not buffer's name has been set

@@ -8,6 +8,7 @@
 #include "google/cloud/storage/client.h"
 #include "google/cloud/storage/oauth2/google_credentials.h"
 #include "ioTypes.h"
+#include "nocompress.h"
 using namespace std::chrono;
 
 using std::string;
@@ -28,6 +29,40 @@ std::shared_ptr<storeFloat> array() {
   return store;
 }
 
+/*
+TEST(TESTBucketCreation, smallTest) {
+
+  long long n123 = 1;
+  int ndim = 3;
+  int n=80;
+  std::vector<int> ns(ndim, n), fs(ndim, 0), js(ndim, 1);
+
+
+  std::string bucket = std::string("test-junk-1");
+  std::string test="test";
+  std::shared_ptr<noCompression> comp(new noCompression(SEP::DATA_FLOAT));
+
+  // Create simple file and write to disk
+  gcpBuffer buf(bucket,ns,fs,comp,UNDEFINED);
+  buf.setName(test);
+  buf.changeState(CPU_DECOMPRESSED);
+  std::shared_ptr<storeFloat> inA=array();
+  
+  buf.putBufferCPU(inA,CPU_DECOMPRESSED);
+  buf.changeState(ON_DISK);
+  std::shared_ptr<storeBase> outA=inA->clone();
+  sleep(5);
+  buf.changeState(CPU_DECOMPRESSED);
+  buf.getBufferCPU(outA,CPU_DECOMPRESSED);
+
+  float *inp=(float*)inA->getPtr(),*outp=(float*)outA->getPtr();
+  for(int i=0;i <27; i++){
+	   EXPECT_EQ(inp[i*13],outp[i*13]);
+  }
+
+
+}
+*/
 TEST(TESTBucketCreation, gcpBuffers) {
   std::vector<SEP::axis> axes;
   long long n = 200;
@@ -38,6 +73,8 @@ TEST(TESTBucketCreation, gcpBuffers) {
     n123 = n123 * n;
     axes.push_back(SEP::axis(n));
   }
+
+  std::cerr<<"WHAT THE 1"<<std::endl;
 
   std::shared_ptr<SEP::hypercube> hyper(new SEP::hypercube(axes));
 
@@ -65,7 +102,6 @@ TEST(TESTBucketCreation, gcpBuffers) {
   SEP::IO::gcpBuffers gcp(hyper, SEP::DATA_FLOAT, block);
   ASSERT_NO_THROW(gcp.setName(bucket1+std::to_string(i), true));
 
-
 //  std::vector<float> vals(n123);
 
     t1 = high_resolution_clock::now();
@@ -76,6 +112,7 @@ TEST(TESTBucketCreation, gcpBuffers) {
 
   ASSERT_NO_THROW(gcp.changeState(ON_DISK));
     high_resolution_clock::time_point t3 = high_resolution_clock::now();
+  std::cerr<<"3HAT THE 1"<<std::endl;
 
       auto d1 = duration_cast<microseconds>(t2 - t1).count();
         auto d2 = duration_cast<microseconds>(t3 - t2).count();
