@@ -10,3 +10,7 @@
 [submodule "external/zfp"]
 	path = external/zfp
 	url = https://github.com/LLNL/zfp.git
+[submodule "buffers"]
+	branch = master
+[submodule "sepVector"]
+	branch = master
