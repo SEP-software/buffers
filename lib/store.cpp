@@ -250,14 +250,14 @@ void storeFloat::getWindow(const std::vector<int> &nwL,
             for (int i1L = 0; i1L < nwL[1]; i1L++) {
               size_t f1L = f2L + nbL[1] * (fwL[1] + jwL[1] * i1L) + fwL[0];
               size_t f1G = nbG[1] * (fwG[1] + i1L) + f2G + fwG[0];
-	      if(jwL[0]==1){
-		       memcpy(&buf[f1G],&buf[f1L],nwL[0]*sizeof(float));
-	      }
-	      else{
+	      //if(jwL[0]==1){
+	//	       memcpy(&buf[f1G],&buf[f1L],nwL[0]*sizeof(float));
+	 //     }
+	  //    else{
               for (size_t i0L = 0; i0L < nwL[0]; i0L++) {
                 buf[i0L + f1G] = _buf[f1L + i0L * jwL[0]];
               }
-	      }
+	   //   }
             }
           }
         }
@@ -301,13 +301,13 @@ void storeFloat::putWindow(const std::vector<int> &nwL,
             for (int i1L = 0; i1L < nwL[1]; i1L++) {
               size_t f1L = f2L + nbL[1] * (fwL[1] + jwL[1] * i1L) + fwL[0];
               size_t f1G = nbG[1] * (fwG[1] + i1L) + f2G + fwG[0];
-	      if(jwL[0]==1){
-		       memcpy(&_buf[f1L],&buf[f1G],nwL[0]*sizeof(float));
-	      }
-	      else{
+	      //if(jwL[0]==1){
+	//	       memcpy(&_buf[f1L],&buf[f1G],nwL[0]*sizeof(float));
+	 //     }
+	  //    else{
               for (size_t i0L = 0; i0L < nwL[0]; i0L++) {
                 _buf[f1L + i0L * jwL[0]] = buf[i0L + f1G];
-              }
+           //   }
 	      }
             }
           }

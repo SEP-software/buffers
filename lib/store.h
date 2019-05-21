@@ -157,6 +157,8 @@ class storeInt : public storeBase {
       delete[] _buf;
       _buf = NULL;
     }
+     _n=0;
+      
   }
 
   //! Destructor
@@ -273,13 +275,14 @@ class storeByte : public storeBase {
       delete[] _buf;
       _buf = NULL;
     }
+     _n=0;
   }
 
   //! Destructor
   virtual ~storeByte() { cleanMemory(); }
 
  private:
-  unsigned char *_buf;
+  unsigned char *_buf=NULL;
 };
 /*!
  Storage object for float data
@@ -366,6 +369,7 @@ class storeFloat : public storeBase {
       delete[] _buf;
       _buf = NULL;
     }
+     _n=0;
   }
 
   //! Destructor
@@ -455,6 +459,7 @@ class storeDouble : public storeBase {
       delete[] _buf;
       _buf = NULL;
     }
+     _n=0;
   }
 
   //! Destructor
@@ -543,6 +548,7 @@ class storeComplex : public storeBase {
       delete[] _buf;
       _buf = NULL;
     }
+     _n=0;
   }
 
   //! Destructor
