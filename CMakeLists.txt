@@ -98,8 +98,8 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
 )
 
-find_library(TCMALLOC_LIB tcmalloc PATHS  ${CMAKE_CURRENT_BINARY_DIR}/gperftools_src/lib REQUIRED)
-find_library(PROFILER_LIB profiler PATHS ${CMAKE_CURRENT_BINARY_DIR}/gperftools_src/lib REQUIRED)
+set(TCMALLOC_LIB  ${CMAKE_CURRENT_BINARY_DIR}/gperftools_src/lib/lib${CMAKE_SHARED_LIBRARY_PREFIX}tcmalloc${CMAKE_SHARED_LIBRARY_SUFFIX})
+set(PROFILER_LIB  ${CMAKE_CURRENT_BINARY_DIR}/gperftools_src/lib/lib${CMAKE_SHARED_LIBRARY_PREFIX}profiler${CMAKE_SHARED_LIBRARY_SUFFIX})
 if(BUILD_GCP)
   set(USE_GCP true)
   include_directories(
