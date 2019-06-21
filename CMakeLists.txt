@@ -89,10 +89,17 @@ endif(BUILD_ZFP)
 # set( GCP_LIBRARIES ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}z
 # fp${CMAKE_SHARED_LIBRARY_SUFFIX} ) endif(BUILD_GCP)
 
+include(ExternalProject)
+ExternalProject_Add(
+  gperftools_src
+  PREFIX gperftools_src
+  URL https://github.com/gperftools/gperftools/releases/download/gperftools-2.7/gperftools-2.7.tar.gz
+  CONFIGURE_COMMAND  ./configure --enable-frame-pointers --prefix=<INSTALL_DIR>
+  BUILD_IN_SOURCE 1
+)
 
-
-find_library(TCMALLOC_LIB tcmalloc PATHS  ${CMAKE_CURRENT_BINARY_DIR}/lib)
-find_library(PROFILER_LIB profiler PATHS ${CMAKE_CURRENT_BINARY_DIR}/lib)
+find_library(TCMALLOC_LIB tcmalloc PATHS  ${CMAKE_CURRENT_BINARY_DIR}/gperftools_src/lib REQUIRED)
+find_library(PROFILER_LIB profiler PATHS ${CMAKE_CURRENT_BINARY_DIR}/gperftools_src/lib REQUIRED)
 if(BUILD_GCP)
   set(USE_GCP true)
   include_directories(
