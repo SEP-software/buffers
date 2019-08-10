@@ -6,6 +6,7 @@ if(NOT SUBPACKAGE)
   option(BUILD_TESTS "Build with test support" ON)
   option(INSTALL_CMAKE_ENV "Install cmake build environment" ON)
   option(BUILD_DOC "Build documentation" OFF)
+  option(BUILD_DEBUG_LIBS "Build gperftool libs" OFF)
 
 else(NOT SUBPACKAGE)
   option(BUILD_TEST "Build with test support" OFF)
@@ -90,6 +91,8 @@ endif(BUILD_ZFP)
 # fp${CMAKE_SHARED_LIBRARY_SUFFIX} ) endif(BUILD_GCP)
 
 include(ExternalProject)
+
+if(BUILD_DEBUG_LIBS)
 ExternalProject_Add(
   gperftools_src
   PREFIX gperftools_src
@@ -111,7 +114,7 @@ set_property(TARGET ${PROFILER_LIB} PROPERTY IMPORTED_LOCATION ${GPERF_LIBDIR}/$
 set_property(TARGET ${TCMALLOC_LIB} PROPERTY IMPORTED_LOCATION ${GPERF_LIBDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}tcmalloc${CMAKE_SHARED_LIBRARY_SUFFIX})
 add_dependencies(${PROFILER_LIB} gperftools_src)
 add_dependencies(${TCMALLOC_LIB} gperftools_src)
-
+endif(BUILD_DEBUG_LIBS)
 
 if(BUILD_GCP)
   set(USE_GCP true)
