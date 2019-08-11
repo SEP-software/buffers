@@ -101,6 +101,9 @@ std::shared_ptr<blocking> blocking::createDefaultBlocking(
 Json::Value blocking::getJsonDescription() {
   Json::Value v;
   Json::Value vals;
+  if (_blockszie.size() == 0)
+    throw SEPException(
+        std::string("Blocking not defined can't return description"));
   for (auto i = 0; i < _blocksize.size(); i++) vals.append(_blocksize[i]);
   v["blocksize"] = vals;
 
