@@ -88,8 +88,9 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
   if (_projectID == std::string("NONE")) {
-    throw SEPException(std::string("Must set environmental variable:") +
-                       _projectID);
+    throw SEPException(
+        std::string("Must set environmental variable projectID:") + _projectID);
+
     exit(1);
   }
 }
@@ -140,11 +141,11 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
   for (auto i = 0; i < _buffers.size(); i++) {
     std::string hsh = std::to_string(
         std::hash<std::string>{}(std::string("/buf") + std::to_string(i)));
-//    _buffers[i]->setName(hsh.substr(0, 5) + std::string("buf") +
-//    _buffers[i]->setName(std::string("buf") +
+    //    _buffers[i]->setName(hsh.substr(0, 5) + std::string("buf") +
+    //    _buffers[i]->setName(std::string("buf") +
     //                    std::to_string(i));
-    _buffers[i]->setName(hsh.substr(0,5)+_baseName +std::string("/")+
-     std::string("buf") + std::to_string(i)); 
+    _buffers[i]->setName(hsh.substr(0, 5) + _baseName + std::string("/") +
+                         std::string("buf") + std::to_string(i));
     //_buffers[i]->setName(_baseName
     //+std::string("/")+ std::string("buf") + std::to_string(i));
     std::shared_ptr<gcpBuffer> b =
