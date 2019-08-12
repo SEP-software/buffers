@@ -39,7 +39,7 @@ std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
 void getValsLocation(const std::vector<long long> locs, const void *buf) {}
 
 Json::Value buffers::getDescription() {
-  std::cerr << "get descriotion" << std::endl;
+  std::cerr << "get descriotion " << _blocking << std::endl;
   Json::Value des;
   std::cerr << "before _blocking descriotion" << std::endl;
   if (!_blocking)
