@@ -106,6 +106,9 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     _baseName.erase(0, _baseName.find("/") + 1);
   }
 
+  std::cerr << "what do you see " << dir << " dir bucket " << _bucket << " "
+            << _baseName << " basename" << std::endl;
+
   if (create) {
     namespace gcs = google::cloud::storage;
     bool found = false;
@@ -134,7 +137,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     if (!found) {
       if (!metadata) {
         std::cerr << metadata.status().message() << std::endl;
-        throw SEPException(std::string("Trouble creating bucket " +
+        throw SEPException(std::string("Trouble creating bucket -->" +
                                        std::string(_bucket) + " <-Name"));
       }
     }
