@@ -134,8 +134,8 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     if (!found) {
       if (!metadata) {
         std::cerr << metadata.status().message() << std::endl;
-        throw SEPException(
-            std::string("Trouble creating bucket " + std::string(_bucket)));
+        throw SEPException(std::string("Trouble creating bucket " +
+                                       std::string(_bucket) + " <-Name"));
       }
     }
   }
