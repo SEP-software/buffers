@@ -77,23 +77,23 @@ std::shared_ptr<blocking> blocking::createDefaultBlocking(
     block[0] = 256 * 1024;
   } else if (hyper->getNdimG1() == 2) {
     bs[1] = std::min(hyper->getAxis(2).n, 4);
-    block[0] = 256;
-    block[1] = 1024;
+    block[0] = bs[0] * 8;
+    block[1] = bs[1] * 256;
   } else if (hyper->getNdimG1() == 2) {
     bs[1] = std::min(hyper->getAxis(2).n, 4);
     bs[2] = std::min(hyper->getAxis(3).n, 4);
-    block[0] = 512;
-    block[1] = 32;
-    block[2] = 32;
+    block[0] = bs[0] * 8;
+    block[1] = bs[1] * 8;
+    block[2] = bs[2] * 8;
 
   } else {
     bs[1] = std::min(hyper->getAxis(2).n, 4);
     bs[2] = std::min(hyper->getAxis(3).n, 4);
     bs[3] = std::min(hyper->getAxis(4).n, 4);
-    block[0] = 512;
-    block[1] = 32;
-    block[2] = 32;
-    block[3] = 32;
+    block[0] = bs[0] * 8;
+    block[1] = bs[1] * 8;
+    block[2] = bs[2] * 8;
+    block[3] = bs[3] * 8;
   }
   std::shared_ptr<blocking> b(new blocking(bs, block));
   return b;
@@ -154,7 +154,7 @@ void blocking::checkLogicBlocking() {
         throw SEPException(std::string("axis ") + std::to_string(i) +
                            std::string(" blockElement=") +
                            std::to_string(_nb[i]) + std::string(" blockSize=") +
-                           std::to_string(_blocksize[i]));
+                           std::to_string(_blocksize[i]) + " not divisible");
       }
     }
   }
