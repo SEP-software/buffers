@@ -39,18 +39,24 @@ std::shared_ptr<memoryUsage> buffers::createDefaultMemory() {
 void getValsLocation(const std::vector<long long> locs, const void *buf) {}
 
 Json::Value buffers::getDescription() {
-  std::cerr<<"get descriotion"<<std::endl;
+  std::cerr << "get descriotion" << std::endl;
   Json::Value des;
-  std::cerr<<"2et descriotion"<<std::endl;
+  std::cerr << "2et descriotion" << std::endl;
   if (!_blocking)
     throw SEPException(
         std::string("Blocking undefined can't return description"));
+  std::cerr << "3et descriotion" << std::endl;
+
   if (!_compress)
     throw SEPException(
         std::string("Compression undefined can't return description"));
+  std::cerr << "4et descriotion" << std::endl;
 
   des["blocking"] = _blocking->getJsonDescription();
+  std::cerr << "5et descriotion" << std::endl;
+
   des["compression"] = _compress->getJsonDescription();
+  std::cerr << "6et descriotion" << std::endl;
 
   return des;
 }
