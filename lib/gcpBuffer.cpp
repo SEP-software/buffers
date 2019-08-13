@@ -15,7 +15,6 @@
 using namespace SEP::IO;
 
 long long gcpBuffer::writeBuffer(bool keepState) {
-  std::cerr << "in write buffer " << std::endl;
   long long oldSize = _buf->getSize();
 
   std::shared_ptr<storeBase> buf;
@@ -42,6 +41,8 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   stream.write(_buf->getPtr(), _buf->getSize() * _buf->getElementSize());
 
   //  stream << buf2->toString();
+  std::cerr << "in write buffer " << _bucketName << " " << _name << " "
+            << _buf->getSize() << std::endl;
 
   stream.Close();
   google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata =
