@@ -54,6 +54,7 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
 
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
+  _ntrys = std::stoi(getEnvVar("GCP_RETRYS", "5"));
   if (_projectID == std::string("NONE")) {
     throw SEPException("Must set environmental variable projectID:" +
                        _projectID);
@@ -185,7 +186,7 @@ void gcpBuffers::createBuffers(const bufferState state) {
   ;
   for (int i = 0; i < b._ns.size(); i++) {
     _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
-                                                   _compress, state));
+                                                   _compress, state, _ntrys));
   }
 
   _n123blocking = b._nblocking;

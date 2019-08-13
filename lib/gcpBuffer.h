@@ -39,7 +39,8 @@ class gcpBuffer : public buffer {
   gcpBuffer(const std::string &bucketName,
 
             const std::vector<int> &n, const std::vector<int> &f,
-            std::shared_ptr<compress> comp, const bufferState state);
+            std::shared_ptr<compress> comp, const bufferState state,
+            const int ntrys);
 
   //! Set the name for the buffer/object
   /*!
@@ -60,6 +61,7 @@ class gcpBuffer : public buffer {
 
  private:
   std::string _bucketName;
+  int ntrys;
 };
 }  // namespace IO
 }  // namespace SEP
