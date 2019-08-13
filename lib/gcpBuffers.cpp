@@ -151,7 +151,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
         throw std::runtime_error(object_metadata.status().message());
       }
       changes.push_back(std::async(std::launch::async,
-                                   [&](BucketMetadata object_metadata) {
+                                   [&](gcs::BucketMetadata object_metadata) {
                                      client->DeleteObject(
                                          object_metadata->bucket(),
                                          object_metadata->name());
