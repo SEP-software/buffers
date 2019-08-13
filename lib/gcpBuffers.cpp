@@ -143,10 +143,8 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
       }
     }
 
-    for (auto &&object_metadata :
-         client->ListObjects(_bucket
-                             //, google::cloud::storage::v1::Prefix(_baseName)
-                             )) {
+    for (auto &&object_metadata : client->ListObjects(
+             _bucket, google::cloud::storage::v1::Prefix(_baseName))) {
       if (!object_metadata) {
         throw std::runtime_error(object_metadata.status().message());
       }
