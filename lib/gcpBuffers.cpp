@@ -108,8 +108,6 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     _baseName.erase(0, _baseName.find("/") + 1);
   }
 
-  std::cerr << "what do you see " << dir << " dir bucket " << _bucket << " "
-            << _baseName << " basename" << std::endl;
   std::vector<std::future<bool>> changes;
 
   if (create) {
@@ -159,12 +157,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
                      object_metadata->bucket(), object_metadata->name()));
     }
 
-    std::cerr << "after async" << std::endl;
-
-    std::cerr << "before crearea" << std::endl;
-    if (create)
-      for (auto &n : changes) n.get();
-    std::cerr << "end line " << std::endl;
+    for (auto &n : changes) n.get();
   }
 
   for (auto i = 0; i < _buffers.size(); i++) {
@@ -183,7 +176,6 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
   }
 }
 void gcpBuffers::createBuffers(const bufferState state) {
-  std::cerr << "creating buffers" << std::endl;
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
   namespace gcs = google::cloud::storage;
