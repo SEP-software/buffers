@@ -30,20 +30,19 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   namespace gcs = google::cloud::storage;
   google::cloud::v0::StatusOr<gcs::Client> client =
       gcs::Client::CreateDefaultClient();
-
+  google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata;
+  gcs::ObjectWriteStream stream;
   int sleep = 100000;  // Start with a retry at .1 seconds
   bool success = false;
   int itry = 0;
   while (!success && itry < _ntrys) {
-    gcs::ObjectWriteStream stream =
-        client.value().WriteObject(_bucketName, _name);
+    stream = client.value().WriteObject(_bucketName, _name);
 
     stream.write(_buf->getPtr(), _buf->getSize() * _buf->getElementSize());
 
     stream.Close();
 
-    google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata =
-        std::move(stream).metadata();
+    metadata = std::move(stream).metadata();
 
     if (metadata)
       success = true;
@@ -75,6 +74,7 @@ long long gcpBuffer::readBuffer() {
   long long oldSize = _buf->getSize();
   _modified = false;
   namespace gcs = google::cloud::storage;
+  google::cloud::v0::StatusOr<gcs::ObjectMetadata> object_metadata;
   google::cloud::v0::StatusOr<gcs::Client> client =
       gcs::Client::CreateDefaultClient();
   /*Only need to do something if sitting on disk*/
@@ -82,79 +82,72 @@ long long gcpBuffer::readBuffer() {
   if (_bufferState == ON_DISK) {
     try {
       [](gcs::Client client, std::string bucket_name, std::string object_name,
-         std::shared_ptr<storeByte> buf) {
+         std::shared_ptr<storeByte> buf, int ntrys,
+         google::cloud::v0::StatusOr<gcs::ObjectMetadata> object_metadata) {
         int sleep = 100000;  // Start with a retry at .1 seconds
         bool success = false;
         int itry = 0;
-        while (!success && itry < _ntrys) {
-          int sleep = 100000;  // Start with a retry at .1 seconds
-          bool success = false;
-          int itry = 0;
-          while (!success && itry < _ntrys) {
-            google::cloud::v0::StatusOr<gcs::ObjectMetadata> object_metadata =
-                client.GetObjectMetadata(bucket_name, object_name);
+        while (!success && itry < ntrys) {
+          object_metadata = client.GetObjectMetadata(bucket_name, object_name);
 
-            if (object_metadata)
-              success = true;
-            else {
-              usleep(sleep);
-              sleep = sleep * 3;
-            }
-            itry++;
+          if (object_metadata)
+            success = true;
+          else {
+            usleep(sleep);
+            sleep = sleep * 3;
           }
-          if (!object_metadata) {
-            throw std::runtime_error(object_metadata.status().message());
-          }
-
-          auto sz = object_metadata->size();
-
-          gcs::ObjectReadStream stream =
-              client.ReadObject(bucket_name, object_name);
-
-          // if (!stream.IsOpen())
-          // throw SEPException(std::string("stream is not open correctly"));
-
-          buf->resize(sz);
-
-          stream.read(buf->getPtr(), sz);
-
-          if (stream.received_hash() != stream.computed_hash())
-            throw SEPException(std::string("Hashes do not match"));
+          itry++;
         }
-        (std::move(client.value()), _bucketName, _name,
-         std::dynamic_pointer_cast<storeByte>(_buf));
-      } catch (std::exception const &ex) {
-        std::cerr << "Trouble reading from bucket " << _name << " " << ex.what()
-                  << std::endl;
-        exit(1);
-      }
-      _bufferState = CPU_COMPRESSED;
+        if (!object_metadata) {
+          throw std::runtime_error(object_metadata.status().message());
+        }
+
+        auto sz = object_metadata->size();
+
+        gcs::ObjectReadStream stream =
+            client.ReadObject(bucket_name, object_name);
+
+        // if (!stream.IsOpen())
+        // throw SEPException(std::string("stream is not open correctly"));
+
+        buf->resize(sz);
+
+        stream.read(buf->getPtr(), sz);
+
+        if (stream.received_hash() != stream.computed_hash())
+          throw SEPException(std::string("Hashes do not match"));
+      }(std::move(client.value()), _bucketName, _name,
+        std::dynamic_pointer_cast<storeByte>(_buf), _ntrys, object_metadata);
+    } catch (std::exception const &ex) {
+      std::cerr << "Trouble reading from bucket " << _name << " " << ex.what()
+                << std::endl;
+      exit(1);
     }
-    if (_bufferState == UNDEFINED)
-      throw SEPException("Bufferstate is undefined");
-    return _buf->getSize() - oldSize;
+    _bufferState = CPU_COMPRESSED;
   }
+  if (_bufferState == UNDEFINED) throw SEPException("Bufferstate is undefined");
+  return _buf->getSize() - oldSize;
+}
 
-  gcpBuffer::gcpBuffer(const std::string &bucketName, const std::string name,
-                       const std::vector<int> &n, const std::vector<int> &f,
-                       std::shared_ptr<compress> comp, const int ntrys) {
-    setLoc(n, f);
-    _bucketName = bucketName;
-    setName(name);
-    setCompress(comp);
-    setBufferState(ON_DISK);
-    _ntrys = ntrys;
-  }
-  gcpBuffer::gcpBuffer(const std::string &bucketName, const std::vector<int> &n,
-                       const std::vector<int> &f,
-                       std::shared_ptr<compress> comp, const bufferState state,
-                       const int ntrys) {
-    _bucketName = bucketName;
+gcpBuffer::gcpBuffer(const std::string &bucketName, const std::string name,
+                     const std::vector<int> &n, const std::vector<int> &f,
+                     std::shared_ptr<compress> comp, const int ntrys) {
+  setLoc(n, f);
+  _bucketName = bucketName;
+  setName(name);
+  setCompress(comp);
+  setBufferState(ON_DISK);
+  _ntrys = ntrys;
+}
+gcpBuffer::gcpBuffer(const std::string &bucketName, const std::vector<int> &n,
+                     const std::vector<int> &f, std::shared_ptr<compress> comp,
+                     const bufferState state, const int ntrys) {
+  _bucketName = bucketName;
 
-    setLoc(n, f);
-    setCompress(comp);
-    setBufferState(state);
-    createStorageBuffer();
-    _compress = comp;
-    _ntrys = ntrys;
-  }
+  setLoc(n, f);
+  setCompress(comp);
+  setBufferState(state);
+  createStorageBuffer();
+  _compress = comp;
+  _ntrys = ntrys;
+}
