@@ -141,15 +141,25 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
                                        std::string(_bucket) + " <-Name"));
       }
     }
+
+    for (auto &&object_metadata :
+         client.ListObjects(_bucket, Prefix(_baseName))) {
+      if (!object_metadata) {
+        throw std::runtime_error(object_metadata.status().message());
+      }
+      std::cout << "bucket_name=" << object_metadata->bucket()
+                << ", object_name=" << object_metadata->name() << "\n";
+    }
   }
+
   for (auto i = 0; i < _buffers.size(); i++) {
     std::string hsh = std::to_string(
         std::hash<std::string>{}(std::string("/buf") + std::to_string(i)));
     //    _buffers[i]->setName(hsh.substr(0, 5) + std::string("buf") +
     //    _buffers[i]->setName(std::string("buf") +
     //                    std::to_string(i));
-    _buffers[i]->setName(hsh.substr(0, 5) + _baseName + std::string("/") +
-                         std::string("buf") + std::to_string(i));
+    _buffers[i]->setName(hsh.substr(0, 5) + std::string("buf") +
+                         std::to_string(i));
     //_buffers[i]->setName(_baseName
     //+std::string("/")+ std::string("buf") + std::to_string(i));
     std::shared_ptr<gcpBuffer> b =
