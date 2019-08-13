@@ -158,7 +158,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
   }
 }
 void gcpBuffers::createBuffers(const bufferState state) {
-  std::cerr << "creating buffers" << std : endl;
+  std::cerr << "creating buffers" << std::endl;
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
   namespace gcs = google::cloud::storage;
