@@ -15,6 +15,7 @@
 using namespace SEP::IO;
 
 long long gcpBuffer::writeBuffer(bool keepState) {
+  std::cerr << "in write buffer " << std::endl;
   long long oldSize = _buf->getSize();
 
   std::shared_ptr<storeBase> buf;
@@ -33,11 +34,12 @@ long long gcpBuffer::writeBuffer(bool keepState) {
 
   gcs::ObjectWriteStream stream =
       client.value().WriteObject(_bucketName, _name);
- // std::shared_ptr<storeByte> buf2 = std::dynamic_pointer_cast<storeByte>(_buf);
-  //std::string x=buf2->toString();
-//  stream<<x; 
-//
-  stream.write(_buf->getPtr(), _buf->getSize()*_buf->getElementSize());
+  // std::shared_ptr<storeByte> buf2 =
+  // std::dynamic_pointer_cast<storeByte>(_buf);
+  // std::string x=buf2->toString();
+  //  stream<<x;
+  //
+  stream.write(_buf->getPtr(), _buf->getSize() * _buf->getElementSize());
 
   //  stream << buf2->toString();
 
