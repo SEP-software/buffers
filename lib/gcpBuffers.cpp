@@ -148,6 +148,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
       if (!object_metadata) {
         throw std::runtime_error(object_metadata.status().message());
       }
+      client->DeleteObject(object_metadata->bucket(), object_metadata->name());
       std::cout << "bucket_name=" << object_metadata->bucket()
                 << ", object_name=" << object_metadata->name() << "\n";
     }
