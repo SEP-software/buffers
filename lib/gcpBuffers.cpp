@@ -109,6 +109,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
 
   std::cerr << "what do you see " << dir << " dir bucket " << _bucket << " "
             << _baseName << " basename" << std::endl;
+  std::vector<std::future<bool>> changes;
 
   if (create) {
     namespace gcs = google::cloud::storage;
@@ -148,41 +149,47 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
       if (!object_metadata) {
         throw std::runtime_error(object_metadata.status().message());
       }
-      client->DeleteObject(object_metadata->bucket(), object_metadata->name());
-      std::cout << "bucket_name=" << object_metadata->bucket()
-                << ", object_name=" << object_metadata->name() << "\n";
+      changes.push_back(std::async(std::launch::async,
+                                   [&](BucketMetadata object_metadata) {
+                                     client->DeleteObject(
+                                         object_metadata->bucket(),
+                                         object_metadata->name());
+                                     return true;
+                                   },
+                                   object_metadata));
     }
-  }
 
-  for (auto i = 0; i < _buffers.size(); i++) {
-    std::string hsh = std::to_string(
-        std::hash<std::string>{}(std::string("/buf") + std::to_string(i)));
-    //    _buffers[i]->setName(hsh.substr(0, 5) + std::string("buf") +
-    //    _buffers[i]->setName(std::string("buf") +
-    //                    std::to_string(i));
-    _buffers[i]->setName(_baseName + std::string("/") + hsh.substr(0, 5) +
-                         std::string("buf") + std::to_string(i));
-    //_buffers[i]->setName(_baseName
-    //+std::string("/")+ std::string("buf") + std::to_string(i));
-    std::shared_ptr<gcpBuffer> b =
-        std::dynamic_pointer_cast<gcpBuffer>(_buffers[i]);
-    b->setBucketName(_bucket);
+    for (auto i = 0; i < _buffers.size(); i++) {
+      std::string hsh = std::to_string(
+          std::hash<std::string>{}(std::string("/buf") + std::to_string(i)));
+      //    _buffers[i]->setName(hsh.substr(0, 5) + std::string("buf") +
+      //    _buffers[i]->setName(std::string("buf") +
+      //                    std::to_string(i));
+      _buffers[i]->setName(_baseName + std::string("/") + hsh.substr(0, 5) +
+                           std::string("buf") + std::to_string(i));
+      //_buffers[i]->setName(_baseName
+      //+std::string("/")+ std::string("buf") + std::to_string(i));
+      std::shared_ptr<gcpBuffer> b =
+          std::dynamic_pointer_cast<gcpBuffer>(_buffers[i]);
+      b->setBucketName(_bucket);
+    }
+    if (create)
+      for (auto &n : changes) n.get();
   }
-}
-void gcpBuffers::createBuffers(const bufferState state) {
-  std::cerr << "creating buffers" << std::endl;
-  std::vector<int> ns = _hyper->getNs();
-  blockParams b = _blocking->makeBlocks(ns);
-  namespace gcs = google::cloud::storage;
-  google::cloud::v0::StatusOr<gcs::Client> client =
-      gcs::Client::CreateDefaultClient();
-  if (!client) throw SEPException("client is dead on createBuffers");
-  ;
-  for (int i = 0; i < b._ns.size(); i++) {
-    _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
-                                                   _compress, state));
-  }
+  void gcpBuffers::createBuffers(const bufferState state) {
+    std::cerr << "creating buffers" << std::endl;
+    std::vector<int> ns = _hyper->getNs();
+    blockParams b = _blocking->makeBlocks(ns);
+    namespace gcs = google::cloud::storage;
+    google::cloud::v0::StatusOr<gcs::Client> client =
+        gcs::Client::CreateDefaultClient();
+    if (!client) throw SEPException("client is dead on createBuffers");
+    ;
+    for (int i = 0; i < b._ns.size(); i++) {
+      _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
+                                                     _compress, state));
+    }
 
-  _n123blocking = b._nblocking;
-  _axisBlocking = b._axesBlock;
-}
+    _n123blocking = b._nblocking;
+    _axisBlocking = b._axesBlock;
+  }
