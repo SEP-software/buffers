@@ -158,7 +158,10 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
                      },
                      object_metadata->bucket(), object_metadata->name()));
     }
+
+    std::cerr << "after async" << std::endl;
   }
+
   for (auto i = 0; i < _buffers.size(); i++) {
     std::string hsh = std::to_string(
         std::hash<std::string>{}(std::string("/buf") + std::to_string(i)));
@@ -173,8 +176,10 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
         std::dynamic_pointer_cast<gcpBuffer>(_buffers[i]);
     b->setBucketName(_bucket);
   }
+  std::cerr << "before crearea" << std::endl;
   if (create)
     for (auto &n : changes) n.get();
+  std::cerr << "end line " << std::endl;
 }
 void gcpBuffers::createBuffers(const bufferState state) {
   std::cerr << "creating buffers" << std::endl;
