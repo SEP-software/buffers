@@ -99,7 +99,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
   int pos;
   if ((pos = dir.find("/")) == std::string::npos) {  // No subdirectory
     _bucket = dir;
-    throw SEPException("Expecting bucket/dir when using GCP IO")
+    throw SEPException("Expecting bucket/dir when using GCP IO");
 
   } else {
     _baseName = dir;
@@ -161,7 +161,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     //    _buffers[i]->setName(hsh.substr(0, 5) + std::string("buf") +
     //    _buffers[i]->setName(std::string("buf") +
     //                    std::to_string(i));
-    _buffers[i]->setName(_basename + std::string("/") + hsh.substr(0, 5) +
+    _buffers[i]->setName(_baseName + std::string("/") + hsh.substr(0, 5) +
                          std::string("buf") + std::to_string(i));
     //_buffers[i]->setName(_baseName
     //+std::string("/")+ std::string("buf") + std::to_string(i));
