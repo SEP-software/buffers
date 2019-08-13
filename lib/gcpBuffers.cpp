@@ -150,14 +150,15 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
       if (!object_metadata) {
         throw std::runtime_error(object_metadata.status().message());
       }
-      changes.push_back(std::async(std::launch::async,
-                                   [&](gcs::BucketMetadata object_metadata) {
+      changes.push_back(
+          std::async(std::launch::async,
+                     [&](const std::string bucket, const std::string name) {
                                      client->DeleteObject(
-                                         object_metadata->bucket(),
-                                         object_metadata->name());
+                                         bucket,
+                                         name;
                                      return true;
-                                   },
-                                   object_metadata));
+                     },
+                     object_metadata->bucket(), object_metadata->name()));
     }
 
     for (auto i = 0; i < _buffers.size(); i++) {
