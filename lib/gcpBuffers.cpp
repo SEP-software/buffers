@@ -153,10 +153,8 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
       changes.push_back(
           std::async(std::launch::async,
                      [&](const std::string bucket, const std::string name) {
-                                     client->DeleteObject(
-                                         bucket,
-                                         name;
-                                     return true;
+                       client->DeleteObject(bucket, name);
+                       return true;
                      },
                      object_metadata->bucket(), object_metadata->name()));
     }
