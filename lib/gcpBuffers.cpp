@@ -160,6 +160,11 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     }
 
     std::cerr << "after async" << std::endl;
+
+    std::cerr << "before crearea" << std::endl;
+    if (create)
+      for (auto &n : changes) n.get();
+    std::cerr << "end line " << std::endl;
   }
 
   for (auto i = 0; i < _buffers.size(); i++) {
@@ -176,10 +181,6 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
         std::dynamic_pointer_cast<gcpBuffer>(_buffers[i]);
     b->setBucketName(_bucket);
   }
-  std::cerr << "before crearea" << std::endl;
-  if (create)
-    for (auto &n : changes) n.get();
-  std::cerr << "end line " << std::endl;
 }
 void gcpBuffers::createBuffers(const bufferState state) {
   std::cerr << "creating buffers" << std::endl;
