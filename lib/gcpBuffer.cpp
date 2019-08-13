@@ -41,8 +41,6 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   stream.write(_buf->getPtr(), _buf->getSize() * _buf->getElementSize());
 
   //  stream << buf2->toString();
-  std::cerr << "in write buffer " << _bucketName << " " << _name << " "
-            << _buf->getSize() << std::endl;
 
   stream.Close();
   google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata =
