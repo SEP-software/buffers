@@ -33,6 +33,9 @@ endif(BUILD_GCP)
 
 
 if(BUILD_GCP)
+  execute_process(COMMAND git submodule update --init --recursive --
+                          external/cloud
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   message("BUILD GCP")
   add_subdirectory(external/cloud)
 #  find_package(storage_client REQUIRED)
