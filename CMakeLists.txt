@@ -24,6 +24,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
+
+if(BUILD_GCP)
+  set(USE_GCP true)
+  include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}/external/nlohmann_json/include)
+endif(BUILD_GCP)
+
+
+if(BUILD_GCP)
+  message("BUILD GCP")
+  add_subdirectory(external/cloud)
+#  find_package(storage_client REQUIRED)
+endif(BUILD_GCP)
+
+
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 enable_testing()
@@ -49,6 +65,7 @@ if(NOT TARGET hypercube)
 endif(NOT TARGET hypercube)
 
 if(BUILD_TESTS)
+  if(NOT BUILD_GCP)
   include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googletest/include)
 
@@ -56,13 +73,12 @@ if(BUILD_TESTS)
                           external/googletest
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   add_subdirectory(external/googletest)
-else()
+endif(NOT BUILD_GCP)
+else(BUILD_TESTS)
 
 endif(BUILD_TESTS)
 
-if(BUILD_GCP)
-  find_package(storage_client REQUIRED)
-endif(BUILD_GCP)
+
 
 if(NOT TARGET jsonCpp)
   execute_process(COMMAND git submodule update --init --recursive --
@@ -131,11 +147,7 @@ if(BUILD_DEBUG_LIBS)
   add_dependencies(${TCMALLOC_LIB} gperftools_src)
 endif(BUILD_DEBUG_LIBS)
 
-if(BUILD_GCP)
-  set(USE_GCP true)
-  include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}/external/nlohmann_json/include)
-endif(BUILD_GCP)
+
 
 # set(buffer_DIRNAME_cmake "lib/cmake") set(buffer_DIRNAME_lib "lib")
 # set(buffer_DIRNAME_include "include")
