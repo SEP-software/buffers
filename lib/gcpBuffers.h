@@ -70,6 +70,7 @@ class gcpBuffers : public buffers {
   std::string _region;     ///<  Region where the data is stored
   std::string _bucket;     ///< Name of the GCP bucket
   std::string _baseName;   ///< Base name (directory) for dataset
+  int _ntrys;              ///< Number of trys for GCP
 };
 }  // namespace IO
 }  // namespace SEP

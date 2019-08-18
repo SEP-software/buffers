@@ -3,6 +3,7 @@
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
 #include <tbb/parallel_reduce.h>
+#include <future>
 #include "SEPException.h"
 
 #include <tbb/tbb.h>
@@ -53,6 +54,7 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
 
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
+  _ntrys = std::stoi(getEnvVar("GCP_RETRYS", "5"));
   if (_projectID == std::string("NONE")) {
     throw SEPException("Must set environmental variable projectID:" +
                        _projectID);
@@ -88,8 +90,9 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
   if (_projectID == std::string("NONE")) {
-    throw SEPException(std::string("Must set environmental variable:") +
-                       _projectID);
+    throw SEPException(
+        std::string("Must set environmental variable projectID:") + _projectID);
+
     exit(1);
   }
 }
@@ -98,12 +101,15 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
   int pos;
   if ((pos = dir.find("/")) == std::string::npos) {  // No subdirectory
     _bucket = dir;
-    _baseName = "";
+    throw SEPException("Expecting bucket/dir when using GCP IO");
+
   } else {
     _baseName = dir;
     _bucket = _baseName.substr(0, _baseName.find("/"));
     _baseName.erase(0, _baseName.find("/") + 1);
   }
+
+  std::vector<std::future<bool>> changes;
 
   if (create) {
     namespace gcs = google::cloud::storage;
@@ -133,18 +139,36 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     if (!found) {
       if (!metadata) {
         std::cerr << metadata.status().message() << std::endl;
-        throw SEPException(std::string("Trouble creating bucket "));
+        throw SEPException(std::string("Trouble creating bucket -->" +
+                                       std::string(_bucket) + " <-Name"));
       }
     }
+
+    for (auto &&object_metadata : client->ListObjects(
+             _bucket, google::cloud::storage::v1::Prefix(_baseName))) {
+      if (!object_metadata) {
+        throw std::runtime_error(object_metadata.status().message());
+      }
+      changes.push_back(
+          std::async(std::launch::async,
+                     [&](const std::string bucket, const std::string name) {
+                       client->DeleteObject(bucket, name);
+                       return true;
+                     },
+                     object_metadata->bucket(), object_metadata->name()));
+    }
+
+    for (auto &n : changes) n.get();
   }
+
   for (auto i = 0; i < _buffers.size(); i++) {
     std::string hsh = std::to_string(
         std::hash<std::string>{}(std::string("/buf") + std::to_string(i)));
-//    _buffers[i]->setName(hsh.substr(0, 5) + std::string("buf") +
-//    _buffers[i]->setName(std::string("buf") +
+    //    _buffers[i]->setName(hsh.substr(0, 5) + std::string("buf") +
+    //    _buffers[i]->setName(std::string("buf") +
     //                    std::to_string(i));
-    _buffers[i]->setName(hsh.substr(0,5)+_baseName +std::string("/")+
-     std::string("buf") + std::to_string(i)); 
+    _buffers[i]->setName(_baseName + std::string("/") + hsh.substr(0, 5) +
+                         std::string("buf") + std::to_string(i));
     //_buffers[i]->setName(_baseName
     //+std::string("/")+ std::string("buf") + std::to_string(i));
     std::shared_ptr<gcpBuffer> b =
@@ -162,7 +186,7 @@ void gcpBuffers::createBuffers(const bufferState state) {
   ;
   for (int i = 0; i < b._ns.size(); i++) {
     _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
-                                                   _compress, state));
+                                                   _compress, state, _ntrys));
   }
 
   _n123blocking = b._nblocking;

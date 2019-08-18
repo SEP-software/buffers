@@ -6,6 +6,7 @@ if(NOT SUBPACKAGE)
   option(BUILD_TESTS "Build with test support" ON)
   option(INSTALL_CMAKE_ENV "Install cmake build environment" ON)
   option(BUILD_DOC "Build documentation" OFF)
+  option(BUILD_DEBUG_LIBS "Build gperftool libs" OFF)
 
 else(NOT SUBPACKAGE)
   option(BUILD_TEST "Build with test support" OFF)
@@ -22,6 +23,25 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+
+
+if(BUILD_GCP)
+  set(USE_GCP true)
+  include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}/external/nlohmann_json/include)
+endif(BUILD_GCP)
+
+
+if(BUILD_GCP)
+  execute_process(COMMAND git submodule update --init --recursive --
+                          external/cloud
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  message("BUILD GCP")
+  add_subdirectory(external/cloud)
+#  find_package(storage_client REQUIRED)
+endif(BUILD_GCP)
+
+
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
@@ -48,19 +68,20 @@ if(NOT TARGET hypercube)
 endif(NOT TARGET hypercube)
 
 if(BUILD_TESTS)
+  if(NOT BUILD_GCP)
   include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googletest/include)
 
   execute_process(COMMAND git submodule update --init --recursive --
                           external/googletest
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-	    add_subdirectory(external/googletest)
-else()
+  add_subdirectory(external/googletest)
+endif(NOT BUILD_GCP)
+else(BUILD_TESTS)
+
 endif(BUILD_TESTS)
 
-if(BUILD_GCP)
-  find_package(storage_client REQUIRED)
-endif(BUILD_GCP)
+
 
 if(NOT TARGET jsonCpp)
   execute_process(COMMAND git submodule update --init --recursive --
@@ -90,34 +111,46 @@ endif(BUILD_ZFP)
 # fp${CMAKE_SHARED_LIBRARY_SUFFIX} ) endif(BUILD_GCP)
 
 include(ExternalProject)
-ExternalProject_Add(
-  gperftools_src
-  PREFIX gperftools_src
-  INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
-  URL https://github.com/gperftools/gperftools/releases/download/gperftools-2.7/gperftools-2.7.tar.gz
-  CONFIGURE_COMMAND  ./configure --enable-frame-pointers --prefix=<INSTALL_DIR>
-  BUILD_IN_SOURCE 1
-)
+
+if(BUILD_DEBUG_LIBS)
+  externalproject_add(
+    gperftools_src
+    PREFIX
+    gperftools_src
+    INSTALL_DIR
+    ${CMAKE_INSTALL_PREFIX}
+    URL
+    https://github.com/gperftools/gperftools/releases/download/gperftools-2.7/gperftools-2.7.tar.gz
+    CONFIGURE_COMMAND
+    ./configure
+    --enable-frame-pointers
+    --prefix=<INSTALL_DIR>
+    BUILD_IN_SOURCE
+    1)
+
+  externalproject_get_property(gperftools_src INSTALL_DIR)
+  set(GPERF_LIBDIR ${INSTALL_DIR}/lib)
+  set(PROFILER_LIB profiler)
+  set(TCMALLOC_LIB tcmalloc)
+  add_library(${PROFILER_LIB} UNKNOWN IMPORTED)
+  add_library(${TCMALLOC_LIB} UNKNOWN IMPORTED)
+  set_property(
+    TARGET ${PROFILER_LIB}
+    PROPERTY
+      IMPORTED_LOCATION
+      ${GPERF_LIBDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}profiler${CMAKE_SHARED_LIBRARY_SUFFIX}
+    )
+  set_property(
+    TARGET ${TCMALLOC_LIB}
+    PROPERTY
+      IMPORTED_LOCATION
+      ${GPERF_LIBDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}tcmalloc${CMAKE_SHARED_LIBRARY_SUFFIX}
+    )
+  add_dependencies(${PROFILER_LIB} gperftools_src)
+  add_dependencies(${TCMALLOC_LIB} gperftools_src)
+endif(BUILD_DEBUG_LIBS)
 
 
-
-ExternalProject_Get_Property(gperftools_src INSTALL_DIR)
-set(GPERF_LIBDIR ${INSTALL_DIR}/lib)
-set(PROFILER_LIB profiler)
-set(TCMALLOC_LIB tcmalloc)
-add_library(${PROFILER_LIB} UNKNOWN IMPORTED)
-add_library(${TCMALLOC_LIB} UNKNOWN IMPORTED)
-set_property(TARGET ${PROFILER_LIB} PROPERTY IMPORTED_LOCATION ${GPERF_LIBDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}profiler${CMAKE_SHARED_LIBRARY_SUFFIX})
-set_property(TARGET ${TCMALLOC_LIB} PROPERTY IMPORTED_LOCATION ${GPERF_LIBDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}tcmalloc${CMAKE_SHARED_LIBRARY_SUFFIX})
-add_dependencies(${PROFILER_LIB} gperftools_src)
-add_dependencies(${TCMALLOC_LIB} gperftools_src)
-
-
-if(BUILD_GCP)
-  set(USE_GCP true)
-  include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}/external/nlohmann_json/include)
-endif(BUILD_GCP)
 
 # set(buffer_DIRNAME_cmake "lib/cmake") set(buffer_DIRNAME_lib "lib")
 # set(buffer_DIRNAME_include "include")
@@ -137,12 +170,13 @@ endif(NOT SUPPORT_LIBRARIES_BUILD)
 
 add_subdirectory(lib)
 
-# first we can indicate the documentation build as an option and set it to ON by default
+# first we can indicate the documentation build as an option and set it to ON by
+# default
 
 # check if Doxygen is installed
 if(BUILD_DOC)
-find_package(Doxygen)
-if (DOXYGEN_FOUND)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
     # set input and output files
     set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in)
     set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/docs/Doxyfile)
@@ -151,18 +185,18 @@ if (DOXYGEN_FOUND)
     configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
     message("Doxygen build started")
 
-    # note the option ALL which allows to build the docs together with the application
-    add_custom_target( doc_doxygen_buffers ALL
-        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Generating API documentation with Doxygen"
-        VERBATIM )
-else (DOXYGEN_FOUND)
-  message("Doxygen need to be installed to generate the doxygen documentation")
-endif (DOXYGEN_FOUND)
-endif (BUILD_DOC)
-
-
+    # note the option ALL which allows to build the docs together with the
+    # application
+    add_custom_target(doc_doxygen_buffers ALL
+                      COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+                      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                      COMMENT "Generating API documentation with Doxygen"
+                      VERBATIM)
+  else(DOXYGEN_FOUND)
+    message(
+      "Doxygen need to be installed to generate the doxygen documentation")
+  endif(DOXYGEN_FOUND)
+endif(BUILD_DOC)
 
 if(BUILD_TESTS)
   add_subdirectory(unit-tests)
@@ -174,10 +208,8 @@ configure_package_config_file(buffersConfig.cmake.in
                               INSTALL_DESTINATION
                               cmake/SEP/IO)
 
-#install(EXPORT buffersTargets
-#        FILE buffersTargets.cmake
- #       NAMESPACE SEP::IO
- #       DESTINATION cmake/sep/io)
+# install(EXPORT buffersTargets FILE buffersTargets.cmake NAMESPACE SEP::IO
+# DESTINATION cmake/sep/io)
 
 include(InstallRequiredSystemLibraries)
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
