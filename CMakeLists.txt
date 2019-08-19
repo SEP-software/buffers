@@ -7,6 +7,7 @@ if(NOT SUBPACKAGE)
   option(INSTALL_CMAKE_ENV "Install cmake build environment" ON)
   option(BUILD_DOC "Build documentation" OFF)
   option(BUILD_DEBUG_LIBS "Build gperftool libs" OFF)
+  option(BUILD_PYTHON "Build python interfaces" ON)
 
 else(NOT SUBPACKAGE)
   option(BUILD_TEST "Build with test support" OFF)
