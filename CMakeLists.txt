@@ -199,9 +199,6 @@ if(BUILD_DOC)
   endif(DOXYGEN_FOUND)
 endif(BUILD_DOC)
 
-if(BUILD_TESTS)
-  add_subdirectory(unit-tests)
-endif(BUILD_TESTS)
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(buffersConfig.cmake.in
