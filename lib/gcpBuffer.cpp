@@ -54,8 +54,8 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   }
 
   if (!metadata) {
-    std::cerr << "FAILURE " << _name << std::endl;
-    std::cerr << metadata.status().message() << std::endl;
+    std::cerr << "FAILURE: " << _name << std::string(":")
+              << metadata.status().message() << std::string(":") << std::endl;
     throw SEPException(std::string("Trouble writing object"));
   }
   if (stream.received_hash() != stream.computed_hash())

@@ -59,11 +59,6 @@ class gcpBuffers : public buffers {
     \param key  What we are looking for
     \param defaultV Default value for key
   */
-  std::string getEnvVar(std::string const &key,
-                        const std::string &defaultV) const {
-    char *val = getenv(key.c_str());
-    return val == NULL ? defaultV : std::string(val);
-  }
 
  private:
   std::string _projectID;  ///< GCP project ID
@@ -72,6 +67,10 @@ class gcpBuffers : public buffers {
   std::string _baseName;   ///< Base name (directory) for dataset
   int _ntrys;              ///< Number of trys for GCP
 };
+std::string getEnvVar(std::string const &key, const std::string &defaultV) {
+  char *val = getenv(key.c_str());
+  return val == NULL ? defaultV : std::string(val);
+}
 }  // namespace IO
 }  // namespace SEP
 #endif
