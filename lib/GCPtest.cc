@@ -101,6 +101,7 @@ TEST(TESTGCP, basic) {
 
   client2.value().DeleteBucket(bucket_name);
 }
+/*
 TEST(TESTGCP, basicBuffer) {
   std::vector<SEP::axis> axes;
   long long n = 200;
@@ -158,14 +159,13 @@ TEST(TESTGCP, basicBuffer) {
   }
 
   // Create a second directory in same bucket
-  /*
-  SEP::IO::gcpBuffers gcp2(hyper, SEP::DATA_FLOAT, block);
-  ASSERT_NO_THROW(gcp2.setName(bucket2, true));
 
-  ASSERT_NO_THROW(gcp2.putWindow(ns, fs, js, vals.data()));
-  ASSERT_NO_THROW(gcp2.changeState(ON_DISK));
+ // SEP::IO::gcpBuffers gcp2(hyper, SEP::DATA_FLOAT, block);
+ // ASSERT_NO_THROW(gcp2.setName(bucket2, true));
 
-  */
+//  ASSERT_NO_THROW(gcp2.putWindow(ns, fs, js, vals.data()));
+//  ASSERT_NO_THROW(gcp2.changeState(ON_DISK));
+
   // Now read the bucket from disk
 
   float tot = 0;
@@ -193,3 +193,4 @@ TEST(TESTGCP, basicBuffer) {
       gcs::Client::CreateDefaultClient();
   client.value().DeleteBucket(bucket);
 }
+*/
