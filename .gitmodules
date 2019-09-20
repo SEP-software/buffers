@@ -1,19 +1,20 @@
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest.git
+	ignore =dirty
 [submodule "external/json"]
 	path = external/json
 	url = http://cees-gitlab.Stanford.EDU/bob/json.git
+	ignore =dirty
 [submodule "external/hypercube"]
 	path = external/hypercube
 	url = http://cees-gitlab.Stanford.EDU/bob/hypercube.git
+	ignore =dirty
 [submodule "external/zfp"]
 	path = external/zfp
 	url = https://github.com/LLNL/zfp.git
-[submodule "buffers"]
-	branch = master
-[submodule "sepVector"]
-	branch = master
+	ignore =dirty
 [submodule "external/cloud"]
 	path = external/cloud
 	url = https://github.com/googleapis/google-cloud-cpp.git
+	ignore =dirty
