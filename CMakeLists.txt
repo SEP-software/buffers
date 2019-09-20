@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 option(BUILD_ZFP "Build with ZFP support" ON)
 option(BUILD_GCP "Build with GCP support" OFF)
 if(NOT SUBPACKAGE)
-  option(BUILD_TESTS "Build with test support" ON)
+	option(BUILD_TEST "Build with test support" OFF)
   option(INSTALL_CMAKE_ENV "Install cmake build environment" ON)
   option(BUILD_DOC "Build documentation" OFF)
   option(BUILD_DEBUG_LIBS "Build gperftool libs" OFF)
@@ -68,7 +68,7 @@ if(NOT TARGET hypercube)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube)
 endif(NOT TARGET hypercube)
 
-if(BUILD_TESTS)
+if(BUILD_TEST)
   if(NOT BUILD_GCP)
   include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googletest/include)
@@ -78,9 +78,9 @@ if(BUILD_TESTS)
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   add_subdirectory(external/googletest)
 endif(NOT BUILD_GCP)
-else(BUILD_TESTS)
+else(BUILD_TEST)
 
-endif(BUILD_TESTS)
+endif(BUILD_TEST)
 
 
 
