@@ -3,15 +3,11 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 option(BUILD_ZFP "Build with ZFP support" ON)
 option(BUILD_GCP "Build with GCP support" OFF)
 if(NOT SUBPACKAGE)
-	option(BUILD_TEST "Build with test support" OFF)
+  option(BUILD_TEST "Build with test support" OFF)
   option(INSTALL_CMAKE_ENV "Install cmake build environment" ON)
   option(BUILD_DOC "Build documentation" OFF)
   option(BUILD_DEBUG_LIBS "Build gperftool libs" OFF)
   option(BUILD_PYTHON "Build python interfaces" ON)
-
-else(NOT SUBPACKAGE)
-  option(BUILD_TEST "Build with test support" OFF)
-  option(BUILD_DOC "Build documentation" ON)
 endif(NOT SUBPACKAGE)
 set(SUBPACKAGE true)
 
@@ -46,7 +42,6 @@ endif(BUILD_GCP)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-enable_testing()
 
 # configure a header file to pass some of the CMake settings
 find_package(TBB REQUIRED)
@@ -67,21 +62,6 @@ if(NOT TARGET hypercube)
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube)
 endif(NOT TARGET hypercube)
-
-if(BUILD_TEST)
-  if(NOT BUILD_GCP)
-  include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/googletest/googletest/include)
-
-  execute_process(COMMAND git submodule update --init --recursive --
-                          external/googletest
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  add_subdirectory(external/googletest)
-endif(NOT BUILD_GCP)
-else(BUILD_TEST)
-
-endif(BUILD_TEST)
-
 
 
 if(NOT TARGET jsonCpp)

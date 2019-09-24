@@ -78,6 +78,7 @@ set(GTEST
     ../external/googletest/googlemock/gtest/libgtest_main.a
     ../external/googletest/googlemock/gtest/libgtest.a)
 
+if(BUILD_TEST)
 add_executable(storeTest storeTest.cc)
 target_link_libraries(storeTest buffers gtest gtest_main gtest)
 add_test(NAME store COMMAND storeTest)
@@ -130,3 +131,4 @@ target_link_libraries(fileBuffersTest
                       hypercube)
 add_test(AllStoreTests fileBuffersTest)
 
+endif(BUILD_TEST)
