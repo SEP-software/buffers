@@ -21,27 +21,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
-
 if(BUILD_GCP)
   set(USE_GCP true)
   include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/external/nlohmann_json/include)
 endif(BUILD_GCP)
 
-
 if(BUILD_GCP)
-  execute_process(COMMAND git submodule update --init --recursive --
-                          external/cloud
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  message("BUILD GCP")
+  if(NOT SUBPACKAGE)
+    execute_process(COMMAND git submodule update --init --recursive --
+                            external/cloud
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endif(NOT SUBPACKAGE)
   add_subdirectory(external/cloud)
-#  find_package(storage_client REQUIRED)
+  # find_package(storage_client REQUIRED)
 endif(BUILD_GCP)
 
-
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-
 
 # configure a header file to pass some of the CMake settings
 find_package(TBB REQUIRED)
@@ -62,7 +58,6 @@ if(NOT TARGET hypercube)
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube)
 endif(NOT TARGET hypercube)
-
 
 if(NOT TARGET jsonCpp)
   execute_process(COMMAND git submodule update --init --recursive --
@@ -131,8 +126,6 @@ if(BUILD_DEBUG_LIBS)
   add_dependencies(${TCMALLOC_LIB} gperftools_src)
 endif(BUILD_DEBUG_LIBS)
 
-
-
 # set(buffer_DIRNAME_cmake "lib/cmake") set(buffer_DIRNAME_lib "lib")
 # set(buffer_DIRNAME_include "include")
 include(CMakePackageConfigHelpers)
@@ -178,7 +171,6 @@ if(BUILD_DOC)
       "Doxygen need to be installed to generate the doxygen documentation")
   endif(DOXYGEN_FOUND)
 endif(BUILD_DOC)
-
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(buffersConfig.cmake.in
