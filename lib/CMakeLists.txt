@@ -83,6 +83,12 @@ add_executable(storeTest storeTest.cc)
 target_link_libraries(storeTest buffers gtest gtest_main gtest)
 add_test(NAME store COMMAND storeTest)
 
+
+add_executable(testBlock testBlock.cc)
+target_link_libraries(testBlock buffers gtest gtest_main gtest)
+add_test(NAME block COMMAND testBlock)
+
+
 add_executable(blockTest blockTest.cc)
 target_link_libraries(blockTest buffers gtest gtest_main gtest jsonCpp)
 add_test(NAME blocktest COMMAND blockTest)
