@@ -7,19 +7,21 @@
 #include "hypercube.h"
 namespace SEP {
 namespace blocking {
+
 /*!
- Class describing a subset of a hypercube*/
-template <typename T>
-class dataSubset {
+Class that holds a subset of a dataset*/
+class basicSubset {
  public:
+  basicSubset() { ; }
+  basicSubset(const std::shared_ptr<SEP::hypercube> hyper) { fromHyper(hyper); }
   /*! Create a datasubset representing entire hypercube
    */
-  dataSubset(std::shared_ptr<SEP::hypercube> hyper) {
+  void fromHyper(const std::shared_ptr<SEP::hypercube> hyper) {
     _nG = std::vector<int>(7, 1);
     _nW = std::vector<int>(7, 1);
     _fW = std::vector<int>(7, 0);
     _jW = std::vector<int>(7, 1);
-    _bG = std::vector<int>(8, 1);
+    _bG = std::vector<long long>(8, 1);
 
     std::vector<int> ns = hyper->getNs();
     for (auto i = 0; i < ns.size(); i++) {
@@ -30,39 +32,14 @@ class dataSubset {
       _bG[i + 1] = _bG[i];
     }
   }
-  /*!
-  Initialize datga subset without storage
-\param nG  Full dimension of the hypercube
-\param nW,fW,jW Window of this subset
-*/
-
-  dataSubset(const std::vector<int> nG, const std::vector<int> nW,
-             const std::vector<int> fW, const std::vector<int> jW)
-      : _nG{nG}, _fW{fW}, _jW{jW}, _nW{nW} {
-    _bG.push_back(1);
-    for (int i = 0; i < _nG.size(); i++)
-      _bG.push_back(_bG[i] * (long long)_nG[i]);
-    for (int i = _nG.size(); i < 7; i++) {
-      _nG.push_back(1);
-      _nW.push_back(1);
-      _fW.push_back(0);
-      _jW.push_back(1);
-      _bG.push_back(_bG[i]);
-    }
-    _n123 = _bG[_nG.size()];
-  }
-  /*!
-  Initialize datga subset with storage
-\param nG  Full dimension of the hypercube
-\param nW,fW,jW Window of this subset
-\param dat Pointer to the data
-\param resetFJ Whther or not reset j to 1 and f to 0
-
-*/
-  dataSubset(const std::vector<int> nG, const std::vector<int> nW,
-             const std::vector<int> fW, const std::vector<int> jW, T *dat,
-             bool resetFJ = false)
-      : _nG{nG}, _fW{fW}, _jW{jW}, _nW{nW}, _dat{dat} {
+  /*! Basic setup of subset*/
+  void basicSetup(const std::vector<int> nG, const std::vector<int> nW,
+                  const std::vector<int> fW, const std::vector<int> jW,
+                  bool resetFJ = false) {
+    _nG = nG;
+    _fW = fW;
+    _jW = jW;
+    _nW = nW;
     _bG.push_back(1);
     for (int i = 0; i < _nG.size(); i++) {
       _bG.push_back(_bG[i] * (long long)_nG[i]);
@@ -79,6 +56,45 @@ class dataSubset {
       _jW.push_back(1);
       _bG.push_back(_bG[i]);
     }
+  }
+
+  std::vector<int> _nG, _fW, _jW, _nW;  ///! Window params for this subset
+  std::vector<long long> _bG;           ///< 1,n1,n1*n2,...
+  long long _n123;                      ///< Number of elements in the dataset
+};
+
+/*!
+ Class describing a subset of a hypercube*/
+template <typename T>
+class dataSubset : public basicSubset {
+ public:
+  /*! Create a datasubset representing entire hypercube
+   */
+  dataSubset(std::shared_ptr<SEP::hypercube> hyper) { fromHyper(); }
+  /*!
+  Initialize datga subset without storage
+\param nG  Full dimension of the hypercube
+\param nW,fW,jW Window of this subset
+*/
+
+  dataSubset(const std::vector<int> nG, const std::vector<int> nW,
+             const std::vector<int> fW, const std::vector<int> jW) {
+    basicSetup(nG, nW, fW, jW);
+  }
+
+  /*!
+  Initialize datga subset with storage
+\param nG  Full dimension of the hypercube
+\param nW,fW,jW Window of this subset
+\param dat Pointer to the data
+\param resetFJ Whther or not reset j to 1 and f to 0
+
+*/
+  dataSubset(const std::vector<int> nG, const std::vector<int> nW,
+             const std::vector<int> fW, const std::vector<int> jW, T *dat,
+             bool resetFJ = false)
+      : _dat{dat} {
+    basicSetup(nG, nW, fW, jW, resetFJ);
   }
   /*!
    Make a clone of the current subset and set data pointer
@@ -97,10 +113,8 @@ class dataSubset {
   void setData(T *dat) { _dat = dat; }
   /*  Set no storage associated with object*/
   void nullStorage() { _dat = nullptr; }
-  std::vector<int> _nG, _fW, _jW, _nW;  ///! Window params for this subset
-  std::vector<long long> _bG;           ///< 1,n1,n1*n2,...
-  long long _n123;                      ///< Number of elements in the dataset
-  T *_dat;                              ///< data storage
+
+  T *_dat;  ///< data storage
 };
 
 /*!
