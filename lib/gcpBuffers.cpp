@@ -109,8 +109,9 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
   }
 
   std::vector<std::future<bool>> changes;
-
+  std::cerr << "in set name" << std::endl;
   if (create) {
+    std::cerr << "in create " << std::endl;
     namespace gcs = google::cloud::storage;
     bool found = false;
 
