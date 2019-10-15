@@ -63,6 +63,7 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
                        const dataType dataType, std::shared_ptr<blocking> block,
                        std::shared_ptr<compress> comp,
                        std::shared_ptr<memoryUsage> mem) {
+  std::cerr << "in qgcp buffers 1" << std::endl;
   _typ = dataType;
   _compress = comp;
   _blocking = block;
@@ -82,17 +83,22 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   else
 
     blockParams v = _blocking->makeBlocks(_hyper->getNs());
+  std::cerr << "inw gcp buffers 1" << std::endl;
 
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
   _ntrys = std::stoi(getEnvVar("GCP_RETRYS", "10"));
+  std::cerr << "in egcp buffers 1" << std::endl;
 
   if (_projectID == std::string("NONE")) {
     throw SEPException(
         std::string("Must set environmental variable projectID:") + _projectID);
     exit(1);
   }
+  std::cerr << "iwn gcp buffers 1" << std::endl;
+
   createBuffers(UNDEFINED);
+  std::cerr << "irn gcp buffers 1" << std::endl;
 
   _defaultStateSet = false;
 }
