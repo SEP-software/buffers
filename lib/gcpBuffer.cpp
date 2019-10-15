@@ -35,6 +35,7 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   int sleep = 100000;  // Start with a retry at .1 seconds
   bool success = false;
   int itry = 0;
+
   while (!success && itry < _ntrys) {
     stream = client.value().WriteObject(_bucketName, _name);
 
@@ -44,9 +45,9 @@ long long gcpBuffer::writeBuffer(bool keepState) {
 
     metadata = std::move(stream).metadata();
 
-    if (metadata)
+    if (metadata) {
       success = true;
-    else {
+    } else {
       usleep(sleep);
       sleep = sleep * 3;
     }
@@ -54,8 +55,9 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   }
 
   if (!metadata) {
-    std::cerr << "FAILURE: " << _name << std::string(":")
-              << metadata.status().message() << std::string(":") << std::endl;
+    std::cerr << "FAIL: " << _name << "after " << itry
+              << " trys message=" << metadata.status().message()
+              << std::string(":") << std::endl;
     throw SEPException(std::string("Trouble writing object"));
   }
   if (stream.received_hash() != stream.computed_hash())

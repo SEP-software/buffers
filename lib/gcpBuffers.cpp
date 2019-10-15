@@ -48,16 +48,14 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
   _compress = ct.getCompressionObj();
 
   _defaultStateSet = false;
-
-  createBuffers(ON_DISK);
-  setName(dir, false);
-
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
-  _ntrys = std::stoi(getEnvVar("GCP_RETRYS", "5"));
+  _ntrys = std::stoi(getEnvVar("GCP_RETRYS", "10"));
   if (_projectID == std::string("NONE")) {
     throw SEPException("Must set environmental variable projectID:" +
                        _projectID);
+    createBuffers(ON_DISK);
+    setName(dir, false);
   }
 }
 
@@ -84,17 +82,19 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   else
 
     blockParams v = _blocking->makeBlocks(_hyper->getNs());
-  createBuffers(UNDEFINED);
-  _defaultStateSet = false;
 
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
+  _ntrys = std::stoi(getEnvVar("GCP_RETRYS", "10"));
+
   if (_projectID == std::string("NONE")) {
     throw SEPException(
         std::string("Must set environmental variable projectID:") + _projectID);
-
     exit(1);
   }
+  createBuffers(UNDEFINED);
+
+  _defaultStateSet = false;
 }
 
 void gcpBuffers::setName(const std::string &dir, const bool create) {

@@ -79,6 +79,8 @@ TEST(TESTGCP, basic) {
       SEP::IO::getEnvVar(std::string("projectID"), std::string("earth-clapp"));
   std::string region =
       SEP::IO::getEnvVar(std::string("region"), std::string("us-west1"));
+  client2.value().DeleteBucket(bucket_name);
+
   google::cloud::StatusOr<gcs::BucketMetadata> bucket_metadata =
       client2->CreateBucketForProject(
           bucket_name, projectID,
@@ -86,7 +88,8 @@ TEST(TESTGCP, basic) {
               gcs::storage_class::Regional()));
 
   EXPECT_TRUE(bucket_metadata);
-
+  std::cerr << bucket_metadata.status().message() << std::string(":")
+            << std::endl;
   std::string const text = "Lorem ipsum dolor sit amet";
   gcs::ObjectWriteStream stream =
       client2->WriteObject(bucket_name, object_name);
@@ -98,10 +101,17 @@ TEST(TESTGCP, basic) {
   stream.Close();
   StatusOr<gcs::ObjectMetadata> metadata = std::move(stream).metadata();
   EXPECT_TRUE(metadata);
+  client2.value().DeleteObject(bucket_name, object_name);
 
-  client2.value().DeleteBucket(bucket_name);
+  google::cloud::Status status = client2.value().DeleteBucket(bucket_name);
+
+  if (!status.ok()) {
+    throw std::runtime_error(status.message());
+  }
+
+  // client2.value().DeleteBucket(bucket_name);
 }
-/*
+
 TEST(TESTGCP, basicBuffer) {
   std::vector<SEP::axis> axes;
   long long n = 200;
@@ -131,7 +141,8 @@ TEST(TESTGCP, basicBuffer) {
 
   Json::Value val;
   high_resolution_clock::time_point t2, t3, t1;
-  for (int i = 0; i < 8; i++) {
+  int ntimes = 1;
+  for (int i = 0; i < ntimes; i++) {
     // Create simple file and write to disk
     SEP::IO::gcpBuffers gcp(hyper, SEP::DATA_FLOAT, block);
     ASSERT_NO_THROW(gcp.setName(bucket1 + std::to_string(i), true));
@@ -160,16 +171,16 @@ TEST(TESTGCP, basicBuffer) {
 
   // Create a second directory in same bucket
 
- // SEP::IO::gcpBuffers gcp2(hyper, SEP::DATA_FLOAT, block);
- // ASSERT_NO_THROW(gcp2.setName(bucket2, true));
+  // SEP::IO::gcpBuffers gcp2(hyper, SEP::DATA_FLOAT, block);
+  // ASSERT_NO_THROW(gcp2.setName(bucket2, true));
 
-//  ASSERT_NO_THROW(gcp2.putWindow(ns, fs, js, vals.data()));
-//  ASSERT_NO_THROW(gcp2.changeState(ON_DISK));
+  //  ASSERT_NO_THROW(gcp2.putWindow(ns, fs, js, vals.data()));
+  //  ASSERT_NO_THROW(gcp2.changeState(ON_DISK));
 
   // Now read the bucket from disk
 
   float tot = 0;
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < ntimes; i++) {
     float *vals2 = new float[n123];
     SEP::IO::gcpBuffers gcp3(hyper, bucket1 + std::to_string(i), val);
     t2 = high_resolution_clock::now();
@@ -186,11 +197,17 @@ TEST(TESTGCP, basicBuffer) {
     tot += d2;
   }
 
-  std::cerr << n123 * 28 / tot << " average speed" << std::endl;
+  std::cerr << 4 * n123 * ntimes / tot << " average speed" << std::endl;
 
   namespace gcs = google::cloud::storage;
   google::cloud::v0::StatusOr<gcs::Client> client =
       gcs::Client::CreateDefaultClient();
+
+  for (auto &&object_metadata : client.value().ListObjects(bucket)) {
+    if (!object_metadata) {
+      throw std::runtime_error(object_metadata.status().message());
+    }
+    client.value().DeleteObject(bucket, object_metadata->name());
+  }
   client.value().DeleteBucket(bucket);
 }
-*/

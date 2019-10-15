@@ -124,7 +124,7 @@ void buffers::updateMemory(const long change2) {
       for (auto i = 0; i < ioT.size(); i++) ioT[i].join();
 
         */
-      /* Async version
+      // Async version
       std::vector<std::future<long long>> changes;
 
       for (auto i = 0; i < a->_toDisk.size(); i++)
@@ -142,7 +142,7 @@ void buffers::updateMemory(const long change2) {
           throw e;
         }
       }
-      */
+
       /* TBB implementation for debugging
     }
   long change = tbb::parallel_reduce(
@@ -171,22 +171,18 @@ void buffers::updateMemory(const long change2) {
           }
         }
         */
-      /*
-        std::vector<std::future<long long>> changes2;
 
-        for (auto i = 0; i < a->_compress.size(); i++)
-          changes2.push_back(std::async(
-              std::launch::async,
-              [&](int i) {
-                return (long
-        long)_buffers[a->_compress[i]]->changeState(ON_DISK);
-              },
-              i));
-        change = 0;
-        for (auto &n : changes2) change += n.get();
+      std::vector<std::future<long long>> changes2;
 
-    }
-    */
+      for (auto i = 0; i < a->_compress.size(); i++)
+        changes2.push_back(std::async(
+            std::launch::async,
+            [&](int i) {
+              return (long long)_buffers[a->_compress[i]]->changeState(ON_DISK);
+            },
+            i));
+      change = 0;
+      for (auto &n : changes2) change += n.get();
     }
   }
 }
@@ -346,7 +342,6 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
 */
   /*Async version*/
   std::vector<std::future<long long>> changes;
-
   for (auto i = 0; i < pwind.size(); i++)
     changes.push_back(
         std::async(std::launch::async,
