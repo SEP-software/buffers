@@ -74,6 +74,7 @@ std::shared_ptr<blocking> blocking::createDefaultBlocking(
     bs[0] = 1;
   else
     bs[0] = 64;
+  std::cerr << "In create default blocking " << std::endl;
 
   if (hyper->getNdimG1() == 1) {
     block[0] = 256 * 1024;
@@ -81,7 +82,9 @@ std::shared_ptr<blocking> blocking::createDefaultBlocking(
     bs[1] = std::min(hyper->getAxis(2).n, 4);
     block[0] = bs[0] * 8;
     block[1] = bs[1] * 256;
-  } else if (hyper->getNdimG1() == 2) {
+  } else if (hyper->getNdimG1() == 3) {
+    std::cerr << "In creafffte default blocking " << std::endl;
+
     bs[1] = std::min(hyper->getAxis(2).n, 4);
     bs[2] = std::min(hyper->getAxis(3).n, 4);
     block[0] = bs[0] * 8;
