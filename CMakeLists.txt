@@ -33,7 +33,7 @@ if(BUILD_GCP)
                             external/cloud
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif(NOT SUBPACKAGE)
-  add_subdirectory(external/cloud)
+  add_subdirectory(external/cloud/super)
   # find_package(storage_client REQUIRED)
 endif(BUILD_GCP)
 
