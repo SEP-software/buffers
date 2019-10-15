@@ -1,3 +1,4 @@
+
 #include "blocking.h"
 #include <cmath>
 #include <iostream>
@@ -67,6 +68,7 @@ blocking::blocking(const Json::Value &jsonArgs) {
 }
 std::shared_ptr<blocking> blocking::createDefaultBlocking(
     std::shared_ptr<SEP::hypercube> hyper) {
+  std::cerr << "In create default blocking " << std::endl;
   std::vector<int> bs(4, 1), block(4, 1);
   if (hyper->getAxis(1).n > 64)
     bs[0] = 1;
@@ -95,7 +97,11 @@ std::shared_ptr<blocking> blocking::createDefaultBlocking(
     block[2] = bs[2] * 8;
     block[3] = bs[3] * 8;
   }
+  std::cerr << "In2 create default blocking " << std::endl;
+
   std::shared_ptr<blocking> b(new blocking(bs, block));
+  std::cerr << "In 3create default blocking " << std::endl;
+
   return b;
 }
 Json::Value blocking::getJsonDescription() {
