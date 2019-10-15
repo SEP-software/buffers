@@ -69,12 +69,16 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   _blocking = block;
   _memory = mem;
   _hyper = hyper;
-  std::cerr << "ina qgcp buffers 1" << std::endl;
+  std::cerr << "ina qgcp 3buffers 1" << std::endl;
 
   if (_compress == nullptr) _compress = createDefaultCompress();
+  std::cerr << "ina qgcp4 buffers 1" << std::endl;
+
   if (_blocking == nullptr) _blocking = blocking::createDefaultBlocking(_hyper);
+  std::cerr << "ina qgcp 5buffers 1" << std::endl;
+
   if (_memory == nullptr) _memory = createDefaultMemory();
-  std::cerr << "inb qgcp buffers 1" << std::endl;
+  std::cerr << "inb qgcp 6buffers 1" << std::endl;
 
   namespace gcs = google::cloud::storage;
   std::cerr << "inc qgcp buffers 1" << std::endl;
