@@ -55,6 +55,10 @@ Json::Value buffers::getDescription() {
   return des;
 }
 
+std::vector<std::string> buffers::getNames() {
+  std::vector<std::string> x;
+  for (auto b : _buffers) x.push_back(b->getName());
+}
 void buffers::updateMemory(const long change2) {
   bool done = false;
   long change = change2;
@@ -186,6 +190,24 @@ void buffers::updateMemory(const long change2) {
     }
   }
 }
+
+void buffers::remove() {
+  std::vector<std::future<void>> changes;
+
+  for (auto i = 0; i < _buffers.size(); i++) {
+    changes.push_back(std::async(std::launch::async,
+                                 [&](int i) { _buffers[i]->remove(); }, i));
+  }
+
+  for (auto &n : changes) {
+    try {
+      n.get();
+    } catch (std::exception e) {
+      throw e;
+    }
+  }
+}
+
 std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
                                         const std ::vector<int> &fw,
                                         const std::vector<int> &jw) {

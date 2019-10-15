@@ -42,6 +42,7 @@ class fileBuffers : public buffers {
   fileBuffers(const std::shared_ptr<hypercube> hyper, const std::string dir,
               const Json::Value &jsonArgs,
               std::shared_ptr<memoryUsage> mem = nullptr);
+
   //! Set the name for the dataset
   /*!
     \param dir Directory for the dataset

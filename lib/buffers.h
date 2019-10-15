@@ -37,6 +37,21 @@ class buffers {
   void putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                  const std::vector<int> &jw, const void *buf);
 
+  /*!
+     Remove buffer
+     */
+  void remove();
+  /*!
+    remove directory
+  */
+  virtual void removeDescDirectory() {
+    perror("Must override remove directory");
+  }
+  /*!
+    Return the name of all of the buffers
+  */
+  std::vector<std::string> getNames();
+
   //! Create buffers
   /*!
     \param state for the created buffers

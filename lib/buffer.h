@@ -64,6 +64,12 @@ class buffer {
     _name = name;
     _nameSet = true;
   }
+  /*!
+    remove buffer
+
+  */
+  virtual void remove() { perror("must override remove from buffer"); }
+
   //! Return the file name
   std::string getFileName() {
     if (!_nameSet) throw SEPException(std::string("Name of file not set"));
@@ -149,6 +155,10 @@ class buffer {
                      std::vector<int> &f_w, std::vector<int> &j_w,
                      std::vector<int> &nwG, std::vector<int> &fwG,
                      std::vector<int> &blockG) const;
+  /*!
+   Get the name of the buffer
+*/
+  std::string getName() { return _name; }
   //! Change the state of the buffer
   /*!
    \param state to change gthe buffer to
@@ -167,10 +177,10 @@ class buffer {
   std::vector<int> _block;  ///< Block for buffer (1,n[0],n[0]*1)
 
  protected:
-  bufferState _bufferState = UNDEFINED;  ///< Current buffer state
-  std::shared_ptr<storeBase> _buf=NULL;      ///< Storage for buffer
-  std::shared_ptr<compress> _compress;  ///< Compression object
-  std::string _name;                    ///< Name for buffer
+  bufferState _bufferState = UNDEFINED;    ///< Current buffer state
+  std::shared_ptr<storeBase> _buf = NULL;  ///< Storage for buffer
+  std::shared_ptr<compress> _compress;     ///< Compression object
+  std::string _name;                       ///< Name for buffer
   bool _nameSet;           ///< Whether or not buffer's name has been set
   bool _modified = false;  ///< Wheter buffer has been modified
   int _ibuf;               ///< Buffer number

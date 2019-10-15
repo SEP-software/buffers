@@ -153,3 +153,10 @@ gcpBuffer::gcpBuffer(const std::string &bucketName, const std::vector<int> &n,
   _compress = comp;
   _ntrys = ntrys;
 }
+void gcpBuffer::remove() {
+  namespace gcs = google::cloud::storage;
+
+  google::cloud::v0::StatusOr<gcs::Client> client =
+      gcs::Client::CreateDefaultClient();
+  client.value().DeleteObject(_bucketName, _name);
+}

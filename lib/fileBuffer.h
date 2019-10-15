@@ -32,6 +32,7 @@ class fileBuffer : public buffer {
   */
   fileBuffer(const std::vector<int> &n, const std::vector<int> &f,
              std::shared_ptr<compress> comp, const bufferState state);
+  virtual void remove() override;
   //! Read a buffer
   virtual long long readBuffer() override;
   //! Write a buffer

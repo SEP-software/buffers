@@ -57,6 +57,10 @@ class gcpBuffer : public buffer {
     \param  keepState Final state for buffer
   */
   virtual long long writeBuffer(bool keepState = false) override;
+  /*!
+  remove object
+  */
+  virtual void remove();
   virtual ~gcpBuffer() { ; }
 
  private:

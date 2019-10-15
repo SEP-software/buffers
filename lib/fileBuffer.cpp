@@ -142,3 +142,4 @@ fileBuffer::fileBuffer(const std::vector<int> &n, const std::vector<int> &f,
   createStorageBuffer();
   _compress = comp;
 }
+void fileBuffer::remove() { std::remove(_name.c_str()); }
