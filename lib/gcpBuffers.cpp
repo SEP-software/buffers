@@ -96,13 +96,6 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
 
   _defaultStateSet = false;
 
-  void gcpBuffers::removeDescDir() {
-    namespace gcs = google::cloud::storage;
-    google::cloud::v0::StatusOr<gcs::Client> client =
-        gcs::Client::CreateDefaultClient();
-
-    client.value().DeleteObject(bucket_name, _baseName + std::string("/desc"));
-  }
   void gcpBuffers::setName(const std::string &dir, const bool create) {
     int pos;
     if ((pos = dir.find("/")) == std::string::npos) {  // No subdirectory
