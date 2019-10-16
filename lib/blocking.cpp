@@ -126,11 +126,13 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     if (_blocksize.size() > i) bs = _blocksize[i];
 
     if (_nb.size() > i) nb = _nb[i];
-
+    //
     int nblocks = ceilf(float(n[i]) / float(_blocksize[i]));  // 100 3 34
     int ratio = nb / bs;                                      // 3
     int nparts = ceilf(float(nblocks) / float(ratio));        // 34 /3 = 12
-
+    std::cerr << nblocks << "=nblocks n=" << n[i]
+              << " blocksize=" << _blocksize[i] << " nb=" << nb << " bs=" << bs
+              << " nparts=" << nparts << std::endl;
     for (int ib = 0; ib < nparts - 1; ib++) {
       int nuse = ceilf(float(nblocks) / float(nparts - ib));
       nblocks -= nuse;
