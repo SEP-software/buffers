@@ -181,6 +181,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
   }
 }
 void gcpBuffers::createBuffers(const bufferState state) {
+  std::cerr << "in create buferrs" << std::endl;
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
   namespace gcs = google::cloud::storage;
@@ -192,6 +193,7 @@ void gcpBuffers::createBuffers(const bufferState state) {
     _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
                                                    _compress, state, _ntrys));
   }
+  std::cerr << " should be done " << b._axisBlock.size() << std::endl;
 
   _n123blocking = b._nblocking;
   _axisBlocking = b._axesBlock;
