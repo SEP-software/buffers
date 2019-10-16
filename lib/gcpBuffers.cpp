@@ -63,25 +63,19 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
                        const dataType dataType, std::shared_ptr<blocking> block,
                        std::shared_ptr<compress> comp,
                        std::shared_ptr<memoryUsage> mem) {
-  std::cerr << "in qgcp buffers 1" << std::endl;
   _typ = dataType;
   _compress = comp;
   _blocking = block;
   _memory = mem;
   _hyper = hyper;
-  std::cerr << "ina qgcp 3buffers 1" << std::endl;
 
   if (_compress == nullptr) _compress = createDefaultCompress();
-  std::cerr << "ina qgcp4 buffers 1" << std::endl;
 
   if (_blocking == nullptr) _blocking = blocking::createDefaultBlocking(_hyper);
-  std::cerr << "ina qgcp 5buffers 1" << std::endl;
 
   if (_memory == nullptr) _memory = createDefaultMemory();
-  std::cerr << "inb qgcp 6buffers 1" << std::endl;
 
   namespace gcs = google::cloud::storage;
-  std::cerr << "inc qgcp buffers 1" << std::endl;
 
   google::cloud::v0::StatusOr<gcs::Client> client =
       gcs::Client::CreateDefaultClient();
@@ -93,22 +87,18 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   else
 
     blockParams v = _blocking->makeBlocks(_hyper->getNs());
-  std::cerr << "inw gcp buffers 1" << std::endl;
 
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
   _ntrys = std::stoi(getEnvVar("GCP_RETRYS", "10"));
-  std::cerr << "in egcp buffers 1" << std::endl;
 
   if (_projectID == std::string("NONE")) {
     throw SEPException(
         std::string("Must set environmental variable projectID:") + _projectID);
     exit(1);
   }
-  std::cerr << "iwn gcp buffers 1" << std::endl;
 
   createBuffers(UNDEFINED);
-  std::cerr << "irn gcp buffers 1" << std::endl;
 
   _defaultStateSet = false;
 }
@@ -125,9 +115,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
   }
 
   std::vector<std::future<bool>> changes;
-  std::cerr << "in set name" << std::endl;
   if (create) {
-    std::cerr << "in create " << std::endl;
     namespace gcs = google::cloud::storage;
     bool found = false;
 
