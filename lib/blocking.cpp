@@ -69,7 +69,7 @@ blocking::blocking(const Json::Value &jsonArgs) {
 std::shared_ptr<blocking> blocking::createDefaultBlocking(
     std::shared_ptr<SEP::hypercube> hyper) {
   std::vector<int> bs(4, 1), block(4, 1);
-  if (hyper->getAxis(1).n > 64)
+  if (hyper->getAxis(1).n < 64)
     bs[0] = 1;
   else
     bs[0] = 64;
