@@ -78,20 +78,20 @@ std::shared_ptr<blocking> blocking::createDefaultBlocking(
     block[0] = 256 * 1024;
   } else if (hyper->getNdimG1() == 2) {
     bs[1] = std::min(hyper->getAxis(2).n, 4);
-    block[0] = bs[0] * 8;
+    block[0] = bs[0] * 16;
     block[1] = bs[1] * 256;
   } else if (hyper->getNdimG1() == 3) {
     bs[1] = std::min(hyper->getAxis(2).n, 4);
     bs[2] = std::min(hyper->getAxis(3).n, 4);
-    block[0] = bs[0] * 8;
-    block[1] = bs[1] * 8;
-    block[2] = bs[2] * 8;
+    block[0] = bs[0] * 16;
+    block[1] = bs[1] * 16;
+    block[2] = bs[2] * 16;
 
   } else {
     bs[1] = std::min(hyper->getAxis(2).n, 4);
     bs[2] = std::min(hyper->getAxis(3).n, 4);
     bs[3] = std::min(hyper->getAxis(4).n, 4);
-    block[0] = bs[0] * 8;
+    block[0] = bs[0] * 4;
     block[1] = bs[1] * 8;
     block[2] = bs[2] * 8;
     block[3] = bs[3] * 8;
