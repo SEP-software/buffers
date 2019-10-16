@@ -19,6 +19,7 @@ using namespace SEP::IO;
 gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
                        const std::string dir, const Json::Value &des,
                        std::shared_ptr<memoryUsage> mem) {
+  std::cerr << "in gcp 1" << std::endl;
   _hyper = hyper->clone();
   if (des["blocking"].isNull()) {
     throw SEPException(
@@ -54,6 +55,8 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
   if (_projectID == std::string("NONE")) {
     throw SEPException("Must set environmental variable projectID:" +
                        _projectID);
+    std::cerr << "in gcp 21" << std::endl;
+
     createBuffers(ON_DISK);
     setName(dir, false);
   }
@@ -68,6 +71,7 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   _blocking = block;
   _memory = mem;
   _hyper = hyper;
+  std::cerr << "in gcp a" << std::endl;
 
   if (_compress == nullptr) _compress = createDefaultCompress();
 
@@ -97,6 +101,7 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
         std::string("Must set environmental variable projectID:") + _projectID);
     exit(1);
   }
+  std::cerr << "in gcp b" << std::endl;
 
   createBuffers(UNDEFINED);
 
