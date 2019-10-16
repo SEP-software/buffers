@@ -193,7 +193,7 @@ void gcpBuffers::createBuffers(const bufferState state) {
     _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
                                                    _compress, state, _ntrys));
   }
-  std::cerr << " should be done " << b._axisBlock.size() << std::endl;
+  std::cerr << " should be done " << b._axesBlock.size() << std::endl;
 
   _n123blocking = b._nblocking;
   _axisBlocking = b._axesBlock;
