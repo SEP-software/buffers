@@ -140,7 +140,7 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     }
 
     if (nleft > 0) axisBlock.push_back(nleft);
-    std::cerr << "iax=" << iax << " " << axisBlock.size() << std::endl;
+    std::cerr << "iax=" << i << " " << axisBlock.size() << std::endl;
     blocks.push_back(axisBlock);
   }
 
