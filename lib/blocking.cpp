@@ -130,9 +130,7 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     int nblocks = ceilf(float(n[i]) / float(_blocksize[i]));  // 100 3 34
     int ratio = nb / bs;                                      // 3
     int nparts = ceilf(float(nblocks) / float(ratio));        // 34 /3 = 12
-    std::cerr << nblocks << "=nblocks n=" << n[i]
-              << " blocksize=" << _blocksize[i] << " nb=" << nb << " bs=" << bs
-              << " nparts=" << nparts << std::endl;
+
     for (int ib = 0; ib < nparts - 1; ib++) {
       int nuse = ceilf(float(nblocks) / float(nparts - ib));
       nblocks -= nuse;
@@ -142,8 +140,7 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     }
 
     if (nleft > 0) axisBlock.push_back(nleft);
-    std::cerr << "iax=" << i << " " << axisBlock.size() << " " << axisBlock[0]
-              << std::endl;
+
     blocks.push_back(axisBlock);
   }
 
@@ -151,7 +148,6 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     std::vector<int> axisBlock(1, 1);
     blocks.push_back(axisBlock);
   }
-  throw SEPException("error");
   return blocks;
 }
 void blocking::checkLogicBlocking() {
