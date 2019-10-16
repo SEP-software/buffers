@@ -242,7 +242,7 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
           std::to_string(nw[i]) + std::string(" ns=") + std::to_string(ns[i]));
 
     sttd::cerr << "what 0" << std::endl;
-    std::cerr << "what i " << i << " " << axisBlocking.size() << std::endl;
+    std::cerr << "what i " << i << " " << _axisBlocking.size() << std::endl;
     std::vector<bool> axisP(_axisBlocking[i].size(), false);
     size_t ip = 0;
     int ibeg = 0;
