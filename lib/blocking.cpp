@@ -68,13 +68,11 @@ blocking::blocking(const Json::Value &jsonArgs) {
 }
 std::shared_ptr<blocking> blocking::createDefaultBlocking(
     std::shared_ptr<SEP::hypercube> hyper) {
-  std::cerr << "In create default blocking " << std::endl;
   std::vector<int> bs(4, 1), block(4, 1);
   if (hyper->getAxis(1).n > 64)
     bs[0] = 1;
   else
     bs[0] = 64;
-  std::cerr << "In create default blocking " << std::endl;
 
   if (hyper->getNdimG1() == 1) {
     block[0] = 256 * 1024;
@@ -83,8 +81,6 @@ std::shared_ptr<blocking> blocking::createDefaultBlocking(
     block[0] = bs[0] * 8;
     block[1] = bs[1] * 256;
   } else if (hyper->getNdimG1() == 3) {
-    std::cerr << "In creafffte default blocking " << std::endl;
-
     bs[1] = std::min(hyper->getAxis(2).n, 4);
     bs[2] = std::min(hyper->getAxis(3).n, 4);
     block[0] = bs[0] * 8;
@@ -100,10 +96,8 @@ std::shared_ptr<blocking> blocking::createDefaultBlocking(
     block[2] = bs[2] * 8;
     block[3] = bs[3] * 8;
   }
-  std::cerr << "In2 create default blocking " << std::endl;
 
   std::shared_ptr<blocking> b(new blocking(bs, block));
-  std::cerr << "In 3create default blocking " << std::endl;
 
   return b;
 }
@@ -146,7 +140,7 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     }
 
     if (nleft > 0) axisBlock.push_back(nleft);
-
+    std::cerr << "iax=" << iax << " " << axisBlock.size() << std::endl;
     blocks.push_back(axisBlock);
   }
 
@@ -154,6 +148,7 @@ std::vector<std::vector<int>> blocking::blockAxis(const std::vector<int> &n) {
     std::vector<int> axisBlock(1, 1);
     blocks.push_back(axisBlock);
   }
+  throw SEPException("error");
   return blocks;
 }
 void blocking::checkLogicBlocking() {
