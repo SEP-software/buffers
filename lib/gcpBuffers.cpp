@@ -62,11 +62,9 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
   if (_projectID == std::string("NONE")) {
     throw SEPException("Must set environmental variable projectID:" +
                        _projectID);
-    std::cerr << "in gcp 21" << std::endl;
-
-    createBuffers(ON_DISK);
-    setName(dir, false);
   }
+  createBuffers(ON_DISK);
+  setName(dir, false);
 }
 
 gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
