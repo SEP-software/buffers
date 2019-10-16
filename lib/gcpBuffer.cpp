@@ -80,7 +80,6 @@ long long gcpBuffer::readBuffer() {
   google::cloud::v0::StatusOr<gcs::Client> client =
       gcs::Client::CreateDefaultClient();
   /*Only need to do something if sitting on disk*/
-  std::cerr << "before read" << std::endl;
 
   namespace gcs = google::cloud::storage;
   if (_bufferState == ON_DISK) {
@@ -127,7 +126,6 @@ long long gcpBuffer::readBuffer() {
                 << std::endl;
       exit(1);
     }
-    std::cerr << "hrough read" << std::endl;
     _bufferState = CPU_COMPRESSED;
   }
   if (_bufferState == UNDEFINED) throw SEPException("Bufferstate is undefined");
