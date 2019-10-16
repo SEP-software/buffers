@@ -19,7 +19,6 @@ using namespace SEP::IO;
 gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
                        const std::string dir, const Json::Value &des,
                        std::shared_ptr<memoryUsage> mem) {
-  std::cerr << "in bgcp 1" << std::endl;
   _hyper = hyper->clone();
   if (des["blocking"].isNull()) {
     throw SEPException(
@@ -32,32 +31,26 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
     throw SEPException(
         std::string("Trouble grabbing compression from parameters"));
   }
-  std::cerr << "in gccp 1" << std::endl;
 
   _memory = mem;
   if (!_memory) {
     _memory = createDefaultMemory();
   }
-  std::cerr << "in g1cp 1" << std::endl;
 
   SEP::IO::compressTypes ct = compressTypes(des["compression"]);
-  std::cerr << "in g2cp 1" << std::endl;
 
   namespace gcs = google::cloud::storage;
   google::cloud::v0::StatusOr<gcs::Client> client =
       gcs::Client::CreateDefaultClient();
   if (!client)
     throw(SEPException(std::string("Trouble creating default client")));
-  std::cerr << "in 3gcp 1" << std::endl;
 
   _compress = ct.getCompressionObj();
-  std::cerr << "in gcp4 1" << std::endl;
 
   _defaultStateSet = false;
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
   _ntrys = std::stoi(getEnvVar("GCP_RETRYS", "10"));
-  std::cerr << "in5 gcp 1" << std::endl;
 
   if (_projectID == std::string("NONE")) {
     throw SEPException("Must set environmental variable projectID:" +
@@ -76,7 +69,6 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   _blocking = block;
   _memory = mem;
   _hyper = hyper;
-  std::cerr << "in gcp a" << std::endl;
 
   if (_compress == nullptr) _compress = createDefaultCompress();
 
@@ -106,7 +98,6 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
         std::string("Must set environmental variable projectID:") + _projectID);
     exit(1);
   }
-  std::cerr << "in gcp b" << std::endl;
 
   createBuffers(UNDEFINED);
 
@@ -191,7 +182,6 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
   }
 }
 void gcpBuffers::createBuffers(const bufferState state) {
-  std::cerr << "in create buferrs" << std::endl;
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
   namespace gcs = google::cloud::storage;
@@ -203,7 +193,6 @@ void gcpBuffers::createBuffers(const bufferState state) {
     _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
                                                    _compress, state, _ntrys));
   }
-  std::cerr << " should be done " << b._axesBlock.size() << std::endl;
 
   _n123blocking = b._nblocking;
   _axisBlocking = b._axesBlock;
