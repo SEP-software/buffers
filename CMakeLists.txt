@@ -68,16 +68,18 @@ if(NOT SUBPACKAGE)
 endif(NOT SUBPACKAGE)
 set(SUBPACKAGE true)
 
+if(NOT TARGET hypercube)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube)
+endif(NOT TARGET hypercube)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 
-if(BUILD_GCP)
+if(BUILD_GCP and not TARGET storage_client)
   add_subdirectory(external/cloud)
 endif(BUILD_GCP)
 
-if(BUILD_ZFP)
+if(BUILD_ZFP AND NOT TARGET zfp)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/zfp)
-endif(BUILD_ZFP)
+endif(BUILD_ZFP AND NOT TARGET zfp)
 
 include(ExternalProject)
 
