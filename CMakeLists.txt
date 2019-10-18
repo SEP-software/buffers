@@ -76,6 +76,8 @@ endif(NOT TARGET hypercube)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 
 if(BUILD_GCP AND NOT TARGET storage_client)
+	set(GOOGLE_CLOUD_CPP_ENABLE_FIRESTONE no)
+	set(GOOGLE_CLOUD_CPP_ENABLE_BIGTABLE no)
   add_subdirectory(external/cloud)
 endif(BUILD_GCP AND NOT TARGET storage_client)
 

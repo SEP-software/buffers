@@ -1,4 +1,4 @@
-:#ifndef BLOCK_H
+#ifndef BLOCK_H
 #define BLOCK_H 1
 #include <cmath>
 #include <memory>
