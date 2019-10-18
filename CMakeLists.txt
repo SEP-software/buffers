@@ -9,7 +9,6 @@ if(NOT SUBPACKAGE)
   option(BUILD_DEBUG_LIBS "Build gperftool libs" OFF)
   option(BUILD_PYTHON "Build python interfaces" ON)
 endif(NOT SUBPACKAGE)
-set(SUBPACKAGE true)
 
 if(BUILD_ZFP)
   set(USE_ZFP true)
@@ -23,18 +22,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
 if(BUILD_GCP)
   set(USE_GCP true)
-  include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}/external/nlohmann_json/include)
 endif(BUILD_GCP)
 
 if(BUILD_GCP)
   if(NOT SUBPACKAGE)
     execute_process(COMMAND git submodule update --init --recursive --
-                          #  external/cloud
+                            # external/cloud
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
- endif(NOT SUBPACKAGE)
-  add_subdirectory(external/cloud)
- #  find_package(storage_client REQUIRED)
+  endif(NOT SUBPACKAGE)
 endif(BUILD_GCP)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -52,39 +47,37 @@ include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 configure_file("${PROJECT_SOURCE_DIR}/buffersConfig.h.in"
                "${PROJECT_BINARY_DIR}/buffersConfig.h")
 
-if(NOT TARGET hypercube)
-  execute_process(COMMAND git submodule update --init --recursive --
-                          external/hypercube
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube)
-endif(NOT TARGET hypercube)
+if(NOT SUBPACKAGE)
+  if(NOT TARGET hypercube)
+    execute_process(COMMAND git submodule update --init --recursive --
+                            external/hypercube
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endif(NOT TARGET hypercube)
 
-if(NOT TARGET jsonCpp)
-  execute_process(COMMAND git submodule update --init --recursive --
-                          external/json
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
-endif(NOT TARGET jsonCpp)
+  if(NOT TARGET jsonCpp)
+    execute_process(COMMAND git submodule update --init --recursive --
+                            external/json
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endif(NOT TARGET jsonCpp)
+
+  if(BUILD_ZFP)
+    execute_process(COMMAND git submodule update --init --recursive --
+                            external/zfp
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endif(BUILD_ZFP)
+endif(NOT SUBPACKAGE)
+set(SUBPACKAGE true)
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
+
+if(BUILD_GCP)
+  add_subdirectory(external/cloud)
+endif(BUILD_GCP)
 
 if(BUILD_ZFP)
-  execute_process(COMMAND git submodule update --init --recursive --
-                          external/zfp
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/zfp)
 endif(BUILD_ZFP)
-
-# if(BUILD_GCP) externalproject_add(STORAGE_INSTALL CMAKE_ARGS
-# -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_INSTALL_LIBDIR=lib
-# -DBUILD_TESTING=false -Bstorage_client GIT_REPOSITORY
-# "https://github.com/GoogleCloudPlatform/google-cloud-cpp.git" PATCH_COMMAND
-# git submodule update --init BUILD_COMMAND ${CMAKE_COMMAND} -E echo
-# "XXXStarting $<CONFIG> build" COMMAND       ${CMAKE_COMMAND} --build
-# <BINARY_DIR> --config $<CONFIG> --target storage_client -j 8 COMMAND
-# ${CMAKE_COMMAND} -E echo "$<CONFIG> build complete" INSTALL_DIR
-# ${CMAKE_INSTALL_PREFIX}) set(GCP_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
-#
-# set( GCP_LIBRARIES ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}z
-# fp${CMAKE_SHARED_LIBRARY_SUFFIX} ) endif(BUILD_GCP)
 
 include(ExternalProject)
 

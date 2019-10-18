@@ -96,9 +96,7 @@ add_test(NAME blocktest COMMAND blockTest)
 add_executable(fileBufferTest fileBufferTest.cc)
 target_link_libraries(fileBufferTest
                       buffers
-                      gtest
                       gtest_main
-                      gtest
                       jsonCpp
                       hypercube)
 add_test(NAME filebuffer COMMAND fileBufferTest)
@@ -113,9 +111,7 @@ if(BUILD_GCP)
   add_executable(GCPtest GCPtest.cc)
   target_link_libraries(GCPtest
                         buffers
-                        gtest
                         gtest_main
-                        gtest
                         jsonCpp
                         storage_client
                         tbb
@@ -129,9 +125,7 @@ endif(BUILD_GCP)
 add_executable(fileBuffersTest fileBuffersTest.cc)
 target_link_libraries(fileBuffersTest
                       buffers
-                      gtest
                       gtest_main
-                      gtest
                       tbb
                       jsonCpp
                       hypercube)
