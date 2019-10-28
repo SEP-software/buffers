@@ -61,8 +61,7 @@ endif(NOT SUPPORT_LIBRARIES_BUILD)
 
 
 
-include_directories(
-  "${CMAKE_CURRENT_SOURCE_DIR}/../external/googletest/googletest/include")
+
 if(BUILD_ZFP)
   include_directories(${ZFP_INCLUDE_DIR})
 endif(BUILD_ZFP)
@@ -73,10 +72,6 @@ if(APPLE)
   add_definitions(-D__GLIBCXX__)
 endif(APPLE)
 
-set(GTEST
-    ../external/googletest/googlemock/gtest/libgtest.a
-    ../external/googletest/googlemock/gtest/libgtest_main.a
-    ../external/googletest/googlemock/gtest/libgtest.a)
 
 if(BUILD_TEST)
 add_executable(storeTest storeTest.cc)
