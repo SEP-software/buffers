@@ -44,7 +44,7 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
       gcs::Client::CreateDefaultClient();
   if (!client)
     throw(SEPException(std::string("Trouble creating default client")));
-
+  _client = client.value();
   _compress = ct.getCompressionObj();
 
   _defaultStateSet = false;
@@ -83,11 +83,9 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
   if (!client)
     throw(SEPException(std::string("Trouble creating default client")));
 
-  if (!client)
-    throw SEPException("_client is undefined");
-  else
+  _client = client.value();
 
-    blockParams v = _blocking->makeBlocks(_hyper->getNs());
+  blockParams v = _blocking->makeBlocks(_hyper->getNs());
 
   _projectID = getEnvVar("projectID", "NONE");
   _region = getEnvVar("region", "us-west1");
@@ -123,11 +121,9 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     // Create a client to communicate with Google Cloud Storage. This client
     // uses the default configuration for authentication and project id.
     namespace gcs = google::cloud::storage;
-    google::cloud::v0::StatusOr<gcs::Client> client =
-        gcs::Client::CreateDefaultClient();
 
     gcs::ListBucketsReader bucket_list =
-        client->ListBucketsForProject(_projectID);
+        _client->ListBucketsForProject(_projectID);
     for (auto &&bucket_metadata : bucket_list) {
       if (!bucket_metadata) {
         throw std::runtime_error(bucket_metadata.status().message());
@@ -136,7 +132,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
     }
 
     google::cloud::StatusOr<gcs::BucketMetadata> metadata =
-        client->CreateBucketForProject(
+        _client->CreateBucketForProject(
             _bucket, _projectID,
             gcs::BucketMetadata().set_location(_region).set_storage_class(
                 gcs::storage_class::Regional()));
@@ -149,7 +145,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
       }
     }
 
-    for (auto &&object_metadata : client->ListObjects(
+    for (auto &&object_metadata : _client->ListObjects(
              _bucket, google::cloud::storage::v1::Prefix(_baseName))) {
       if (!object_metadata) {
         throw std::runtime_error(object_metadata.status().message());
@@ -157,7 +153,7 @@ void gcpBuffers::setName(const std::string &dir, const bool create) {
       changes.push_back(
           std::async(std::launch::async,
                      [&](const std::string bucket, const std::string name) {
-                       client->DeleteObject(bucket, name);
+                       _client->DeleteObject(bucket, name);
                        return true;
                      },
                      object_metadata->bucket(), object_metadata->name()));
@@ -185,13 +181,15 @@ void gcpBuffers::createBuffers(const bufferState state) {
   std::vector<int> ns = _hyper->getNs();
   blockParams b = _blocking->makeBlocks(ns);
   namespace gcs = google::cloud::storage;
-  google::cloud::v0::StatusOr<gcs::Client> client =
-      gcs::Client::CreateDefaultClient();
-  if (!client) throw SEPException("client is dead on createBuffers");
+  // google::cloud::v0::StatusOr<gcs::Client> client =
+  //  gcs::Client::CreateDefaultClient();
+  // if (!client) throw SEPException("client is dead on createBuffers");
   ;
   for (int i = 0; i < b._ns.size(); i++) {
     _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
                                                    _compress, state, _ntrys));
+    std::cerr << "what is going ogn " << std::endl;
+    _buffers[i].setClient(_client);
   }
 
   _n123blocking = b._nblocking;

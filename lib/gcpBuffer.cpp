@@ -28,8 +28,8 @@ long long gcpBuffer::writeBuffer(bool keepState) {
 
   changeState(CPU_COMPRESSED);
   namespace gcs = google::cloud::storage;
-  google::cloud::v0::StatusOr<gcs::Client> client =
-      gcs::Client::CreateDefaultClient();
+  //  google::cloud::v0::StatusOr<gcs::Client> client =
+  //     gcs::Client::CreateDefaultClient();
   google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata;
   gcs::ObjectWriteStream stream;
   int sleep = 100000;  // Start with a retry at .1 seconds
@@ -37,7 +37,7 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   int itry = 0;
 
   while (!success && itry < _ntrys) {
-    stream = client.value().WriteObject(_bucketName, _name);
+    stream = _client.WriteObject(_bucketName, _name);
 
     stream.write(_buf->getPtr(), _buf->getSize() * _buf->getElementSize());
 
@@ -77,8 +77,8 @@ long long gcpBuffer::readBuffer() {
   _modified = false;
   namespace gcs = google::cloud::storage;
   google::cloud::v0::StatusOr<gcs::ObjectMetadata> object_metadata;
-  google::cloud::v0::StatusOr<gcs::Client> client =
-      gcs::Client::CreateDefaultClient();
+  // google::cloud::v0::StatusOr<gcs::Client> client =
+  //   gcs::Client::CreateDefaultClient();
   /*Only need to do something if sitting on disk*/
 
   namespace gcs = google::cloud::storage;
@@ -119,7 +119,7 @@ long long gcpBuffer::readBuffer() {
 
         if (stream.received_hash() != stream.computed_hash())
           throw SEPException(std::string("Hashes do not match"));
-      }(std::move(client.value()), _bucketName, _name,
+      }(std::move(_client, _bucketName, _name,
         std::dynamic_pointer_cast<storeByte>(_buf), _ntrys, object_metadata);
     } catch (std::exception const &ex) {
       std::cerr << "Trouble reading from bucket " << _name << " " << ex.what()
@@ -157,7 +157,5 @@ gcpBuffer::gcpBuffer(const std::string &bucketName, const std::vector<int> &n,
 void gcpBuffer::remove() {
   namespace gcs = google::cloud::storage;
 
-  google::cloud::v0::StatusOr<gcs::Client> client =
-      gcs::Client::CreateDefaultClient();
-  client.value().DeleteObject(_bucketName, _name);
+  _client.DeleteObject(_bucketName, _name);
 }

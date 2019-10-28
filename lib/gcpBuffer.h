@@ -63,7 +63,11 @@ class gcpBuffer : public buffer {
   virtual void remove();
   virtual ~gcpBuffer() { ; }
 
+  void setClient(google::cloud::storage::Client client) { _client = client; }
+
  private:
+  google::cloud::storage::Client _client;
+
   std::string _bucketName;
   int _ntrys;
 };
