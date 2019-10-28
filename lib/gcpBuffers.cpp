@@ -44,7 +44,7 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
       gcs::Client::CreateDefaultClient();
   if (!client)
     throw(SEPException(std::string("Trouble creating default client")));
-  _client = client.value();
+  _client = client;
   _compress = ct.getCompressionObj();
 
   _defaultStateSet = false;
@@ -186,10 +186,9 @@ void gcpBuffers::createBuffers(const bufferState state) {
   // if (!client) throw SEPException("client is dead on createBuffers");
   ;
   for (int i = 0; i < b._ns.size(); i++) {
-    _buffers.push_back(std::make_shared<gcpBuffer>(_name, b._ns[i], b._fs[i],
-                                                   _compress, state, _ntrys));
+    _buffers.push_back(std::make_shared<gcpBuffer>(
+        _name, _client, b._ns[i], b._fs[i], _compress, state, _ntrys));
     std::cerr << "what is going ogn " << std::endl;
-    _buffers[i].setClient(_client);
   }
 
   _n123blocking = b._nblocking;

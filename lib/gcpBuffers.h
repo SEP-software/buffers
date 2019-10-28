@@ -62,7 +62,7 @@ class gcpBuffers : public buffers {
   */
 
  private:
-  google::cloud::storage::Client client;
+  google::cloud::v0::StatusOr<google::cloud::storage::Client> _client;
   std::string _projectID;  ///< GCP project ID
   std::string _region;     ///<  Region where the data is stored
   std::string _bucket;     ///< Name of the GCP bucket

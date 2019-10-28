@@ -19,24 +19,30 @@ class gcpBuffer : public buffer {
   //! Create a GCP buffer from an existing object
   /*!
     \param bucketName Bucket and directory for dataset
+        \param client GCP client
+
     \param name Name of object
     \param n Size of domain
     \param f Location of buffer within grid
     \param comp Compression object
   */
-  gcpBuffer(const std::string &bucketName, const std::string name,
-            const std::vector<int> &n, const std::vector<int> &f,
-            std::shared_ptr<compress> comp, const int ntrys);
+  gcpBuffer(const std::string &bucketName,
+            google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
+            const std::string name, const std::vector<int> &n,
+            const std::vector<int> &f, std::shared_ptr<compress> comp,
+            const int ntrys);
 
   //! Create a GCP buffer from parameters
   /*!
     \param bucketName Bucket and directory for dataset
+    \param client GCP client
     \param n Size of domain
     \param f Location of buffer within grid
     \param comp Compression object
     \param state State for buffet
   */
   gcpBuffer(const std::string &bucketName,
+            google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
 
             const std::vector<int> &n, const std::vector<int> &f,
             std::shared_ptr<compress> comp, const bufferState state,
@@ -63,10 +69,13 @@ class gcpBuffer : public buffer {
   virtual void remove();
   virtual ~gcpBuffer() { ; }
 
-  void setClient(google::cloud::storage::Client client) { _client = client; }
+  void setClient(
+      google::cloud::v0::StatusOr<google::cloud::storage::Client> client) {
+    _client = client;
+  }
 
  private:
-  google::cloud::storage::Client _client;
+  google::cloud::v0::StatusOr<google::cloud::storage::Client> _client;
 
   std::string _bucketName;
   int _ntrys;
