@@ -60,9 +60,7 @@ if(NOT SUBPACKAGE)
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif(NOT TARGET jsonCpp)
 
-  message("IN ONE")
   if(BUILD_ZFP)
-  message("IN2ONE")
     execute_process(COMMAND git submodule update --init --recursive --
                             external/zfp
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
