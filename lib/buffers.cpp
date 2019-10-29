@@ -402,8 +402,9 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   updateMemory(change);
 }
 void buffers::changeState(const bufferState state) {
-  long long change = 0;
   /*
+  long long change = 0;
+
     for (auto i = 0; i < _buffers.size(); i++) {
       change += _buffers[i]->changeState(state);
     }
