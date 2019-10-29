@@ -416,6 +416,7 @@ void buffers::changeState(const bufferState state) {
   long long change = 0;
   for (auto &n : changes) change += n.get();
 */
+  std::vector<std::future<long>> changes;
 
   long long ibuf = 0;
 
