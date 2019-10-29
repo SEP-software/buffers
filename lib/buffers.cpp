@@ -403,8 +403,6 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
 void buffers::changeState(const bufferState state) {
   /* Thread version */
 
-  /*
-
   std::vector<std::future<long>> changes;
 
   for (auto i = 0; i < _buffers.size(); i++) {
@@ -415,39 +413,39 @@ void buffers::changeState(const bufferState state) {
 
   long long change = 0;
   for (auto &n : changes) change += n.get();
-*/
+  /*
 
-  long long ibuf = 0;
-  long long change = 0;
+    long long ibuf = 0;
+    long long change = 0;
 
-  std::mutex mtx;
+    std::mutex mtx;
 
-  std::vector<std::thread> ioT(_ioThreads);
+    std::vector<std::thread> ioT(_ioThreads);
 
-  auto func = [&]() {
-    bool done = false;
-    while (!done) {
-      long long iuser;
-      {
-        std::lock_guard<std::mutex> lock(mtx);
-        iuser = ibuf;
-        ibuf++;
-      }
-      if (iuser < _buffers.size()) {
-        long long ch = _buffers[iuser]->changeState(state);
+    auto func = [&]() {
+      bool done = false;
+      while (!done) {
+        long long iuser;
         {
           std::lock_guard<std::mutex> lock(mtx);
-          change += ch;
+          iuser = ibuf;
+          ibuf++;
         }
-      } else
-        done = true;
+        if (iuser < _buffers.size()) {
+          long long ch = _buffers[iuser]->changeState(state);
+          {
+            std::lock_guard<std::mutex> lock(mtx);
+            change += ch;
+          }
+        } else
+          done = true;
+      }
+    };
+    for (auto i = 0; i < ioT.size(); i++) {
+      ioT[i] = std::thread(func);
     }
-  };
-  for (auto i = 0; i < ioT.size(); i++) {
-    ioT[i] = std::thread(func);
-  }
-  for (auto i = 0; i < ioT.size(); i++) ioT[i].join();
-
+    for (auto i = 0; i < ioT.size(); i++) ioT[i].join();
+  */
   //   */
   /*
  long long change = 0;
@@ -500,63 +498,63 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < std::min(7, (int)jw.size()); i++) j[i] = jw[i];
 
   /* Thread version */
+  /*
+    long long change = 0;
+    long long ibuf = 0;
+    std::mutex mtx;
 
-  long long change = 0;
-  long long ibuf = 0;
-  std::mutex mtx;
+        std::vector<std::thread> ioT(_ioThreads);
 
-  std::vector<std::thread> ioT(_ioThreads);
+      auto func = [&]() {
+        bool done = false;
+        while (!done) {
+          long long iuser;
+          {
+            std::lock_guard<std::mutex> lock(mtx);
+            iuser = ibuf;
+            ibuf++;
+          }
+          if (iuser < pwind.size()) {
+            std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
+            size_t pos = _buffers[pwind[iuser]]->localWindow(n, f, j, n_w, f_w,
+      j_w, nG, fG, blockG);
 
-  auto func = [&]() {
-    bool done = false;
-    while (!done) {
-      long long iuser;
-      {
-        std::lock_guard<std::mutex> lock(mtx);
-        iuser = ibuf;
-        ibuf++;
-      }
-      if (iuser < pwind.size()) {
-        std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
-        size_t pos = _buffers[pwind[iuser]]->localWindow(n, f, j, n_w, f_w, j_w,
-                                                         nG, fG, blockG);
+            long long ch = _buffers[pwind[iuser]]->putWindowCPU(
+                n_w, f_w, j_w, nG, fG, blockG, buf, state);
 
-        long long ch = _buffers[pwind[iuser]]->putWindowCPU(
-            n_w, f_w, j_w, nG, fG, blockG, buf, state);
-
-        {
-          std::lock_guard<std::mutex> lock(mtx);
-          change += ch;
+            {
+              std::lock_guard<std::mutex> lock(mtx);
+              change += ch;
+            }
+          } else
+            done = true;
         }
-      } else
-        done = true;
-    }
-  };
-  for (auto i = 0; i < ioT.size(); i++) {
-    ioT[i] = std::thread(func);
-  }
-  for (auto i = 0; i < ioT.size(); i++) ioT[i].join();
-
+      };
+      for (auto i = 0; i < ioT.size(); i++) {
+        ioT[i] = std::thread(func);
+      }
+      for (auto i = 0; i < ioT.size(); i++) ioT[i].join();
+    */
   // Async version
 
   // int locChange = 0;
-  /*
-    std::vector<std::future<long long>> changes;
-    for (auto i = 0; i < pwind.size(); i++)
-      changes.push_back(std::async(
-          std::launch::async,
-          [&](int i) {
-            std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
-            size_t pos = _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w,
-                                                         nG, fG, blockG);
 
-            return (long long)_buffers[pwind[i]]->putWindowCPU(
-                n_w, f_w, j_w, nG, fG, blockG, buf, state);
-          },
-          i));
-    long long change = 0;
-    for (auto &n : changes) change += n.get();
-      */
+  std::vector<std::future<long long>> changes;
+  for (auto i = 0; i < pwind.size(); i++)
+    changes.push_back(std::async(
+        std::launch::async,
+        [&](int i) {
+          std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
+          size_t pos = _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w,
+                                                       nG, fG, blockG);
+
+          return (long long)_buffers[pwind[i]]->putWindowCPU(
+              n_w, f_w, j_w, nG, fG, blockG, buf, state);
+        },
+        i));
+  long long change = 0;
+  for (auto &n : changes) change += n.get();
+
   /*
 long long change = 0;
 for (auto i = 0; i < pwind.size(); i++) {
