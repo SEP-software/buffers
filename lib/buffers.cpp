@@ -323,10 +323,9 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   if (!_memory) throw SEPException(std::string("Memory has not been set"));
 
   _memory->updateRecentBuffers(pwind);
-  /*
+
   long long change = 0;
   long long ibuf = 0;
-
 
   std::mutex mtx;
 
@@ -362,8 +361,9 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
     ioT[i] = std::thread(func);
   }
   for (auto i = 0; i < ioT.size(); i++) ioT[i].join();
-*/
+
   /*Async version*/
+  /*
   std::vector<std::future<long long>> changes;
   for (auto i = 0; i < pwind.size(); i++)
     changes.push_back(
@@ -380,6 +380,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                    i));
   long long change = 0;
   for (auto &n : changes) change += n.get();
+  */
   /* */
   /* TBB implementation
     long change = tbb::parallel_reduce(
