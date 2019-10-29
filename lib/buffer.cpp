@@ -112,7 +112,6 @@ size_t buffer::localWindow(const std::vector<int> &nw,
   fwG.resize(7);
   blockG[0] = 1;
   size_t i = 0;
-  std::cerr << "in local window " << std::endl;
   for (i = 0; i < n_w.size(); i++) {
     // Number of samples used before this window
     int nusedLocalBuf = ceilf(float(_f[i] - fw[i]) / float(jw[i]));
