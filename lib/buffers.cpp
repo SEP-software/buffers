@@ -403,7 +403,7 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
 void buffers::changeState(const bufferState state) {
   /* Thread version */
 
-  //	  /*
+  /*
 
   std::vector<std::future<long>> changes;
 
@@ -415,11 +415,11 @@ void buffers::changeState(const bufferState state) {
 
   long long change = 0;
   for (auto &n : changes) change += n.get();
+*/
 
-  /*
   long long ibuf = 0;
 
-   std::mutex mtx;
+  std::mutex mtx;
 
   std::vector<std::thread> ioT(_ioThreads);
 
@@ -446,7 +446,7 @@ void buffers::changeState(const bufferState state) {
     ioT[i] = std::thread(func);
   }
   for (auto i = 0; i < ioT.size(); i++) ioT[i].join();
-    */
+
   //   */
   /*
  long long change = 0;
