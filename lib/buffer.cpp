@@ -114,7 +114,6 @@ size_t buffer::localWindow(const std::vector<int> &nw,
   size_t i = 0;
   std::cerr << "in local window " << std::endl;
   for (i = 0; i < n_w.size(); i++) {
-    std::cerr << i << "  one" << std::endl;
     // Number of samples used before this window
     int nusedLocalBuf = ceilf(float(_f[i] - fw[i]) / float(jw[i]));
     int nusedWindow = ceilf((float)_f[i] / (float)(jw[i]));
@@ -130,22 +129,18 @@ size_t buffer::localWindow(const std::vector<int> &nw,
           ceilf(float(_f[i] - fw[i]) / float(jw[i])) * jw[i] + fw[i] - _f[i];
       nbeforeBuffer = int(float(_f[i] - fw[i]) / float(jw[i]));
     }
-    std::cerr << i << " 2 one" << std::endl;
 
     assert(nbeforeBuffer < nw[i]);
-    std::cerr << i << " 3 one" << std::endl;
 
     n_w[i] = std::min((int)(ceilf(float(_n[i] - f_w[i]) / float(jw[i]))),
                       nw[i] - nbeforeBuffer);
     // Is the first sample outside this patch?
     assert(f_w[i] < _n[i]);
     // if (f_w[i] > _n[i]) return 0;
-    std::cerr << i << " 4 one" << std::endl;
 
     assert(f_w[i] >= 0);
     // subtract off the points already used in previous cells
     // n_w[i] = nw[i] - nusedBuf;
-    std::cerr << i << " 5 one" << std::endl;
 
     // If less 0 we are done
     assert(n_w[i] > 0);
