@@ -401,18 +401,26 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   updateMemory(change);
 }
 void buffers::changeState(const bufferState state) {
-  /* Thread version */
-
-  std::vector<std::future<long>> changes;
+  long long change = 0;
 
   for (auto i = 0; i < _buffers.size(); i++) {
-    changes.push_back(
-        std::async(std::launch::async,
-                   [&](int i) { return _buffers[i]->changeState(state); }, i));
+    change += _buffers[i]->changeState(state);
   }
 
-  long long change = 0;
-  for (auto &n : changes) change += n.get();
+  /* Thread version */
+  /*
+    std::vector<std::future<long>> changes;
+
+    for (auto i = 0; i < _buffers.size(); i++) {
+      changes.push_back(
+          std::async(std::launch::async,
+                     [&](int i) { return _buffers[i]->changeState(state); },
+    i));
+    }
+
+    long long change = 0;
+    for (auto &n : changes) change += n.get();
+      */
   /*
 
     long long ibuf = 0;
