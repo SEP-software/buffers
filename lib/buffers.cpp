@@ -219,8 +219,7 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
   std::vector<std::vector<bool>> patches;
   std::vector<int> first(1, 0);
   size_t ntot = 1;
-  std::cerr << "what the " << fw[0] << " " << fw[1] << " " << fw[2]
-            << std::endl;
+
   for (int i = ns.size(); i < nw.size(); i++) ns.push_back(1);
   for (int i = 0; i < std::min(7, (int)nw.size()); i++) {
     bool fail = false;
@@ -404,26 +403,24 @@ void buffers::getWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
 }
 void buffers::changeState(const bufferState state) {
   long long change = 0;
+  /*
+    for (auto i = 0; i < _buffers.size(); i++) {
+      change += _buffers[i]->changeState(state);
+    }
+  */
+  /* Thread version */
+
+  std::vector<std::future<long>> changes;
 
   for (auto i = 0; i < _buffers.size(); i++) {
-    std::cerr << "loopinf " << i << " " << _buffers.size() << std::endl;
-    change += _buffers[i]->changeState(state);
+    changes.push_back(
+        std::async(std::launch::async,
+                   [&](int i) { return _buffers[i]->changeState(state); }, i));
   }
 
-  /* Thread version */
-  /*
-    std::vector<std::future<long>> changes;
+  long long change = 0;
+  for (auto &n : changes) change += n.get();
 
-    for (auto i = 0; i < _buffers.size(); i++) {
-      changes.push_back(
-          std::async(std::launch::async,
-                     [&](int i) { return _buffers[i]->changeState(state); },
-    i));
-    }
-
-    long long change = 0;
-    for (auto &n : changes) change += n.get();
-      */
   /*
 
     long long ibuf = 0;
@@ -501,7 +498,6 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, const void *buf) {
   bufferState state = CPU_DECOMPRESSED;
   if (_defaultStateSet) state = _defState;
-  std::cerr << "in parsed windows" << std::endl;
 
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
@@ -551,36 +547,35 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   // Async version
 
   // int locChange = 0;
-  /*
-    std::vector<std::future<long long>> changes;
-    for (auto i = 0; i < pwind.size(); i++)
-      changes.push_back(std::async(
-          std::launch::async,
-          [&](int i) {
-            std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
-            size_t pos = _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w,
-                                                         nG, fG, blockG);
 
-            return (long long)_buffers[pwind[i]]->putWindowCPU(
-                n_w, f_w, j_w, nG, fG, blockG, buf, state);
-          },
-          i));
-    long long change = 0;
-    for (auto &n : changes) change += n.get();
-  */
+  std::vector<std::future<long long>> changes;
+  for (auto i = 0; i < pwind.size(); i++)
+    changes.push_back(std::async(
+        std::launch::async,
+        [&](int i) {
+          std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
+          size_t pos = _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w,
+                                                       nG, fG, blockG);
 
+          return (long long)_buffers[pwind[i]]->putWindowCPU(
+              n_w, f_w, j_w, nG, fG, blockG, buf, state);
+        },
+        i));
   long long change = 0;
-  for (auto i = 0; i < pwind.size(); i++) {
-    std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
-    std::cerr << "what is fgoinf on " << i << " " << pwind[i] << std::endl;
-    size_t pos =
-        _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
-    std::cerr << "local indow" << n_w[2] << " " << f_w[2] << std::endl;
+  for (auto &n : changes) change += n.get();
 
-    change += (long long)_buffers[pwind[i]]->putWindowCPU(n_w, f_w, j_w, nG, fG,
-                                                          blockG, buf, state);
-  }
+  /*
+    long long change = 0;
+    for (auto i = 0; i < pwind.size(); i++) {
+      std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
+      size_t pos =
+          _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w, nG, fG,
+    blockG);
 
+      change += (long long)_buffers[pwind[i]]->putWindowCPU(n_w, f_w, j_w, nG,
+    fG, blockG, buf, state);
+    }
+  */
   /*
 
     long change = tbb::parallel_reduce(
