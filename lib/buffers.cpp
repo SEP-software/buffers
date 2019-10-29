@@ -501,6 +501,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, const void *buf) {
   bufferState state = CPU_DECOMPRESSED;
   if (_defaultStateSet) state = _defState;
+  std::cerr << "in parsed windows" << std::endl;
   std::cerr std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
   _memory->updateRecentBuffers(pwind);
