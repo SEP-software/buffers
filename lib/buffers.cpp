@@ -490,6 +490,7 @@ tbb::blocked_range<size_t>(0, _buffers.size()), long(0),
 }
 void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, const void *buf) {
+  std::cerr << "IN put window " << std::endl;
   bufferState state = CPU_DECOMPRESSED;
   if (_defaultStateSet) state = _defState;
   std::vector<int> pwind = parsedWindows(nw, fw, jw);
