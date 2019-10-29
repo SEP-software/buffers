@@ -404,6 +404,7 @@ void buffers::changeState(const bufferState state) {
   long long change = 0;
 
   for (auto i = 0; i < _buffers.size(); i++) {
+    std::cerr << "loopinf " << i << " " << _buffers.size() << std::endl;
     change += _buffers[i]->changeState(state);
   }
 
