@@ -562,11 +562,14 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
   for (auto i = 0; i < _buffers.size(); i++) {
     std::vector<int> n_w(7), f_w(7), j_w(7), nG(7), fG(7), blockG(7);
 
+    std::cerr << "before local window" << std::endl;
     size_t pos =
         _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
+    std::cerr << "before2 local window" << std::endl;
 
     change += (long long)_buffers[pwind[i]]->putWindowCPU(n_w, f_w, j_w, nG, fG,
                                                           blockG, buf, state);
+    std::cerr << "before3 local window" << std::endl;
   }
 
   /*

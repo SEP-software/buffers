@@ -188,7 +188,6 @@ void gcpBuffers::createBuffers(const bufferState state) {
   for (int i = 0; i < b._ns.size(); i++) {
     _buffers.push_back(std::make_shared<gcpBuffer>(
         _name, _client, b._ns[i], b._fs[i], _compress, state, _ntrys));
-    std::cerr << "what is going ogn " << std::endl;
   }
 
   _n123blocking = b._nblocking;
