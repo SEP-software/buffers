@@ -540,8 +540,8 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
 
   // int locChange = 0;
 
+  std::cerr << "trhough parse window" << std::endl;
   std::vector<std::future<long long>> changes;
-
   for (auto i = 0; i < _buffers.size(); i++)
     changes.push_back(std::async(
         std::launch::async,
@@ -555,8 +555,9 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
         },
         i));
   long long change = 0;
+  std::cerr << "before 1 " << std::endl;
   for (auto &n : changes) change += n.get();
-
+  std::cerr << "after merge" << std::endl;
   /*
 
     long change = tbb::parallel_reduce(
