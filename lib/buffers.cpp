@@ -575,6 +575,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
     std::cerr << "what is fgoinf on " << i << " " << pwind[i] << std::endl;
     size_t pos =
         _buffers[pwind[i]]->localWindow(n, f, j, n_w, f_w, j_w, nG, fG, blockG);
+    std::cerr << "local indow" << n_w[2] << " " << f_w[2] << std::endl;
 
     change += (long long)_buffers[pwind[i]]->putWindowCPU(n_w, f_w, j_w, nG, fG,
                                                           blockG, buf, state);
