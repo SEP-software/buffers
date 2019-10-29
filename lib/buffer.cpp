@@ -51,8 +51,7 @@ long long buffer::putBufferCPU(std::shared_ptr<storeBase> buf,
   bufferState restore = _bufferState;
   long long oldSize = _buf->getSize();
   _buf = _compress->getUncompressedStore(_n);
-   _modified=true;
-
+  _modified = true;
 
   _bufferState = CPU_DECOMPRESSED;
   _buf->putData(buf);
@@ -113,7 +112,9 @@ size_t buffer::localWindow(const std::vector<int> &nw,
   fwG.resize(7);
   blockG[0] = 1;
   size_t i = 0;
+  std::cerr << "in local window " << std::endl;
   for (i = 0; i < n_w.size(); i++) {
+    std::cerr << i << "  one" << std::endl;
     // Number of samples used before this window
     int nusedLocalBuf = ceilf(float(_f[i] - fw[i]) / float(jw[i]));
     int nusedWindow = ceilf((float)_f[i] / (float)(jw[i]));
@@ -129,18 +130,22 @@ size_t buffer::localWindow(const std::vector<int> &nw,
           ceilf(float(_f[i] - fw[i]) / float(jw[i])) * jw[i] + fw[i] - _f[i];
       nbeforeBuffer = int(float(_f[i] - fw[i]) / float(jw[i]));
     }
+    std::cerr << i << " 2 one" << std::endl;
 
     assert(nbeforeBuffer < nw[i]);
+    std::cerr << i << " 3 one" << std::endl;
 
     n_w[i] = std::min((int)(ceilf(float(_n[i] - f_w[i]) / float(jw[i]))),
                       nw[i] - nbeforeBuffer);
     // Is the first sample outside this patch?
     assert(f_w[i] < _n[i]);
     // if (f_w[i] > _n[i]) return 0;
+    std::cerr << i << " 4 one" << std::endl;
 
     assert(f_w[i] >= 0);
     // subtract off the points already used in previous cells
     // n_w[i] = nw[i] - nusedBuf;
+    std::cerr << i << " 5 one" << std::endl;
 
     // If less 0 we are done
     assert(n_w[i] > 0);
@@ -162,10 +167,10 @@ size_t buffer::localWindow(const std::vector<int> &nw,
 
 long buffer::changeState(const bufferState state) {
   if (state == _bufferState) return 0;
-//    std::cerr << "in chnage stae TO " << bufferStateToString(state)
- //           << " FROM:" <<bufferStateToString(_bufferState) << std::endl;
-        long long oldSize=0;
- if(_buf)  oldSize= _buf->getSize();
+  //    std::cerr << "in chnage stae TO " << bufferStateToString(state)
+  //           << " FROM:" <<bufferStateToString(_bufferState) << std::endl;
+  long long oldSize = 0;
+  if (_buf) oldSize = _buf->getSize();
 
   switch (state) {
     case CPU_DECOMPRESSED:
@@ -215,13 +220,15 @@ long buffer::changeState(const bufferState state) {
           _bufferState = CPU_COMPRESSED;
         case CPU_COMPRESSED:
           if (_modified) {
-		 
             writeBuffer();
           }
           break;
         default:
-	  std::cerr<<std::string("Unknown conversion ")+bufferStateToString(_bufferState)<<std::endl;
-	  throw SEPException(std::string("Unknown conversion ")+bufferStateToString(_bufferState));
+          std::cerr << std::string("Unknown conversion ") +
+                           bufferStateToString(_bufferState)
+                    << std::endl;
+          throw SEPException(std::string("Unknown conversion ") +
+                             bufferStateToString(_bufferState));
       }
       _bufferState = ON_DISK;
       _buf->zero();
