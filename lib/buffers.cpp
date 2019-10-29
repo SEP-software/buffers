@@ -219,6 +219,8 @@ std::vector<int> buffers::parsedWindows(const std::vector<int> &nw,
   std::vector<std::vector<bool>> patches;
   std::vector<int> first(1, 0);
   size_t ntot = 1;
+  std::cerr << "what the " << fw[0] << " " << fw[1] << " " << fw[2]
+            << std::endl;
   for (int i = ns.size(); i < nw.size(); i++) ns.push_back(1);
   for (int i = 0; i < std::min(7, (int)nw.size()); i++) {
     bool fail = false;
@@ -499,7 +501,7 @@ void buffers::putWindow(const std::vector<int> &nw, const std ::vector<int> &fw,
                         const std::vector<int> &jw, const void *buf) {
   bufferState state = CPU_DECOMPRESSED;
   if (_defaultStateSet) state = _defState;
-  std::vector<int> pwind = parsedWindows(nw, fw, jw);
+  std::cerr std::vector<int> pwind = parsedWindows(nw, fw, jw);
   std::vector<int> n(7, 1), f(7, 0), j(7, 1);
   _memory->updateRecentBuffers(pwind);
   for (auto i = 0; i < std::min(7, (int)nw.size()); i++) n[i] = nw[i];
