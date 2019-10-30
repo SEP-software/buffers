@@ -25,11 +25,12 @@ if(BUILD_GCP)
 endif(BUILD_GCP)
 
 if(BUILD_GCP)
-  if(NOT SUBPACKAGE)
-    execute_process(COMMAND git submodule update --init --recursive --
+	find_package(storage_client REQUIRED)
+	#  if(NOT SUBPACKAGE)
+	  #    execute_process(COMMAND git submodule update --init --recursive --
                             # external/cloud
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  endif(NOT SUBPACKAGE)
+			    #            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+	    #  endif(NOT SUBPACKAGE)
 endif(BUILD_GCP)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -73,11 +74,11 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube)
 endif(NOT TARGET hypercube)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 
-if(BUILD_GCP AND NOT TARGET storage_client)
-	set(GOOGLE_CLOUD_CPP_ENABLE_FIRESTONE no)
-	set(GOOGLE_CLOUD_CPP_ENABLE_BIGTABLE no)
-  add_subdirectory(external/cloud)
-endif(BUILD_GCP AND NOT TARGET storage_client)
+#if(BUILD_GCP AND NOT TARGET storage_client)
+#	set(GOOGLE_CLOUD_CPP_ENABLE_FIRESTONE no)
+#	set(GOOGLE_CLOUD_CPP_ENABLE_BIGTABLE no)
+#  add_subdirectory(external/cloud)
+#endif(BUILD_GCP AND NOT TARGET storage_client)
 
 if(BUILD_ZFP AND NOT TARGET zfp)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/zfp)
