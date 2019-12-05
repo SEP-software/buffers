@@ -26,11 +26,6 @@ endif(BUILD_GCP)
 
 if(BUILD_GCP)
 	find_package(storage_client REQUIRED)
-	#  if(NOT SUBPACKAGE)
-	  #    execute_process(COMMAND git submodule update --init --recursive --
-                            # external/cloud
-			    #            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-	    #  endif(NOT SUBPACKAGE)
 endif(BUILD_GCP)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
