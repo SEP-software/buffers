@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 option(BUILD_ZFP "Build with ZFP support" ON)
 option(BUILD_GCP "Build with GCP support" OFF)
+  option(BUILD_TESTING "FIX ZFP BUG DO NOT SET" OFF)
 if(NOT SUBPACKAGE)
   option(BUILD_TEST "Build with test support" OFF)
   option(INSTALL_CMAKE_ENV "Install cmake build environment" ON)
