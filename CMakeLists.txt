@@ -76,6 +76,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 #  add_subdirectory(external/cloud)
 #endif(BUILD_GCP AND NOT TARGET storage_client)
 
+cmake_policy(SET CMP0077 NEW)
 if(BUILD_ZFP AND NOT TARGET zfp)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/zfp)
 endif(BUILD_ZFP AND NOT TARGET zfp)
