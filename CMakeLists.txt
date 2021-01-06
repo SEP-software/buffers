@@ -58,9 +58,9 @@ if(NOT SUBPACKAGE)
   endif(NOT TARGET jsonCpp)
 
   if(BUILD_ZFP)
-    execute_process(COMMAND git submodule update --init --recursive --
-                            external/zfp
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+#    execute_process(COMMAND git submodule update --init --recursive --
+#                            external/zfp
+#                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif(BUILD_ZFP)
 endif(NOT SUBPACKAGE)
 set(SUBPACKAGE true)
