@@ -5,7 +5,3 @@
 [submodule "external/hypercube"]
 	path = external/hypercube
 	url = http://cees-gitlab.Stanford.EDU/bob/hypercube.git
-[submodule "external/zfp"]
-	path = external/zfp
-	url = https://github.com/LLNL/zfp.git
-        branch = master
