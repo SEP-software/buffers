@@ -25,9 +25,7 @@ if(BUILD_GCP)
   set(USE_GCP true)
 endif(BUILD_GCP)
 
-if(BUILD_GCP)
-	find_package(storage_client REQUIRED)
-endif(BUILD_GCP)
+
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
@@ -58,9 +56,9 @@ if(NOT SUBPACKAGE)
   endif(NOT TARGET jsonCpp)
 
   if(BUILD_ZFP)
-#    execute_process(COMMAND git submodule update --init --recursive --
-#                            external/zfp
-#                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    execute_process(COMMAND git submodule update --init --recursive --
+                            external/zfp
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif(BUILD_ZFP)
 endif(NOT SUBPACKAGE)
 set(SUBPACKAGE true)
@@ -70,11 +68,9 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/hypercube)
 endif(NOT TARGET hypercube)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/json)
 
-#if(BUILD_GCP AND NOT TARGET storage_client)
-#	set(GOOGLE_CLOUD_CPP_ENABLE_FIRESTONE no)
-#	set(GOOGLE_CLOUD_CPP_ENABLE_BIGTABLE no)
-#  add_subdirectory(external/cloud)
-#endif(BUILD_GCP AND NOT TARGET storage_client)
+if(BUILD_GCP) 
+  find_package(google_cloud_cpp_storage REQUIRED)
+endif(BUILD_GCP)
 
 #set(BUILD_TESTING FALSE)
 cmake_policy(SET CMP0077 NEW)

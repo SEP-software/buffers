@@ -30,7 +30,7 @@ long long gcpBuffer::writeBuffer(bool keepState) {
   namespace gcs = google::cloud::storage;
   //  google::cloud::v0::StatusOr<gcs::Client> client =
   //     gcs::Client::CreateDefaultClient();
-  google::cloud::v0::StatusOr<gcs::ObjectMetadata> metadata;
+  google::cloud::StatusOr<gcs::ObjectMetadata> metadata;
   gcs::ObjectWriteStream stream;
   int sleep = 100000;  // Start with a retry at .1 seconds
   bool success = false;
@@ -76,7 +76,7 @@ long long gcpBuffer::readBuffer() {
   long long oldSize = _buf->getSize();
   _modified = false;
   namespace gcs = google::cloud::storage;
-  google::cloud::v0::StatusOr<gcs::ObjectMetadata> object_metadata;
+  google::cloud::StatusOr<gcs::ObjectMetadata> object_metadata;
   // google::cloud::v0::StatusOr<gcs::Client> client =
   //   gcs::Client::CreateDefaultClient();
   /*Only need to do something if sitting on disk*/
@@ -126,7 +126,7 @@ long long gcpBuffer::readBuffer() {
 
 gcpBuffer::gcpBuffer(
     const std::string &bucketName,
-    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
+    google::cloud::StatusOr<google::cloud::storage::Client> client,
     const std::string name, const std::vector<int> &n,
     const std::vector<int> &f, std::shared_ptr<compress> comp,
     const int ntrys) {
@@ -140,7 +140,7 @@ gcpBuffer::gcpBuffer(
 }
 gcpBuffer::gcpBuffer(
     const std::string &bucketName,
-    google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
+    google::cloud::StatusOr<google::cloud::storage::Client> client,
     const std::vector<int> &n, const std::vector<int> &f,
     std::shared_ptr<compress> comp, const bufferState state, const int ntrys) {
   _bucketName = bucketName;

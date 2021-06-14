@@ -40,7 +40,7 @@ gcpBuffers::gcpBuffers(const std::shared_ptr<hypercube> hyper,
   SEP::IO::compressTypes ct = compressTypes(des["compression"]);
 
   namespace gcs = google::cloud::storage;
-  google::cloud::v0::StatusOr<gcs::Client> client =
+  google::cloud::StatusOr<gcs::Client> client =
       gcs::Client::CreateDefaultClient();
   if (!client)
     throw(SEPException(std::string("Trouble creating default client")));
@@ -78,7 +78,7 @@ gcpBuffers::gcpBuffers(std::shared_ptr<hypercube> hyper,
 
   namespace gcs = google::cloud::storage;
 
-  google::cloud::v0::StatusOr<gcs::Client> client =
+  google::cloud::StatusOr<gcs::Client> client =
       gcs::Client::CreateDefaultClient();
   if (!client)
     throw(SEPException(std::string("Trouble creating default client")));

@@ -27,7 +27,7 @@ if(USE_GCP)
 	  gcpBuffer.cpp 
 	  gcpBuffers.cpp
 	  )
-  set(DEP_LIBS  ${DEP_LIBS} storage_client)
+  set(DEP_LIBS  ${DEP_LIBS} google-cloud-cpp::storage)
 endif(USE_GCP)
 
 set(INCLUDES

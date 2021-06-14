@@ -27,7 +27,7 @@ class gcpBuffer : public buffer {
     \param comp Compression object
   */
   gcpBuffer(const std::string &bucketName,
-            google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
+            google::cloud::StatusOr<google::cloud::storage::Client> client,
             const std::string name, const std::vector<int> &n,
             const std::vector<int> &f, std::shared_ptr<compress> comp,
             const int ntrys);
@@ -42,7 +42,7 @@ class gcpBuffer : public buffer {
     \param state State for buffet
   */
   gcpBuffer(const std::string &bucketName,
-            google::cloud::v0::StatusOr<google::cloud::storage::Client> client,
+            google::cloud::StatusOr<google::cloud::storage::Client> client,
 
             const std::vector<int> &n, const std::vector<int> &f,
             std::shared_ptr<compress> comp, const bufferState state,
@@ -70,12 +70,12 @@ class gcpBuffer : public buffer {
   virtual ~gcpBuffer() { ; }
 
   void setClient(
-      google::cloud::v0::StatusOr<google::cloud::storage::Client> client) {
+      google::cloud::StatusOr<google::cloud::storage::Client> client) {
     _client = client;
   }
 
  private:
-  google::cloud::v0::StatusOr<google::cloud::storage::Client> _client;
+  google::cloud::StatusOr<google::cloud::storage::Client> _client;
 
   std::string _bucketName;
   int _ntrys;
