@@ -2,9 +2,6 @@
 	path = external/json
 	url = http://cees-gitlab.Stanford.EDU/bob/json.git
 	ignore =dirty
-[submodule "external/hypercube"]
-	path = external/hypercube
-	url = http://cees-gitlab.Stanford.EDU/bob/hypercube.git
 [submodule "external/zfp"]
 	path = external/zfp
 	url = https://github.com/LLNL/zfp.git
