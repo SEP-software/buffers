@@ -54,10 +54,8 @@ target_include_directories(
          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
  target_link_libraries(buffers hypercube jsonCpp ${DEP_LIBS} ${TBB_LIBRARIES})
-if(NOT SUPPORT_LIBRARIES_BUILD)
   install(FILES ${INCLUDES} DESTINATION include)
   install(TARGETS buffers DESTINATION lib EXPORT buffersTargets)
-endif(NOT SUPPORT_LIBRARIES_BUILD)
 
 
 
