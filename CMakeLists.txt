@@ -30,6 +30,7 @@ endif(BUILD_GCP)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 # configure a header file to pass some of the CMake settings
+CMAKE_POLICY(SET CMP0074 NEW)
 find_package(TBB REQUIRED)
 
 set(buffer_MAJOR_VERSION 0)
