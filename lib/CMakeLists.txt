@@ -55,7 +55,7 @@ target_include_directories(
   PRIVATE ${TBB_INCLUDE_DIRS}
 	 )
 
- target_link_libraries(buffers hypercube jsonCpp ${DEP_LIBS} ${TBB_LIBRARIES})
+ target_link_libraries(buffers hypercube jsonCpp ${DEP_LIBS} TBB::tbb)
   install(FILES ${INCLUDES} DESTINATION include)
   install(TARGETS buffers DESTINATION lib EXPORT buffersTargets)
 
