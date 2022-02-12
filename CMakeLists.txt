@@ -31,7 +31,17 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 # configure a header file to pass some of the CMake settings
 CMAKE_POLICY(SET CMP0074 NEW)
-find_package(TBB REQUIRED)
+find_package(TBB REQUIRED COMPONENTS tbbmalloc)
+
+macro(print_all_variables)
+    message(STATUS "print_all_variables------------------------------------------{")
+    get_cmake_property(_variableNames VARIABLES)
+    foreach (_variableName ${_variableNames})
+        message(STATUS "${_variableName}=${${_variableName}}")
+    endforeach()
+    message(STATUS "print_all_variables------------------------------------------}")
+endmacro()
+
 
 set(buffer_MAJOR_VERSION 0)
 set(buffer_MINOR_VERSION 2)

@@ -51,7 +51,9 @@ target_include_directories(
   buffers
   PUBLIC $<INSTALL_INTERFACE:include>
          $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../>
-         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  PRIVATE ${TBB_INCLUDE_DIRS}
+	 )
 
  target_link_libraries(buffers hypercube jsonCpp ${DEP_LIBS} ${TBB_LIBRARIES})
   install(FILES ${INCLUDES} DESTINATION include)
