@@ -9,3 +9,4 @@
 [submodule "external/hypercube"]
 	path = external/hypercube
 	url = http://cees-gitlab.stanford.edu/bob/hypercube.git
+	ignore = dirty
