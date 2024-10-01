@@ -1,6 +1,6 @@
 [submodule "external/json"]
 	path = external/json
-	url = http://cees-gitlab.Stanford.EDU/bob/json.git
+	url = https://github.com/SEP-software/json.git
 	ignore =dirty
 [submodule "external/zfp"]
 	path = external/zfp
@@ -8,5 +8,5 @@
 	branch = master
 [submodule "external/hypercube"]
 	path = external/hypercube
-	url = http://cees-gitlab.stanford.edu/bob/hypercube.git
+	url = https://github.com/SEP-software/hypercube.git
 	ignore = dirty
